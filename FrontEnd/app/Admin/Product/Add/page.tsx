@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent ,useEffect } from "react";
-import { addProduct } from "@/utils/Admin/api";
+import { addProduct } from "@/utils/admin/api";
 
-const API_URL = "http://localhost:5000/form";
+const API_URL = "http://localhost:5500/form";
 
 type Product = {
   _id: string;
@@ -210,7 +210,7 @@ const AddProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
   const fetchProducts = async () => {
-    const res = await fetch("http://localhost:5000/form");
+    const res = await fetch("http://localhost:5500/form");
     const data = await res.json();
     setProducts(data);
   };

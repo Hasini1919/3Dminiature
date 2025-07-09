@@ -14,7 +14,7 @@ const ProductTable = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/form', { cache: 'no-store' });
+      const res = await fetch('http://localhost:5500/form', { cache: 'no-store' });
       const data = await res.json();
       setProducts(data);
     } catch (error) {
