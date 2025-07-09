@@ -39,7 +39,7 @@ const colorOptions: Record<string, { frameColors: string[]; themeColors: string[
   },
 };
 */
-const categories = ["Wedding", "Birthday", "Baby"];
+const categories = ["Wedding", "Birthday", "Baby" ,"Graduation", "Family"];
 const frameColors =[
   "Black",
   "Brown",
