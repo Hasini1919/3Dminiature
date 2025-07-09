@@ -47,7 +47,7 @@
 
 //     setLoading(true);
 //     try {
-//       const response = await fetch("http://localhost:5008/api/auth/verify-code", {
+//       const response = await fetch("http://localhost:5500/api/auth/verify-code", {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },
 //         body: JSON.stringify({ code }),

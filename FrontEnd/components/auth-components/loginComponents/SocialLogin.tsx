@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 
 const SocialLogin = () => {
 
-  const GOOGLE_AUTH_URL = "http://localhost:5000/auth/google";
+  const GOOGLE_AUTH_URL = "http://localhost:5500/auth/google";
 
   return (
     <div className="flex flex-col space-y-4">
