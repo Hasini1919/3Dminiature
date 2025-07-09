@@ -1,11 +1,10 @@
-import React from "react";
 
-
-
-export default function HomePage() {
+import Login from "./authentication/login/page";
+export default function Home() {
   return (
-    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-red-800 ">Tailwind Works!</h1>
-    </div>
-  )
+   <div>
+     <Login/>
+     
+   </div>
+  );
 }
