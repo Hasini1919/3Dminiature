@@ -1,11 +1,11 @@
 {
   "name": "miniature_backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon backend/index.js",
-    "start": "node backend/index.js",
+    "dev": "nodemon BackEnd/src/index.js",
+    "start": "node BackEnd/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"No build step defined\" && exit 0"
   },
@@ -18,7 +18,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.12.1",
-    "multer": "^1.4.5-lts.2"
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^7.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
