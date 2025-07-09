@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent ,useEffect } from "react";
-import { addProduct } from "@/utils/Admin/api";
+import { addProduct } from "@/utils/admin/api";
 
 const API_URL = "http://localhost:5000/form";
 

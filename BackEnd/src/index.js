@@ -7,10 +7,10 @@ import path from "path";
 import fs from "fs";
 
 // mongoDB connection
-import connectDB from './config/Admin_config/db.js';
+import connectDB from './config/admin_config/db.js';
 
 //route files
-import addRoutes from "./routes/Admin_routes/Add_1.js";
+import addRoutes from "./routes/admin_routes/add_1.js";
 
 /*
 
