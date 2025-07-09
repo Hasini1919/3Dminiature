@@ -80,7 +80,7 @@ const Slidebar = () => {
 
         {/* Dashboard */}
 
-        <Link href="/admin/dashboard" onClick={() => setIsOpen(false)}>
+        <Link href="/Admin/Dashboard" onClick={() => setIsOpen(false)}>
           <span
             className={`flex items-center p-3 rounded ${pathname === "/Dashboard" ? "border border-white"  : "hover:bg-transparent"}`}
           >
@@ -101,10 +101,10 @@ const Slidebar = () => {
           </button>
           {productOpen && (
             <div id="product-menu" className="ml-6 space-y-2">
-              <Link href="/admin/product/add" onClick={() => setIsOpen(false)}>
+              <Link href="/Admin/Product/Add" onClick={() => setIsOpen(false)}>
                 <span className={`block p-2 hover:bg-transparent rounded ${pathname === "/Product/Add" ? "border border-white" : ""}`}>Add Product</span>
               </Link>
-              <Link href="/admin/product/table" onClick={() => setIsOpen(false)}>
+              <Link href="/Admin/Product/Table" onClick={() => setIsOpen(false)}>
                 <span className={`block p-2 hover:bg-gray-700 rounded ${pathname === "/Product/Table" ? "border border-white" : ""}`}>Product Table</span>
               </Link>
             </div>
@@ -124,16 +124,16 @@ const Slidebar = () => {
           </button>
           {orderOpen && (
             <div id="order-menu" className="ml-6 space-y-2">
-              <Link href="/admin/order/new" onClick={() => setIsOpen(false)}>
+              <Link href="/Admin/Order/New" onClick={() => setIsOpen(false)}>
                 <span className={`block p-2 hover:bg-gray-700 rounded ${pathname === "/Order/New" ? "border border-white" : ""}`}>
                 New Orders
                
                 </span>
               </Link>
-              <Link href="/admin/order/pending" onClick={() => setIsOpen(false)}>
+              <Link href="/Admin/Order/Pending" onClick={() => setIsOpen(false)}>
                 <span className={`block p-2 hover:bg-gray-700 rounded ${pathname === "/Order/Pending" ? "border border-white" : ""}`}>Pending Orders</span>
               </Link>
-              <Link href="/admin/order/completed" onClick={() => setIsOpen(false)}>
+              <Link href="/Admin/Order/Completed" onClick={() => setIsOpen(false)}>
                 <span className={`block p-2 hover:bg-gray-700 rounded ${pathname === "/Order/Completed" ? "border border-white" : ""}`} >Completed Orders</span>
               </Link>
             </div>
@@ -141,14 +141,14 @@ const Slidebar = () => {
         </div>
 
         {/* Customers */}
-        <Link href="/admin/customer" onClick={() => setIsOpen(false)}>
+        <Link href="/Admin/Customer" onClick={() => setIsOpen(false)}>
           <span className={`flex items-center p-3 rounded ${pathname === "/Customer" ? "border border-white" : "hover:bg-gray-700"}`}>
             <FiUsers className="mr-2" /> Customers
           </span>
         </Link>
 
         {/* Logout */}
-        <Link href="/admin/logout" onClick={() => setIsOpen(false)}>
+        <Link href="/Admin/logout" onClick={() => setIsOpen(false)}>
           <span className="flex items-center p-3 hover:bg-red-700 rounded mt-4">
             <FiLogOut className="mr-2" /> Logout
           </span>

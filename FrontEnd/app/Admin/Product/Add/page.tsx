@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent ,useEffect } from "react";
-import { addProduct } from "@/utils/admin/api";
+import { addProduct } from "@/utils/Admin/api";
 
 const API_URL = "http://localhost:5000/form";
 
@@ -39,7 +39,7 @@ const colorOptions: Record<string, { frameColors: string[]; themeColors: string[
   },
 };
 */
-const categories = ["Wedding", "Birthday", "Baby" ,"Graduation", "Family"];
+const categories = ["Wedding", "Birthday", "Baby"];
 const frameColors =[
   "Black",
   "Brown",
