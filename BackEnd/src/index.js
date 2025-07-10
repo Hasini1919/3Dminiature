@@ -15,10 +15,11 @@ const app = express();
 
 connectDB();
 
-// app.use(cors({
-//     origin: 'http://localhost:3000',
-//     credentials: true
-// }));
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: "GET,POST,PUT,PATCH,DELETE",
+    credentials: true
+}));
 app.use(express.json());
 app.use(passport.initialize());
 
@@ -42,8 +43,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// mongoDB connection
-import connectDB from './config/Admin_config/db.js';
 
 //route files
 import addRoutes from "./routes/admin_routes/add_order.js";
@@ -66,8 +65,8 @@ import notificationRoutes from './notification.js'
 
 */
 dotenv.config();
-const app = express();
-const PORT = process.env.PORT || 5500;
+
+
 
 //connect Mongo
 connectDB();
@@ -81,11 +80,11 @@ if (!fs.existsSync(uploadDir)) {
 
 
 // connect frontend
-app.use(cors({
-    origin: 'http://localhost:3500', // Allow requests from frontend
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true
-}));
+// app.use(cors({
+//     origin: 'http://localhost:3500', // Allow requests from frontend
+//     methods: "GET,POST,PUT,DELETE",
+//     credentials: true
+// }));
 
 // Body parser (built-in in Express 4.16+)
 // app.use(express.json());
@@ -113,7 +112,7 @@ app.use("/form",addRoutes);
 
 // app.get("/" ,(req , res) => {
 //     res.send("Express backend is running");
-});
+
 
 // app.listen(PORT ,() =>{
 //     console.log(`Backend server running on http://localhost:${PORT}`);
