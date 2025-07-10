@@ -87,7 +87,7 @@ const OrderSummary: React.FC = () => {
                               (imgUrl, index) => (
                                 <img
                                   key={index}
-                                  src={`http://localhost:5000${imgUrl}`}
+                                  src={`http://localhost:5500${imgUrl}`}
                                   alt={`Uploaded ${index + 1}`}
                                   className="w-40 h-40 object-cover rounded-md border border-gray-300"
                                 />
@@ -161,7 +161,7 @@ const OrderSummary: React.FC = () => {
                           {item.uploadedImageFiles.map((imgUrl, index) => (
                             <img
                               key={index}
-                              src={`http://localhost:5000${imgUrl}`}
+                              src={`http://localhost:5500${imgUrl}`}
                               alt={`Uploaded ${index + 1}`}
                               className="w-40 h-40 object-cover rounded-md border-gray-200 border "
                             />

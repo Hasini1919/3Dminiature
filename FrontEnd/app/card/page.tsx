@@ -247,7 +247,7 @@ const Card = () => {
                             <div className="flex items-center">
                               <div className="w-16 h-16 rounded-md overflow-hidden border border-gray-200">
                                 <img
-                                  src={`${"http://localhost:5000"}${
+                                  src={`${"http://localhost:5500"}${
                                     item.productImage
                                   }`}
                                   alt={item.productName}
@@ -273,7 +273,7 @@ const Card = () => {
                                         className="w-40 h-40 rounded-md border overflow-hidden border-gray-200"
                                       >
                                         <img
-                                          src={`${"http://localhost:5000"}${imgUrl}`}
+                                          src={`${"http://localhost:5500"}${imgUrl}`}
                                           alt={`Uploaded ${index + 1}`}
                                           className=" w-full h-full object-cover"
                                         />
