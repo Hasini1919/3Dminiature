@@ -1,10 +1,11 @@
 import User from  "../models/UserModel.js"
-import Product from  "../models/UserModel.js";
+import Product from  "../models/Product.js";
 import path from "path";
 import fs from "fs";
 
 // Add to Cart
 const addToCart = async (req, res) => {
+  
   const {
     
     productId,
@@ -14,8 +15,10 @@ const addToCart = async (req, res) => {
     quantity,
     customText,
   } = req.body;
-  const userId = req.userId;
 
+  
+  const userId = req.userId;
+  
 
   // Array of uploaded image file paths
   const uploadedImageFiles = req.files
@@ -27,9 +30,14 @@ const addToCart = async (req, res) => {
 
   try {
     const user = await User.findById(userId);
+    console.log(productId);
     const product = await Product.findById(productId);
+    
+    console.log(product);
 
     if (!user || !product) {
+      
+   
       return res.status(404).json({ message: "User or Product not found" });
     }
 

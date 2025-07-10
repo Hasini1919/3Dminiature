@@ -3,7 +3,7 @@ import Product from "../models/Product.js";
 const addProducts = async (req, res) => {
   try {
     const { name, price, frameSize, description, frameColor, themeColor, category } = req.body;
-    const images = req.files.map(file => `/uploads/${file.filename}`); 
+    const image = `/uploads/${req.file.filename}`;
 
     const newProduct = new Product({
       name,
@@ -13,7 +13,7 @@ const addProducts = async (req, res) => {
       frameColor,
       themeColor,
       category,
-      imageUrl: images
+      imageUrl: image
     });
 
     await newProduct.save();
@@ -28,6 +28,7 @@ const addProducts = async (req, res) => {
 const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
+   
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products" });

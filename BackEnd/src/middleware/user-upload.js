@@ -1,9 +1,13 @@
-// uploadUserImages.js
-
 import multer from 'multer';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Ensure the user upload folder exists
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+
 const ensureUserFolder = (folderPath) => {
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
@@ -12,12 +16,12 @@ const ensureUserFolder = (folderPath) => {
 
 const userStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const folderPath = './uploads/user-uploads';
+    const folderPath = path.join(__dirname, '../uploads/user-uploads');
     ensureUserFolder(folderPath);
     cb(null, folderPath);
   },
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + file.originalname;
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
     cb(null, uniqueName);
   }
 });
