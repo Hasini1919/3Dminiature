@@ -1,7 +1,43 @@
+
+
+import dotenv from 'dotenv';
+dotenv.config();
+
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
+
 import express from 'express';
-import cors from "cors";
+import cors from 'cors';
+import passport from 'passport';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+
+const app = express();
+
+connectDB();
+
+// app.use(cors({
+//     origin: 'http://localhost:3000',
+//     credentials: true
+// }));
+app.use(express.json());
+app.use(passport.initialize());
+
+app.use('/api/auth', authRoutes);
+
+app.get('/', (req, res) => {
+    res.send('API is running...');
+});
+
+const PORT = 5500;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log('Google OAuth is configured and ready');
+});
+
+// import express from 'express';
+// import cors from "cors";
 //import bodyParser from 'body-parser';
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -46,14 +82,14 @@ if (!fs.existsSync(uploadDir)) {
 
 // connect frontend
 app.use(cors({
-    origin: process.env.CLIENT_URL, // Allow requests from frontend
+    origin: 'http://localhost:3500', // Allow requests from frontend
     methods: "GET,POST,PUT,DELETE",
     credentials: true
 }));
 
 // Body parser (built-in in Express 4.16+)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -75,13 +111,13 @@ app.use("/uploads", express.static(uploadDir));
 //routes
 app.use("/form",addRoutes);
 
-app.get("/" ,(req , res) => {
-    res.send("Express backend is running");
+// app.get("/" ,(req , res) => {
+//     res.send("Express backend is running");
 });
 
-app.listen(PORT ,() =>{
-    console.log(`Backend server running on http://localhost:${PORT}`);
-});
+// app.listen(PORT ,() =>{
+//     console.log(`Backend server running on http://localhost:${PORT}`);
+// });
 
 
 /*
@@ -107,3 +143,4 @@ app.use('/api/orders-completed',comStatsRoutes);
 app.use('/api/notifications',notificationRoutes)
 
 */
+
