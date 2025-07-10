@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body 
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f3f0f0fc]`}>
-       <Slidebar/>
+       
         {children}
       </body>
     </html>
