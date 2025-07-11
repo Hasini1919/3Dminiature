@@ -1,4 +1,4 @@
-import Product from "../models/productModel.js";
+import Products from "../models/productModel.js";
 const LIMIT_PER_PAGE = 6;
 
 class ProductService {
@@ -12,12 +12,12 @@ class ProductService {
       const skip = (validatedPage - 1) * LIMIT_PER_PAGE;
 
       const [products, totalCount] = await Promise.all([
-        Product.find(filters)
+        Products.find(filters)
           .sort(sortOption)
           .skip(skip)
           .limit(LIMIT_PER_PAGE)
           .lean(),
-        Product.countDocuments(filters),
+        Products.countDocuments(filters),
       ]);
 
       const totalPages = Math.ceil(totalCount / LIMIT_PER_PAGE);

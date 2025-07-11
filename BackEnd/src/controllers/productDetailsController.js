@@ -1,16 +1,16 @@
 import  multer from "multer";
 import mongoose from 'mongoose';
-import Product from "../models/productModel.js"; 
+import Products from "../models/productModel.js"; 
 import path  from "path";
 
    // Get product details by ID
 export const getProductDetailsById = async (req, res) => {
   try {
     const productId = req.params.id;
-    let product = await Product.findOne({ _id: productId });
+    let product = await Products.findOne({ _id: productId });
 
     if (!product && mongoose.Types.ObjectId.isValid(productId)) {
-      product = await Product.findOne({
+      product = await Products.findOne({
         $or: [
           { _id: productId },
           { _id: new mongoose.Types.ObjectId(productId) },
@@ -19,7 +19,7 @@ export const getProductDetailsById = async (req, res) => {
     }
 
     if (!product) {
-      product = await Product.findOne({
+      product = await Products.findOne({
         $expr: {
           $eq: [{ $toString: "$_id" }, productId],
         },
@@ -28,7 +28,7 @@ export const getProductDetailsById = async (req, res) => {
 
     // Debugging information
     if (!product) {
-      const exampleProducts = await Product.find().limit(3);
+      const exampleProducts = await Products.find().limit(3);
       return res.status(404).json({
         message: "Product not found",
         details: {

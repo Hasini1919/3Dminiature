@@ -27,6 +27,6 @@ productSchema.index({
 });
 
 // Create model
-const Product =
-  mongoose.models.Product || mongoose.model("Product", productSchema);
-export default Product;
+const Products =
+  mongoose.models.Product || mongoose.model("Products", productSchema);
+export default Products;
