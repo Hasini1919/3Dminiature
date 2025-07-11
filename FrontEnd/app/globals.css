@@ -3,5 +3,232 @@
 @tailwind utilities;
 
 
+  @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+  
+
+@layer base {
+  body {
+    font-family: 'Kalam', cursive,Arial, Helvetica, sans-serif;
+    color: var(--foreground);
+    background: var(--background);
+  }
+
+}
+html,
+body {
+  font-family: 'Amazon Ember';
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+}
+
+/* Scroll Bar 
+
+::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(66, 66, 66, 0.2);
+  border: 0px;
+  background-clip: padding-box;
+  border-radius: 5px;
+}*/
+
+.bttn1{
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.bttn1:hover{
+  background-color: #f21f1f;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.514);
+  
+}
+
+.bttn {
+  position: relative;
+  color: #fffffff3;
+  text-decoration: none;
+  border: none;
+
+}
+
+.bttn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px; /* adjust as needed */
+  width: 0;
+  height: 2px;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.bttn:hover {
+  color: #ffffff;
+}
+
+.bttn:hover::after {
+  width: 100%;
+}
+
+
+#search_btn {
+  background-color: #e3e3e3;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+}
+
+.input-group {
+  display: flex;
+  width: 10%; 
+  margin: 0 auto;
+}
+
+#search_field {
+  flex-grow: 1;
+  min-width: 0;
+  height: 2.4rem;
+  padding: 1rem;
+  background-color: #e3e3e3;
+}
+
+/* Infinite Scroller */
+.scroller {
+  display: flex;
+  max-width: 100%;
+ 
+  justify-content: center;  
+  align-items: center;
+  background-color: #CB1A2E;
+  overflow: hidden;
+ 
+}
+.scrollerimg{
+  display: flex;
+  max-width: 100%;
+ 
+  justify-content: center;  
+  align-items: center;
+  background-color: white;
+  overflow: hidden;
+ 
+}
+
+.text-list {
+  display: flex;
+  gap: 4rem;
+  padding-block: 10px;
+  flex-wrap: nowrap;  /* Prevent wrapping */
+  color: #ededed;
+  
+}
+
+/* Apply animation if enabled */
+.scroller[data-animation="true"] .text-list {
+  width: max-content; /* Allow continuous scrolling */
+  flex-wrap: nowrap;
+  animation: scroll 10s linear infinite; /* Adjust speed */
+}
+.scrollerimg[data-animation="true"] .text-list {
+  width: max-content; /* Allow continuous scrolling */
+  flex-wrap: nowrap;
+  animation: scroll 10s linear infinite; /* Adjust speed */
+}
+
+.scrollerimg:hover ul.animate-scroll {
+  animation-play-state: paused;
+}
+
+/* Fix Keyframes Animation */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-45%); /* Move half the content for looping */
+  }
+}
+
+.wrapper{
+  display: flex;
+  width: 70%;
+  justify-content: space-around;
+}
+
+.card {
+  height: 200px;
+  width: 200px;
+  padding: 2rem 1rem;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  box-shadow: 0px 7px 10px rgba(0,0,0,0.5);
+  transition: 0.5s ease-in-out;
+  
+}
+.card:hover{
+  transform: translateY(30px);
+}
+
+.card::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom,rgba(176, 41, 0, 0.5),rgb(201, 61, 61));
+  z-index: 2;
+  transition: 0.5s all;
+  opacity: 0;
+}
+
+.card:hover:before{
+  opacity: 1;
+
+}
+
+.card img{
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  position:relative;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  top: -20px; 
+  left: -30px;
+  z-index: 3; 
+  
+}
+.card p{
+  z-index: 3; 
+  text-align: center;
+  position: absolute;
+  bottom: 30px; /* Adjust positioning */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  text-align: center;
+}
+
+.footer a {
+  text-decoration: none;
+}
+.link {
+  text-decoration: none;
+}
+
 
   
