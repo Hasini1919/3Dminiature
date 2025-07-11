@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
 
-
-
-await Counter.create({ name: 'customerId', seq: 0 });
-
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -32,7 +27,6 @@ const userSchema = new mongoose.Schema({
     picture: {
         type: String
     },
-    
     resetPasswordToken: {
         type: String
     },
