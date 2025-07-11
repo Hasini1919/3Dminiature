@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
     },
 
     frameSize: {
-        type: String,
+        type: [String],
         required: true,
     },
 

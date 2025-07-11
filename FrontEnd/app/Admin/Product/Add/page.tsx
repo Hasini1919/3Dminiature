@@ -10,7 +10,7 @@ type Product = {
   name: string;
   category: string;
   price: string;
-  frameSize: string;
+  frameSize:  string[];
   frameColor: string[];
   themeColor: string[];
   images: string[]; 
@@ -64,6 +64,14 @@ const ProductForm = ({
     });
   };
 
+  const handleFrameSizeChange = (size: string) => {
+    setFormData((prev: any) => {
+      const newSizes = prev.frameSize.includes(size)
+        ? prev.frameSize.filter((s: string) => s !== size)
+        : [...prev.frameSize, size];
+      return { ...prev, frameSize: newSizes };
+    });
+  };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -87,7 +95,7 @@ const ProductForm = ({
       {/* Form Grid */}
       <div className="grid grid-cols-2 gap-6">
         {/* Left Side */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
             <label className="block text-sm text-gray-600">Upload Images</label>
             <input type="file" multiple accept="image/*" onChange={handleImageChange} className="w-full" />
@@ -104,15 +112,26 @@ const ProductForm = ({
             <label className="block text-sm text-gray-600">Product Name</label>
             <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded-md" placeholder="Enter product name" required />
           </div>
+          
           <div>
-            <label className="block text-sm text-gray-600">Frame Size</label>
-            <select name="frameSize" value={formData.frameSize} onChange={handleChange} className="w-full p-2 border rounded-md" required >
-              <option value = "">Select Frame Size</option>
-              <option value="A4">A4</option>
-              <option value="A3">A3</option>
-              <option value="8*15">8*15</option>
-            </select>
-          </div>
+  <label className="block text-sm text-gray-600">Frame Size</label>
+  <div className="flex flex-wrap gap-2 mt-1">
+    {["A4", "A3", "8*15"].map((size) => (
+      <label key={size} className="flex items-center space-x-2 text-sm">
+        <input
+          type="checkbox"
+          value={size}
+          checked={formData.frameSize.includes(size)}
+          onChange={() => handleFrameSizeChange(size)}
+          className="rounded border-gray-300"
+        />
+        <span>{size}</span>
+      </label>
+    ))}
+  </div>
+</div>
+
+
 
           <div>
             <label className="block text-sm text-gray-600">Description</label>
@@ -181,7 +200,7 @@ const AddProduct = () => {
     name: "",
     category: "", // 
     price: "",
-    frameSize: "",
+    frameSize: [] as string[],
     frameColor: [] as string[],
     themeColor: [] as string[], 
     images: [] as File[],
@@ -226,7 +245,7 @@ const AddProduct = () => {
     formDataToSend.append("name", formData.name);
     formDataToSend.append("category", formData.category);
     formDataToSend.append("price", formData.price);
-    formDataToSend.append("frameSize", formData.frameSize);
+    formDataToSend.append("frameSize", formData.frameSize.join(","));
     formDataToSend.append("description", formData.description);
    // formDataToSend.append('images', formData.images[0]);
     formDataToSend.append("frameColor", formData.frameColor.join(","));
@@ -249,7 +268,7 @@ const AddProduct = () => {
           name: "",
           category: "",
           price: "",
-          frameSize: "",
+          frameSize: [],
           frameColor: [],
           themeColor: [],
           images: [],
