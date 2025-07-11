@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+
+
+await Counter.create({ name: 'customerId', seq: 0 });
+
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -15,7 +20,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: function() {
+        required: function () {
             return !this.googleId; // Password required only if no Google auth
         }
     },
@@ -27,6 +32,7 @@ const userSchema = new mongoose.Schema({
     picture: {
         type: String
     },
+    
     resetPasswordToken: {
         type: String
     },

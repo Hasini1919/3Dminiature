@@ -1,4 +1,3 @@
-
 import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
@@ -19,7 +18,10 @@ connectDB();
 
 const app = express();
 
-
+const startServer = async () => {
+  try {
+    await connectDB();  // Wait for DB connection here
+    console.log('MongoDB connected successfully');
 
 app.use(cors({
     origin: 'http://localhost:3000',
