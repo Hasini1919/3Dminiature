@@ -17,17 +17,17 @@ export default function Footer() {
     
     
     <div className=" sm:w-1/3 text-white p-2 text-center sm:text-left">
-      <h3 className={`${kalam.className} !text-red-800`}>Tiny Treasure</h3>
-      <p>
+      <h3 className={`${kalam.className} text-3xl !text-red-800`}>Tiny Treasure</h3>
+      <p className='text-lg'>
         Unleashing creativity with personalized 3D gifts and designs that make
         every moment unforgettable.
       </p>
-      <p>Call us: 0774582344</p>
+      <p className='text-lg'>Call us: 0774582344</p>
     </div>
    
   
     <div className="sm:w-1/3 text-white space-y-2 sm:px-10 text-center sm:text-left p-4">
-      <p>Subscribe to explore the latest in personalized 3D designs and exclusive updates!</p>
+      <p className='text-lg'>Subscribe to explore the latest in personalized 3D designs and exclusive updates!</p>
      <Subscribe/>
     </div>
   
@@ -35,7 +35,7 @@ export default function Footer() {
 
     {/* Follow Us Section */}
     <div className="   sm:w-1/3 flex justify-end flex-col items-between sm:items-start text-white pt-0 p-4 ">
-      <h4 className="mb-2 text-center sm:text-left">Follow Us</h4>
+      <h4 className="mb-2 text-center sm:text-left text-xl text-bold">Follow Us</h4>
       <div className="flex gap-4 justify-center sm:justify-start">
         <Link href="https://www.facebook.com/profile.php?id=61567273401352" target="_blank">
           <Image src="/facebook-1-svgrepo-com.svg" alt="Facebook" width={30} height={30} />

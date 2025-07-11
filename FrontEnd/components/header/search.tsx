@@ -5,39 +5,42 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export default function Search() {
-  const [search, setSearch] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const searchPost = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) => {
-    if ("key" in e && e.key !== "Enter") {
+    if ("key" in e && e.key !== "Enter") return;
+
+    setSearching(true);
+    const query = inputRef.current?.value.trim();
+    if (!query) {
+      setSearching(false);
       return;
     }
-    setSearch(true);
-    if (!inputRef.current) return;
-    const query = inputRef.current.value.trim();
+
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts?q=${query}`)
       .then((res) => res.json())
       .then((res) => setPosts(res))
-      .finally(() => setSearch(false));
-  }
+      .finally(() => setSearching(false));
+  };
 
   return (
-    <div className="input-group flex items-center space-x-2">
+    <div className="flex items-center space-x-0">
       <input
         type="text"
         id="search_field"
-        className="form-control w-40 px-4 py-2 rounded-md "
-        placeholder="Search ..."
+        className="w-64 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Search..."
         onKeyDown={searchPost}
-        disabled={search}
+        disabled={searching}
         ref={inputRef}
       />
-      <button 
+      <button
         onClick={searchPost}
-        disabled={search}
+        disabled={searching}
         id="search_btn"
-        className="btn px-3 py-2 rounded-md  text-black hover:bg-gray-200"
+        className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-r-md hover:bg-gray-200 disabled:opacity-50"
       >
         <FontAwesomeIcon icon={faSearch} />
       </button>

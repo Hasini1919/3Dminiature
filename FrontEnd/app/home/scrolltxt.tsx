@@ -1,7 +1,6 @@
 "use client"; 
 
 import { useEffect } from "react";
-import "./globals.css"; 
 
 export default function Scroller() {
   useEffect(() => {
@@ -16,7 +15,7 @@ export default function Scroller() {
 
   return (
     <div className="scroller overflow-hidden">
-      <ul className="text-list text-lg">
+      <ul className="text-list text-xl">
         <li>Memories</li>
         <li>Celebrate</li>
         <li>Wedding</li>

@@ -127,7 +127,7 @@ body {
 .text-list {
   display: flex;
   gap: 4rem;
-  padding-block: 10px;
+  padding-block: 15px;
   flex-wrap: nowrap;  /* Prevent wrapping */
   color: #ededed;
   
