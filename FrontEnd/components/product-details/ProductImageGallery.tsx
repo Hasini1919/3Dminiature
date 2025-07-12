@@ -1,8 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { FaHeart, FaRegHeart, FaBalanceScale, FaExpand } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaBalanceScale,
+  FaExpand,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 
 interface ProductImageGalleryProps {
   image: string[];
@@ -16,6 +23,12 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
   const [imageLoadErrors, setImageLoadErrors] = useState<
     Record<number, boolean>
   >({});
+  const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const imageRef = useRef<HTMLDivElement>(null);
+
+  const THUMBNAILS_PER_PAGE = 3;
 
   // Filter out empty/invalid images
   const validImages = Array.isArray(image)
@@ -26,11 +39,31 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
   useEffect(() => {
     setSelectedImageIndex(0);
     setImageLoadErrors({});
+    setThumbnailStartIndex(0);
   }, [image]);
 
   const handleWishlist = () => setIsWishlisted(!isWishlisted);
   const handleCompare = () => setIsInCompare(!isInCompare);
   const handleZoom = () => setIsZoomed(!isZoomed);
+
+  // Handle mouse movement for zoom effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageRef.current || !isHovering) return;
+
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    setMousePosition({ x, y });
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
 
   /**
    * Simple image URL constructor - assumes backend serves images correctly
@@ -62,6 +95,49 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
   // Custom loader for Next.js Image component
   const customLoader = ({ src }: { src: string }) => src;
 
+  // Thumbnail navigation functions
+  const handleThumbnailPrev = () => {
+    setThumbnailStartIndex((prev) => Math.max(0, prev - THUMBNAILS_PER_PAGE));
+  };
+
+  const handleThumbnailNext = () => {
+    const maxStartIndex = Math.max(0, validImages.length - THUMBNAILS_PER_PAGE);
+    setThumbnailStartIndex((prev) =>
+      Math.min(maxStartIndex, prev + THUMBNAILS_PER_PAGE)
+    );
+  };
+
+  // Get visible thumbnails (excluding selected image)
+  const getVisibleThumbnails = () => {
+    const otherImages = validImages.filter(
+      (_, index) => index !== selectedImageIndex
+    );
+
+    if (otherImages.length <= THUMBNAILS_PER_PAGE) {
+      return otherImages.map((img, originalIndex) => ({
+        img,
+        originalIndex: validImages.findIndex((validImg) => validImg === img),
+      }));
+    }
+
+    return otherImages
+      .slice(thumbnailStartIndex, thumbnailStartIndex + THUMBNAILS_PER_PAGE)
+      .map((img, originalIndex) => ({
+        img,
+        originalIndex: validImages.findIndex((validImg) => validImg === img),
+      }));
+  };
+
+  // Get grid class based on thumbnail count
+  const getThumbnailGridClass = () => {
+    const visibleThumbnails = getVisibleThumbnails();
+    const count = visibleThumbnails.length;
+
+    if (count <= 2) return "grid-cols-2 justify-center max-w-72 mx-auto";
+    if (count <= 3) return "grid-cols-3 justify-center max-w-96 mx-auto";
+    return "grid-cols-3 max-w-full";
+  };
+
   // No valid images case
   if (validImages.length === 0) {
     return (
@@ -84,18 +160,40 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
 
   const showThumbnails = validImages.length > 1;
   const currentImage = validImages[selectedImageIndex];
+  const visibleThumbnails = getVisibleThumbnails();
+  const otherImagesCount = validImages.length - 1;
+  const canShowThumbnailPrev = thumbnailStartIndex > 0;
+  const canShowThumbnailNext =
+    thumbnailStartIndex + THUMBNAILS_PER_PAGE < otherImagesCount;
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative group">
-        <div className="relative w-full h-96 bg-gray-100 rounded-xl overflow-hidden">
+        <div
+          ref={imageRef}
+          className="relative w-full h-96 bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in"
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          style={{
+            cursor: isHovering ? "zoom-in" : "default",
+          }}
+        >
           {!imageLoadErrors[selectedImageIndex] ? (
             <Image
               src={getImageUrl(currentImage)}
               alt={`Product image ${selectedImageIndex + 1}`}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-300"
+              style={{
+                transform: isHovering
+                  ? `scale(2) translate(${25 - mousePosition.x / 2}%, ${
+                      25 - mousePosition.y / 2
+                    }%)`
+                  : "scale(1)",
+                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
+              }}
               unoptimized
               priority={selectedImageIndex === 0}
               loader={customLoader}
@@ -141,26 +239,26 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
       {showThumbnails && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-gray-700">Other Images:</h4>
-          <div className="grid grid-cols-3 gap-3 max-w-md">
-            {validImages.map((img, index) => {
-              if (index === selectedImageIndex) return null;
 
-              return (
+          <div className="relative">
+            {/* Thumbnail Grid */}
+            <div className={`grid ${getThumbnailGridClass()} gap-3`}>
+              {visibleThumbnails.map(({ img, originalIndex }, displayIndex) => (
                 <div
-                  key={index}
+                  key={originalIndex}
                   className="cursor-pointer rounded-lg overflow-hidden transition-all hover:scale-105 ring-1 ring-gray-200 hover:ring-gray-300"
-                  onClick={() => setSelectedImageIndex(index)}
+                  onClick={() => setSelectedImageIndex(originalIndex)}
                 >
                   <div className="relative w-full h-20 bg-gray-100">
-                    {!imageLoadErrors[index] ? (
+                    {!imageLoadErrors[originalIndex] ? (
                       <Image
                         src={getImageUrl(img)}
-                        alt={`Thumbnail ${index + 1}`}
+                        alt={`Thumbnail ${originalIndex + 1}`}
                         fill
                         className="object-cover"
                         unoptimized
                         loader={customLoader}
-                        onError={() => handleImageError(index)}
+                        onError={() => handleImageError(originalIndex)}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -169,13 +267,35 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
                     )}
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* Thumbnail Navigation Arrows */}
+            {otherImagesCount > THUMBNAILS_PER_PAGE && (
+              <>
+                {canShowThumbnailPrev && (
+                  <button
+                    onClick={handleThumbnailPrev}
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 p-2 bg-white shadow-lg rounded-full hover:bg-gray-50 transition-all"
+                  >
+                    <FaChevronLeft className="text-gray-600" />
+                  </button>
+                )}
+                {canShowThumbnailNext && (
+                  <button
+                    onClick={handleThumbnailNext}
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 p-2 bg-white shadow-lg rounded-full hover:bg-gray-50 transition-all"
+                  >
+                    <FaChevronRight className="text-gray-600" />
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* Navigation Arrows */}
+      {/* Main Image Navigation Arrows */}
       {showThumbnails && (
         <div className="flex justify-center space-x-4">
           <button
@@ -184,9 +304,9 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
                 prev === 0 ? validImages.length - 1 : prev - 1
               )
             }
-            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-md text-white text-base"
           >
-            ← Previous
+            ←previous
           </button>
           <button
             onClick={() =>
@@ -194,9 +314,9 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
                 prev === validImages.length - 1 ? 0 : prev + 1
               )
             }
-            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-md  text-white text-base"
           >
-            Next →
+            Next→
           </button>
         </div>
       )}

@@ -5,7 +5,7 @@ import ProductCard from "../shop-components/ProductCard";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
 
-interface Product {
+interface Products {
   _id: string;
   name: string;
   description: string;
@@ -25,25 +25,22 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   title = "YOU MIGHT ALSO LIKE",
   className = "",
 }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleProducts, setVisibleProducts] = useState<Product[]>([]);
   const itemsPerPage = 3;
 
-  // Fetch related products
+  // ✅ Fetch related products from the correct backend endpoint
   useEffect(() => {
-    const fetchRelatedProducts = async () => {
+    const fetchProductWithRelated = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const params = new URLSearchParams();
-        params.append("relatedTo", productId);
-        params.append("limit", "6");
         const response = await fetch(
-          `http://localhost:5500/api/products?${params.toString()}`
+          `http://localhost:5500/api/product-details/${productId}`
         );
 
         if (!response.ok) {
@@ -51,19 +48,24 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         }
 
         const data = await response.json();
-        setProducts(data.products || []);
+
+        // ✅ Set only relatedProducts
+        setProducts(data.relatedProducts || []);
+        setCurrentIndex(0); // Reset carousel index on product change
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to fetch products"
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch related products"
         );
-        console.error("Error fetching related products:", err);
+        console.error("Fetch error:", err);
         setProducts([]);
       } finally {
         setLoading(false);
       }
     };
 
-    if (productId) fetchRelatedProducts();
+    if (productId) fetchProductWithRelated();
   }, [productId]);
 
   // Update visible products
@@ -166,7 +168,13 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
           )}
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-8 sm:mx-12">
+          <div
+            className={`${
+              products.length < 3
+                ? "flex justify-center flex-wrap gap-6 mx-8 sm:mx-12"
+                : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-8 sm:mx-12"
+            }`}
+          >
             {visibleProducts.map((product) => (
               <div
                 key={product._id}

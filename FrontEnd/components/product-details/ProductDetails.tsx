@@ -109,7 +109,7 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
             ))}
           </div>
           <span className="ml-3 text-lg text-gray-600 font-medium">
-            {product.rating.toFixed(1)}/5.0
+            {product.rating?.toFixed(1) ?? "0.0"}/5.0{" "}
           </span>
         </div>
 

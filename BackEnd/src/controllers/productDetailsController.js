@@ -26,27 +26,44 @@ export const getProductDetailsById = async (req, res) => {
       });
     }
 
-    // Debugging information
     if (!product) {
       const exampleProducts = await Products.find().limit(3);
       return res.status(404).json({
         message: "Product not found",
         details: {
           requestedId: productId,
-          totalProducts: await Product.countDocuments(),
+          totalProducts: await Products.countDocuments(),
           exampleIds: exampleProducts.map((p) => p._id),
           idType: typeof exampleProducts[0]?._id,
         },
       });
     }
 
-    return res.json(product);
+    // NEW: Get related products (same category)
+    const relatedProducts = product.category
+      ? await Products.find({
+          category: product.category,
+          _id: { $ne: product._id },
+        }).limit(6)
+      : [];
+
+    // Maintain backward compatibility
+    const response = {
+      // Original response structure
+      ...product.toObject(),
+      // New fields (won't break existing frontend)
+      relatedProducts,
+      // Ensure rating always exists
+      rating: product.rating || 0,
+    };
+
+    return res.json(response);
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       message: "Server error",
       error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };

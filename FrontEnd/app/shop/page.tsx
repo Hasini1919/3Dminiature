@@ -26,6 +26,9 @@ const ShopPage = () => {
           Search Products
         </button>
       </div>
+      
+      {/* Advertising component */}
+      <Advertising />
 
       {/* SearchBar component */}
       <SearchBar
@@ -36,7 +39,6 @@ const ShopPage = () => {
 
       {/* Main content */}
       <ProductsPage searchQuery={searchQuery} />
-      <Advertising />
     </div>
   );
 };
