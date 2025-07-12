@@ -1,9 +1,9 @@
 import OrderModel  from "../models/Order.js";
-import User from  "../models/UserModel.js"
+import User from  "../models/User.js"
 import { sendOrderConfirmationEmail } from "../utils/mailer.js";
 
 import Counter from "../models/Counter.js"
-import Coupon from "../models/Counter.js"
+import Coupon from "../models/Coupon.js"
 //placing Order using Cash on delivery
 const placeOrder=async(req,res)=>{
 
@@ -18,7 +18,7 @@ const placeOrder=async(req,res)=>{
             buyNow
            
         } = req.body;
-        const userId = req.userId;
+         const userId = req.user._id;
 
         
         let orderCounter = await Counter.findOneAndUpdate(
@@ -101,7 +101,7 @@ const allOrders=async(req,res)=>{
 //User Orderdata for Frontend
 const userOrders=async(req,res)=>{
      try{
-        const userId = req.userId;
+         const userId = req.user._id;
         const orders=await OrderModel.find({userId});
         res.json({success:true,orders});
      }
@@ -112,7 +112,7 @@ const userOrders=async(req,res)=>{
 }
 const getuserOrderDataBystatus = async (req, res) => {
   try {
-    const userId = req.userId;
+     const userId = req.user._id;
     const { status } = req.query;
   
     
@@ -143,7 +143,7 @@ const updateStatus=async(req,res)=>{
 //get the User LastAddress
 const getUserAddress=async(req,res)=>{
     try{
-       const userId = req.userId;
+         const userId = req.user._id;
          // Find the most recent order for this user
          const latestOrder = await OrderModel.findOne({ userId })
          .sort({ date: -1 }) // Sort by date in descending order
@@ -177,7 +177,7 @@ const getUserAddress=async(req,res)=>{
 
 const getlastestOrder=async(req,res)=>{
     try{
-        const userId = req.userId;
+        const userId = req.user._id;
         const latestOrder = await OrderModel.findOne({ userId })
         .sort({ date: -1 }) // Sort by date in descending order
         .limit(1);

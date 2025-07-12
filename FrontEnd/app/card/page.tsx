@@ -248,7 +248,7 @@ const Card = () => {
                               <div className="w-16 h-16 rounded-md overflow-hidden border border-gray-200">
                                 <img
                                   src={`${"http://localhost:5500"}${
-                                    item.productImage
+                                    item.images[0]
                                   }`}
                                   alt={item.productName}
                                   className="w-full h-full object-cover"

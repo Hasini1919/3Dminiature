@@ -1,10 +1,10 @@
 import coupons from "../models/Coupon.js";
-import User from  "../models/UserModel.js";
+import User from  "../models/User.js";
 
 const ApplyCoupon= async(req,res) =>{
 
     const { couponCode, totalAmount } = req.body;
-    const userId = req.userId;
+     const userId = req.user._id;
     try{
         const coupon = await coupons.findOne({ code: couponCode, active: true });
        

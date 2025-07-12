@@ -17,6 +17,7 @@ const OrderSummary: React.FC = () => {
     shippingCost,
     setDiscountedTotal
   } = useAppContext();
+  
 
   const [subTotal, setSubTotal] = useState<number>(0);
 

@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOrderConfirmationEmail = async (to, orderDetails) => {
-    
+    console.log(to);
 
     const mailOptions = {
         from: `"Tiny Treasure" <${process.env.GMAIL_USER}>`,

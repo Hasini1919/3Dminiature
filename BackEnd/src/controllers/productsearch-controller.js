@@ -1,4 +1,4 @@
-import Product from "../models/Product.js";
+import Product from "../models/Admin_models/Product.js";
 
 const addProducts = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ const addProducts = async (req, res) => {
       frameColor,
       themeColor,
       category,
-      imageUrl: image
+      images: [image]
     });
 
     await newProduct.save();
@@ -28,7 +28,7 @@ const addProducts = async (req, res) => {
 const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
-   
+   console.log(products);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products" });

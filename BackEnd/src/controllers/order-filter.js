@@ -1,7 +1,7 @@
 import OrderModel  from "../models/Order.js";
 
 const orderFilter = async (req, res) => {
-  const userId = req.userId;
+  const userId = req.user._id;
   const { from, to, status } = req.query;
 
   console.log("From:", from);

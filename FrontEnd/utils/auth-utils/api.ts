@@ -30,7 +30,7 @@ export const login = async (email: string, password: string) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-
+    
     if (!response.ok) {
       let errorMessage = "Login failed";
       try {
@@ -39,7 +39,10 @@ export const login = async (email: string, password: string) => {
       } catch (error) {
         console.error("Error parsing response JSON:", error);
       }
+      console.log(errorMessage);
       throw new Error(errorMessage);
+      
+      
     }
 
     const data = await response.json();

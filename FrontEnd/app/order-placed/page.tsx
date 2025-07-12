@@ -11,7 +11,7 @@ interface OrderItem {
   price: number;
   size: string;
   quantity: number;
-  imageUrl?: string;
+  imageUrl: string;
   customText:string;
   frameColor:string;
   themeColor:string;
@@ -48,6 +48,7 @@ const OrderConfirmed = () => {
   const getLatestOrder = async () => {
     try {
       const response = await axiosInstance.get("/api/order/userlastestOrder");
+      console.log(response.data);
       if (response.data.success) {
         setOrderDetails(response.data.latestOrder);
       }
@@ -184,7 +185,7 @@ const OrderConfirmed = () => {
                   <td className="p-5">
                     <div className="flex items-center gap-5">
                       <img
-                        src={`http://localhost:5000${
+                        src={`http://localhost:5500${
                           item.imageUrl || "/no-image.png"
                         }`}
                         alt={item.name}
@@ -240,7 +241,7 @@ const OrderConfirmed = () => {
                     className="text-sm text-red-600 border border-gray-300 px-4 py-1 rounded hover:shadow-sm transition cursor-pointer"
                     onClick={viewOrders}
                   >
-                    View Order
+                    Track Order
                   </button>
                 </td>
               </tr>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent ,useEffect } from "react";
-import { addProduct } from "@/utils/admin/api";
+import { addProduct } from "@/utils/Admin/api";
 
 const API_URL = "http://localhost:5500/form";
 
@@ -16,6 +16,7 @@ type Product = {
   images: string[]; 
   description: string;
 };
+console.log("hi");
 
 /*
 
@@ -259,7 +260,7 @@ const AddProduct = () => {
         const errorMessage = await result.text();
         throw new Error(`Server responded with ${result.status}: ${errorMessage}`);
       }else{
-        setSuccessMessage("Filled successfully ✅");
+        setSuccessMessage("Filled successfully ");
 
         setFormData({
           name: "",

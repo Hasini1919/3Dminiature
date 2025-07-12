@@ -46,7 +46,7 @@ interface CartItem {
   
   productId: string;
   productName: string;
-  productImage: string;
+  images: string;
   frameSize: string;
   frameColor: string;
   themeColor: string;
@@ -189,23 +189,28 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [isBuyNow, setIsBuyNow] = useState(false);
 
   useEffect(() => {
-    const fetchCartData = async () => {
-      try {
-        const response = await axiosInstance.get("/api/cart/get");
-        if (response.data.cartData) {
-          setCartData(response.data.cartData);
-        }
-      } catch (error) {
-        console.error("Error fetching cart data:", error);
-      }
-    };
-    fetchCartData();
+  const fetchCartData = async () => {
+    try {
+      
 
-    const storedData = sessionStorage.getItem("buyNowItem");
-    if (storedData) {
-      setBuyNowItem(JSON.parse(storedData));
+      const response = await axiosInstance.get("/api/cart/get");
+
+      if (response.data.cartData) {
+        setCartData(response.data.cartData);
+      }
+    } catch (error) {
+      console.error("Error fetching cart data:", error);
     }
-  }, []);
+  };
+
+  fetchCartData();
+
+  const storedData = sessionStorage.getItem("buyNowItem");
+  if (storedData) {
+    setBuyNowItem(JSON.parse(storedData));
+  }
+}, []);
+
   
  
   useEffect(() => {
@@ -214,7 +219,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         const response = await axiosInstance.get<Product[]>(
           "/api/admin/products"
         );
-        
+        console.log(response.data);
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -323,7 +328,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
     
   };
-
+  console.log(cartData);
   const updateCartItem = async (
     productId: string,
     frameSize: string,
@@ -389,7 +394,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     sessionStorage.removeItem("buyNowItem");
   };
  
-   
+   console.log(cartData);
  
   
   

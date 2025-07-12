@@ -35,8 +35,9 @@ export const signup = async (req, res) => {
         await user.save();
 
         // Generate token
+        
         const token = generateToken(user);
-
+        console.log(token)
         res.status(201).json({ 
             message: 'Account created successfully',
             token,

@@ -4,7 +4,7 @@ import User from '../models/User.js';
 const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization')?.replace('Bearer ', '');
-        
+        console.log(token);
         if (!token) {
             return res.status(401).json({ message: 'No token, authorization denied' });
         }
@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
         if (!user) {
             return res.status(401).json({ message: 'Token is not valid' });
         }
-
+        console.log(user);
         req.user = user;
         next();
     } catch (error) {
@@ -23,7 +23,7 @@ const auth = async (req, res, next) => {
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
-
+/*
 export default auth;
 const authUser= (req,res,next)=>{
     try{
@@ -37,5 +37,5 @@ const authUser= (req,res,next)=>{
         res.json({success:false,message:error.message});
     }
 }
-
-export default authUser;
+*/
+export default auth;

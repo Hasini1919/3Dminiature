@@ -1,7 +1,11 @@
-import User from  "../models/UserModel.js"
-import Product from  "../models/Product.js";
+import User from  "../models/User.js"
+import Product from  "../models/Admin_models/Product.js";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // Add to Cart
 const addToCart = async (req, res) => {
@@ -16,23 +20,24 @@ const addToCart = async (req, res) => {
     customText,
   } = req.body;
 
-  
-  const userId = req.userId;
+  console.log(req.body);
+  const userId = req.user._id;
   
 
   // Array of uploaded image file paths
   const uploadedImageFiles = req.files
     ? req.files.map((file) => `/uploads/user-uploads/${file.filename}`)
     : [];
-    
+    console.log(uploadedImageFiles);
    
 
 
   try {
     const user = await User.findById(userId);
     console.log(productId);
-    const product = await Product.findById(productId);
     
+    const product = await Product.findById(productId);
+    console.log("product detauils");
     console.log(product);
 
     if (!user || !product) {
@@ -61,7 +66,7 @@ const addToCart = async (req, res) => {
       const newCartItem = {
         productId,
         productName: product.name,
-        productImage: product.imageUrl,
+        images: product.images,
         price: product.price,
         frameSize,
         frameColor,
@@ -91,7 +96,11 @@ const addToCart = async (req, res) => {
 const getCartData = async (req, res) => {
   try {
     
-    const userId = req.userId;
+    const userId = req.user._id;
+    
+    
+   
+    console.log(userId);
     const userData = await User.findById(userId);
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
@@ -115,7 +124,7 @@ const updateCart = async (req, res) => {
     uploadedImageFiles, 
     customText
   } = req.body;
-  const userId = req.userId;
+   const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);

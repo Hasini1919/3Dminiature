@@ -73,7 +73,7 @@ const Payment_Section = () => {
             quantity: item.quantity,
             price: item.price,
             name: item.productName,
-            imageUrl: item.productImage,
+            imageUrl: item.images,
             customText:item.customText
           });
         }

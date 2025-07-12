@@ -1,6 +1,10 @@
 import "./globals.css";
-import Slidebar from "../components/Admin_sidebar/Slidebar"
+import Script from "next/script";
+import Slidebar from "../components/Admin_sidebar/Slidebar";
 import { AppContextProvider } from "@/context/AppContext";
+import { addProduct } from "@/utils/Admin/api";
+
+
 
 
 export default function RootLayout({
@@ -8,16 +12,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f3f0f0fc]`}>
-        <script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&loading=async&libraries=places`}
-        ></script>
+      <body className="antialiased ">
+        <Script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+          strategy="beforeInteractive"
+        />
         <div className="debug">
-            <Slidebar />
-        <AppContextProvider>{children}</AppContextProvider>
-       </div>
+          
+          <AppContextProvider>{children}</AppContextProvider>
+        </div>
       </body>
     </html>
   );
