@@ -1,7 +1,6 @@
 
 import Login from "./authentication/login/page";
 
-
 export default function Home() {
   return (
    <div>
@@ -11,4 +10,6 @@ export default function Home() {
    </div>
   );
 }
+
+
 
