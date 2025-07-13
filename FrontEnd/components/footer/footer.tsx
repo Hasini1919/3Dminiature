@@ -49,7 +49,7 @@ export default function Footer() {
 
   <div style={{ backgroundColor: '#cb1a2e' }} className=' mx-auto p-0'>
     <div className=" mx-auto flex justify-between items-center px-5 py-1">
-      <p className="text-sm text-black mt-3">
+      <p className="text-sm text-black mt-3 mb-2">
         &copy; {new Date().getFullYear()} All rights reserved
       </p>
       <div className="footer">

@@ -4,6 +4,7 @@ export const metadata = {
 
 import Image from "next/image";
 import Subscribe from "@/components/footer/subscribe";
+import Pdf from "@/components/pdf/pdf";
 
 export default function About() {
     return (
@@ -39,7 +40,7 @@ export default function About() {
             </div>
         </div>
 
-   <div className="relative mx-auto px-3 py-4 bg-gray-500 max-w-4xl mt-20 rounded-3xl overflow-visible">
+   <div className="relative mx-auto px-3 py-3 bg-gray-500 max-w-4xl mt-20 rounded-3xl overflow-visible">
   <div className="flex flex-col lg:flex-row items-center lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 w-full relative">
 
     {/* Text Section */}
@@ -77,7 +78,7 @@ export default function About() {
       
       <div className="container mx-auto flex flex-col md:flex-row  sm:gap-12  mt-32 px-4">
         
-        <div className="md:w-7/10 text-left flex flex-col items-start px-20 ">
+        <div className="md:w-7/10 text-left flex flex-col items-start px-48">
           
           <p className=" text-black font-bold text-2xl  mb-0 border-b-2 border-black inline-block">Why choose us?</p>
           <p className="text-lg mt-3">At Tiny Treasures, we bring your cherished memories to life with beautifully crafted 3D frames.
@@ -91,7 +92,7 @@ export default function About() {
         </div>
         <div className="w-2/10">
         </div>
-        <div className="md:w-1/10 text-center flex flex-col bg-red-700 items-center rounded-br-3xl ">
+        <div className="md:w-[10%] h-[500px] text-center flex flex-col bg-red-700 items-center rounded-br-3xl ">
           
         <div className="w-72 h-72 lg:w-74 lg:h-74  overflow-hidden shadow-[0px_15px_40px_rgba(0,0,0,0.6)]  -translate-x-1/2 mt-20 rounded-bl-[100px]">
                     <Image
@@ -148,15 +149,15 @@ export default function About() {
 
     <div className="w-1/2 left flex flex-col items-center px-15 mt-0">
              
-        <div className="w-60 h-60 lg:w-120 lg:h-100  overflow-hidden mt-0 ">
-                    <Image
-                        src="/socialupdate.svg"
-                        alt="About Us"
-                        width={256}
-                        height={256}
-                        className="object-cover w-full h-full"
-                    />
-                </div>
+        <div className="w-96 h-96 lg:w-[34rem] lg:h-[30rem] overflow-hidden mt-0">
+    <Image
+      src="/socialupdate.svg"
+      alt="About Us"
+      width={544}
+      height={480}
+      className="object-cover w-full h-full"
+    />
+  </div>
     </div>
 
     </div>

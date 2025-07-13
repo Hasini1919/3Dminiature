@@ -14,11 +14,16 @@ export default function Header() {
   return (
       <nav  style={{ backgroundColor: "#cb1a2e" }}  className="sm:flex justify-between items-center  mx-auto px-3 py-2">
         
-        <div className="h-16 w-16">
-          <Link href="/">
-            <img className="rounded-full" alt="Vithush logo" src="/logo.png" />
-          </Link>
-        </div>
+        <div className="h-16 w-16 overflow-hidden">
+             <Link href="/">
+                  <img
+                   className="rounded-full w-full h-full object-cover "
+                   alt="Tiny treasures logo"
+                   src="/logo.jpg"
+                      />
+               </Link>
+          </div>
+
 
         <div className="sm:flex space-x-10  justify-center  ">
           <Link href="/" className=" bttn transition">Home</Link>

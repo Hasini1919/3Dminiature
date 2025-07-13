@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invoice Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; font-size: 20px; }
+    h2 { text-align: center; font-size: 28px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 20px; }
+    th, td { border: 1px solid black; padding: 8px; text-align: left; font-size: 20px; }
+    th { background-color: #f2f2f2; font-size: 22px; }
+    .user-info { margin-bottom: 20px; padding: 10px; background: #f9f9f9; font-size: 20px; }
+  </style>
+</head>
+<body>
+
+  <h2>Customer Order Report</h2>
+
+  {{#each prodlist}}
+    <div class="user-info">
+      <strong>User ID:</strong> {{this.userId}}<br>
+      <strong>Addresses:</strong>
+      <ul>
+        {{#each this.addressList}}
+          <li>{{this.street}}, {{this.city}}, {{this.postalCode}}, {{this.country}}</li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Order Number</th>
+          <th>Status</th>
+          <th>Payment Method</th>
+          <th>Shipping</th>
+          <th>Amount (Rs.)</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each this.orders}}
+          <tr>
+            <td>{{this.items.name}}</td>
+            <td>{{this.orderNumber}}</td>
+            <td>{{this.status}}</td>
+            <td>{{this.paymentMethod}}</td>
+            <td>{{this.shippingOption}}</td>
+            <td>{{this.amount}}</td>
+            <td>{{this.date}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"><strong>Subtotal</strong></td>
+          <td colspan="2"><strong>Rs.{{this.subtotal}}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <hr><br>
+  {{/each}}
+
+  <h3>Total Subtotal: Rs.{{subtotal}}</h3>
+  <h3>Invoice Number: {{invoiceNo}}</h3>
+  <h3>Date: {{date}}</h3>
+
+</body>
+</html>

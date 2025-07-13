@@ -4,38 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Scroller from "./scrolltxt";
 import ScrollerImg from "./scrollImage";
 
-interface Posts {
-  image: string;
-  title: string;
-  description: string;
-  _id:string;
-  
-}
+
 
 
 export default function Homepage() {
-  const [posts,setPosts] = useState<Posts[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [search,setSearch] = useState(false);
+ 
 
-  useEffect(()=>{
-    fetch(process.env.NEXT_PUBLIC_API_URL + '/posts')
-    .then((res)=> res.json())
-    .then((res)=> setPosts(res))
-  },[]);
 
-  const searchPost = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>)=> {
-    if ("key" in e && e.key !== "Enter"){
-     return
-    }
-    setSearch(true);
-    if (!inputRef.current) return; 
-    const query = inputRef.current.value.trim();
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts?q=${query}`)
-    .then((res)=> res.json())
-    .then((res)=> setPosts(res))
-    .finally(()=> setSearch(false))
-  }
   return (
    
       <>  
@@ -47,7 +22,7 @@ export default function Homepage() {
   <div className="grid grid-cols-3 gap-6 place-items-center ">
     {/* Image Column 1 */}
     <div className="text-center">
-      <Image src="/picture.avif" width={250} height={450} alt="pic" className="rounded-md" />
+      <Image src="/frame2.jpg" width={250} height={450} alt="pic" className="rounded-md" />
       
     </div>
     {/* Image Column 2 */}
@@ -56,7 +31,7 @@ export default function Homepage() {
     </div>
     {/* Image Column 3 */}
     <div className="text-center">
-      <Image src="/picture.avif" width={250} height={450} alt="pic" className="rounded-lg" />
+      <Image src="/frame2.jpg" width={250} height={450} alt="pic" className="rounded-lg" />
     </div>
   </div>
       </div>
