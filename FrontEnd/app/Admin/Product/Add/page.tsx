@@ -16,7 +16,7 @@ type Product = {
   images: string[]; 
   description: string;
 };
-
+console.log("hi");
 
 
 const categories = ["Wedding", "Birthday", "Baby" ,"Graduation", "Family"];
@@ -243,7 +243,7 @@ const AddProduct = () => {
         const errorMessage = await result.text();
         throw new Error(`Server responded with ${result.status}: ${errorMessage}`);
       }else{
-        setSuccessMessage("Filled successfully ✅");
+        setSuccessMessage("Filled successfully ");
 
         setFormData({
           name: "",
