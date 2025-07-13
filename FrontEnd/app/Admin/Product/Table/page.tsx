@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Slidebar from '@/components/Admin_sidebar/Slidebar';
 
 interface Product {
   _id: string;
@@ -9,7 +10,9 @@ interface Product {
   category: string;
 }
 
+
 const ProductTable = () => {
+  
   const [products, setProducts] = useState<Product[]>([]);
 
   const fetchProducts = async () => {
@@ -29,6 +32,12 @@ const ProductTable = () => {
   }, []);
 
   return (
+    <div className="flex pt-20 min-h-screen">
+      {/* Sidebar */}
+      <div className="w-64 fixed top-20 left-0 h-full z-10">
+        <Slidebar />
+      </div>
+
     <div className="min-h-screen py-10 px-4 md:px-16 ml-60">
 
       <h2 className="text-4xl font-bold p-12 text-emerald-800 mb-10 text-center underline underline-offset-8">
@@ -75,6 +84,7 @@ const ProductTable = () => {
         </table>
       </div>
     </div>
+   </div>
   );
 };
 

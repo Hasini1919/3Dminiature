@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent, FormEvent ,useEffect } from "react";
 import { addProduct } from "@/utils/Admin/api";
-
+import Slidebar from "@/components/Admin_sidebar/Slidebar";
 const API_URL = "http://localhost:5500/form";
 
 type Product = {
@@ -18,28 +18,7 @@ type Product = {
 };
 console.log("hi");
 
-/*
 
-
-const colorOptions: Record<string, { frameColors: string[]; themeColors: string[] }> = {
-  Wedding: {
-    frameColors: ["Blue", "White", "Red"],
-    themeColors: ["Gold", "Silver", "Pink"],
-  },
-  Birthday: {
-    frameColors: ["Pink", "Blue"],
-    themeColors: ["Purple", "Yellow", "Orange"],
-  },
-  Baby: {
-    frameColors: ["Light Blue", "Yellow", "White"],
-    themeColors: ["Pastel Pink", "Green", "Lavender"],
-  },
-  Default: {
-    frameColors: ["Yellow", "Green", "Black", "Orange"],
-    themeColors: ["Gray", "Brown", "Light Blue"],
-  },
-};
-*/
 const categories = ["Wedding", "Birthday", "Baby" ,"Graduation", "Family"];
 const frameColors =[
   "Black",
@@ -195,7 +174,9 @@ const ProductForm = ({
   );
 };
 
+
 const AddProduct = () => {
+
   const [formData, setFormData] = useState({
     name: "",
     category: "", // 
@@ -206,6 +187,8 @@ const AddProduct = () => {
     images: [] as File[],
     description: "",
   });
+
+  
 
   const [successMessage, setSuccessMessage] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
@@ -285,8 +268,15 @@ const AddProduct = () => {
       console.error("Error submitting form:", error);
     }
   };
+  
 
   return (
+    <div className="flex pt-20 min-h-screen">
+      {/* Sidebar */}
+      <div className="w-64 fixed top-20 left-0 h-full z-10">
+        <Slidebar />
+      </div>
+
     <div className="pt-20 min-h-screen items-center justify-center  block">
       {successMessage && ( <div className="fixed top-20 right-8 bg-green-100 text-green-800 border border-green-400 px-4 py-3 rounded-lg shadow-lg z-50 animate-slide-in">
     <strong className="font-semibold">Success!</strong>
@@ -296,7 +286,12 @@ const AddProduct = () => {
       <ProductForm formData={formData} setFormData={setFormData} handleSubmit={handleSubmit} />
     
     </div>
+    </div>
   );
+  
 };
 
+
+
 export default AddProduct;
+
