@@ -10,7 +10,7 @@ interface Notification {
 }
 
 import { usePathname } from "next/navigation";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FiMenu, FiBox, FiShoppingCart, FiUsers, FiLogOut, FiChevronDown, FiBell, FiSettings, FiFolder } from "react-icons/fi";
@@ -22,14 +22,14 @@ const Slidebar = () => {
   const [orderOpen, setOrderOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  useEffect(()=> {
+  useEffect(() => {
     fetch('http://localhost:5500/api/notifications')
       .then(res => res.json())
       .then(data => setNotifications(data));
 
   }, []);
 
-  const unseenCount = notifications.filter( n => !n.seen).length;
+  const unseenCount = notifications.filter(n => !n.seen).length;
 
 
   return (
@@ -38,7 +38,19 @@ const Slidebar = () => {
       <nav className="fixed top-0 left-0 w-full bg-white  border-r border-white  p-3 z-20 flex items-center   shadow">
         {/* Logo */}
         <div className=" mt-3">
-          <Image src="/logo1.jpg" alt="Logo" width={150} height={40} className=" hidden md:block " />
+          <div className="relative w-[150px] md:w-[150px] h-[40px]">
+            <Image
+              src="/logo1.jpg"
+              alt="Logo"
+              fill
+              priority
+              sizes="(max-width: 768px) 100px, 150px"
+              className="object-contain hidden md:block"
+            />
+
+          </div>
+
+
           {/* <Image src="/logo2.jpg" alt="Logo" width={100} height={40} className="rounded-full md:hidden mx-auto h-auto w-auto" /> */}
         </div>
 
@@ -55,13 +67,13 @@ const Slidebar = () => {
 
         {/* Navbar Icons (Right side) */}
         <div className="ml-auto flex items-center">
-          <Link href='/notifications' className="relative">
-          <FiBell className="text-gray-500 mx-3 cursor-pointer" size={20} />
-          {unseenCount > 0 && (
-            <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs px-1.5 rounded-full ">
-              {unseenCount}
-            </span>
-          )}
+          <Link href='/Admin/notification' className="relative">
+            <FiBell className="text-gray-500 mx-3 cursor-pointer" size={20} />
+            {unseenCount > 0 && (
+              <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs px-1.5 rounded-full ">
+                {unseenCount}
+              </span>
+            )}
           </Link>
           <FiSettings className="text-gray-500 mx-3 cursor-pointer" size={20} />
           <img src="/dp.jpg" alt="dp" className="text-gray-500 mx-3 cursor-pointer rounded-full object-cover size-10"></img>
@@ -83,7 +95,7 @@ const Slidebar = () => {
 
         <Link href="/Admin/dashboard" onClick={() => setIsOpen(false)}>
           <span
-            className={`flex items-center p-3 rounded ${pathname === "/Dashboard" ? "border border-white"  : "hover:bg-transparent hover:bg-gray-700"}`}
+            className={`flex items-center p-3 rounded ${pathname === "/Dashboard" ? "border border-white" : "hover:bg-transparent hover:bg-gray-700"}`}
           >
             <FiFolder className="mr-2" /> Dashboard
           </span>
@@ -127,8 +139,8 @@ const Slidebar = () => {
             <div id="order-menu" className="ml-6 space-y-2">
               <Link href="/Admin/order/new" onClick={() => setIsOpen(false)}>
                 <span className={`block p-2 hover:bg-gray-700 rounded ${pathname === "/Order/New" ? "border border-white" : ""}`}>
-                New Orders
-               
+                  New Orders
+
                 </span>
               </Link>
               <Link href="/Admin/order/pending" onClick={() => setIsOpen(false)}>

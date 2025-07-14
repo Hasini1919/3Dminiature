@@ -18,7 +18,7 @@ export default function CustomerDet() {
 
   const fetchCustomers = async () => {
     try {
-      const res = await fetch("http://localhost:1000/api/customer");
+      const res = await fetch("http://localhost:5500/api/customer");
       const datas = await res.json();
       setData(datas);
     } catch (error) {

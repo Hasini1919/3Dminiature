@@ -12,57 +12,70 @@ interface Notification {
 export default function Notification() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
+    const fetchNotifications = async () => {
+        try {
+            const res = await fetch('http://localhost:5500/api/notifications');
+            if (!res.ok) throw new Error("Failed to fetch notifications");
+            const data = await res.json();
+            setNotifications(data);
+        } catch (err) {
+            console.error("Error fetching notifications:", err);
+        }
+    };
+
     useEffect(() => {
-        const fetchNotifications = () => {
-            fetch('http://localhost:5500/api/notifications')
-                .then(res => res.json())
-                .then(data => setNotifications(data));
-
-        };
-
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 10000);
         return () => clearInterval(interval);
-    },
-        []);
-
+    }, []);
 
     const markAsSeen = async (id: string) => {
         try {
-            const res = await fetch(`http://localhost:5500/api/notifications/seen/${id}`, { method: 'PATCH' });
-            const updated = await fetch('http://localhost:1000/api/notifications').then(res => res.json());
-            setNotifications(updated);
+            const res = await fetch(`http://localhost:5500/api/notifications/seen/${id}`, {
+                method: 'PATCH'
+            });
             if (!res.ok) throw new Error('Failed to mark as seen');
-            setNotifications(notifications.map(n => n._id === id ? { ...n, seen: true } : n));
+            await fetchNotifications();
         } catch (error) {
             console.error('Error marking notification as seen:', error);
         }
     };
 
     return (
-        <div className="p-6">
-            <h2 className="text-2xl mb-4">Notifications</h2>
-            {notifications.map(n => (
-                <div
-                    key={n._id}
-                    className={`p-4 mb-2 border rounded-lg shadow-sm ${!n.seen ? 'bg-yellow-100 border-yellow-500' : 'bg-gray-50'}`}>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="font-semibold">{n.type ? n.type.toUpperCase() : ''}</p>
-                            <p>{n.message}</p>
-                            <p className="text-xs text-gray-500">{new Date(n.createdAt).toLocaleString()}</p>
+        <div className="max-w-4xl mx-auto mt-28 p-6">
+            <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-2">Notifications</h2>
 
+            {notifications.length === 0 ? (
+                <p className="text-center text-gray-500">No notifications to display.</p>
+            ) : (
+                notifications.map((n) => (
+                    <div
+                        key={n._id}
+                        className={`p-5 mb-5 border rounded-lg shadow-sm transition duration-300 ${!n.seen
+                                ? 'bg-yellow-50 border-yellow-400 hover:bg-yellow-100'
+                                : 'bg-white border-gray-200 hover:bg-gray-50'
+                            }`}
+                    >
+                        <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                                <p className="text-sm font-semibold text-gray-800">{n.type?.toUpperCase()}</p>
+                                <p className="text-gray-700">{n.message}</p>
+                                <p className="text-xs text-gray-500">
+                                    {new Date(n.createdAt).toLocaleString()}
+                                </p>
+                            </div>
+                            {!n.seen && (
+                                <button
+                                    onClick={() => markAsSeen(n._id)}
+                                    className="ml-4 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                                >
+                                    Mark As Seen
+                                </button>
+                            )}
                         </div>
-                        {!n.seen && (
-                            <button
-                                onClick={() => markAsSeen(n._id)}
-                                className="text-sm text-blue-600 hover:underline">
-                                Mark As Seen
-                            </button>
-                        )}
                     </div>
-                </div>
-            ))}
+                ))
+            )}
         </div>
     );
 }

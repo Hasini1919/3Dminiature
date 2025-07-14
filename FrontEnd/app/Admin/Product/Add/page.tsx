@@ -9,7 +9,7 @@ type Product = {
   _id: string;
   name: string;
   category: string;
-  price: string;
+  price: number;
   frameSize:  string[];
   frameColor: string[];
   themeColor: string[];
@@ -144,7 +144,7 @@ const ProductForm = ({
         <div className="space-y-4">
           <div>
             <label className="block text-sm text-gray-600">Price</label>
-            <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full p-2 border rounded-md" placeholder="Enter price" required />
+            <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full p-2 border rounded-md" placeholder="Enter price" min={0} required />
           </div>
           <div>
             <label className="block text-sm text-gray-600">Category</label>
@@ -199,7 +199,7 @@ const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: "",
     category: "", // 
-    price: "",
+    price: 0,
     frameSize: [] as string[],
     frameColor: [] as string[],
     themeColor: [] as string[], 
@@ -241,10 +241,16 @@ const AddProduct = () => {
       return;
     }
 
+    if (isNaN(formData.price) || formData.price <= 0) {
+      alert("Price must be a valid positive number.");
+      return;
+    }
+
+
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("category", formData.category);
-    formDataToSend.append("price", formData.price);
+    formDataToSend.append("price", formData.price.toString());
     formDataToSend.append("frameSize", formData.frameSize.join(","));
     formDataToSend.append("description", formData.description);
    // formDataToSend.append('images', formData.images[0]);
@@ -267,7 +273,7 @@ const AddProduct = () => {
         setFormData({
           name: "",
           category: "",
-          price: "",
+          price: 0,
           frameSize: [],
           frameColor: [],
           themeColor: [],

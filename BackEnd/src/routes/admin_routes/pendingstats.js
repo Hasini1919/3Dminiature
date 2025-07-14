@@ -1,17 +1,13 @@
+// routes/admin_routes/OrderAnalyticsRoutes.js
 import express from 'express';
-import Order from '../../models/Admin_models/Order.js';
+import {
+    getPendingOrderCount // ✅ Add this import
+} from '../../controllers/admin_controller/pendingstatsController.js';
 
 const router = express.Router();
 
-//get count
-router.get('/count-pending', async (req , res) => {
-    try {
-        const pendingOrdersCount = await Order.countDocuments({status: 'pending'});
-        res.json({count:pendingOrdersCount});
-    } catch (error) {
-        console.error("Error fetching pending order count:",error);
-        res.status(500).json({message:"server error"});
-    }
-});
+
+router.get('/count-pending', getPendingOrderCount); // ✅ New route
+
 
 export default router;
