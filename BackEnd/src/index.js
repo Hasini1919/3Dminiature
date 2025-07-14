@@ -7,7 +7,10 @@ import authRoutes from './routes/authRoutes.js';
 // import multer from "multer";
 import path from "path";
 // import fs from "fs";
-import dotenv from 'dotenv';
+import multer from "multer";
+import { fileURLToPath } from "url";
+import passport from "passport";
+import authRoutes from "./routes/authRoutes.js";
 import addRoutes from "./routes/admin_routes/add_order.js";
 
 ////////////////////////////////////////////////////////////////////////
@@ -23,24 +26,36 @@ import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
 import notificationRoutes from './routes/admin_routes/notification.js'
 
 /////////////////////////////////////////////////////////////////////////////
+import addressRoutes from "./routes/address-routes.js";
+import cartRouter from "./routes/cart-routes.js";
+import productRoutes from "./routes/product-routes.js";
+import couponRouter from "./routes/coupon-routes.js";
+import orderRouter from "./routes/order-routes.js";
+import uploadRouter from "./routes/userimage-routes.js";
+import "./config/passport.js";
 
-
+// Load environment variables
 dotenv.config();
 
-console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
+// Get __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-connectDB();
-
+// Express app
 const app = express();
 
+// MongoDB connection (use only one)
+import connectDB from "./config/db.js"; // or admin_config/db.js if needed
+connectDB();
 
-
+// Middleware
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: "GET,POST,PUT,PATCH,DELETE",
-    credentials: true
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PUT","PATCH", "DELETE"],
+  credentials: true
 }));
-app.use(express.json());
 app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
@@ -49,29 +64,42 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Serve uploaded images
+app.use("/uploads", express.static(uploadDir));
+
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+const upload = multer({ storage });
+
+
+// Routes
 
 
 
+app.use("/api/auth", authRoutes);
+app.use("/form", addRoutes);
+app.use("/api/cart", cartRouter);
+app.use("/api", addressRoutes);
+app.use("/api/admin", productRoutes);
+app.use("/api/apply", couponRouter);
+app.use("/api/order", orderRouter);
+app.use("/api", uploadRouter);
 
+// Default route
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
-// // Ensure "uploads" directory exists
-// const uploadDir = path.join(process.cwd(), "src/uploads");
-// if (!fs.existsSync(uploadDir)) {
-//     fs.mkdirSync(uploadDir, { recursive: true });
-// }
-
-
-
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, uploadDir); // Save files in the "uploads" folder
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, Date.now() + "-" + file.originalname);
-//     },
-// });
-
-
+// Start server
+const PORT = process.env.PORT || 5002;
 // // Initialize upload
 // const upload = multer({ storage });
 
@@ -107,60 +135,7 @@ app.use('/api/notifications',notificationRoutes)
 
 ///////////////////////////////////////////////////////
 
-const PORT = 5500;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log('Google OAuth is configured and ready');
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(" Google OAuth is ready if configured");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// app.use(bodyParser.json());
-
-//routes
-
-
-// app.get("/" ,(req , res) => {
-//     res.send("Express backend is running");
-
-
-// app.listen(PORT ,() =>{
-//     console.log(`Backend server running on http://localhost:${PORT}`);
-// });
-
-
-
-
-
-
-

@@ -23,13 +23,13 @@ const LoginForm = () => {
 
     try {
       const data = await login(formData.email, formData.password);
-      setMessage("✅ Login successful!");
+      setMessage("Login successful!");
 
       setTimeout(() => {
         router.push("/Home");
       }, 1500);
     } catch (err: any) {
-      setMessage(`❌ ${err.message}`);
+      setMessage(` ${err.message}`);
     } finally {
       setLoading(false);
     }
