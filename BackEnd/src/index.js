@@ -1,37 +1,44 @@
+// File: src/server.js (or index.js)
 import express from "express";
+import dotenv from "dotenv";
 import cors from "cors";
-import { promises as fs, constants } from "fs";
-import fsSync from "fs";
+import { promises as fsPromises, constants } from "fs";
 import mime from "mime-types";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import passport from "passport";
 import path from "path";
-import dotenv from "dotenv";
+import fs from "fs";
 
 // Route imports
-import filterRoute from "./routes/filterRoute.js";
-import productRoutes from "./routes/productRoute.js";
+import productroutes from "./routes/productRoute.js";
 import productDetailsRoute from "./routes/productDetailsRoute.js";
 import advertisementRoutes from "./routes/advertisementRoutes.js";
-import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import addRoutes from "./routes/admin_routes/add_order.js";
+import addressRoutes from "./routes/address-routes.js";
+import cartRouter from "./routes/cart-routes.js";
+import productRoutes from "./routes/product-routes.js";
+import couponRouter from "./routes/coupon-routes.js";
+import orderRouter from "./routes/order-routes.js";
+import uploadRouter from "./routes/userimage-routes.js";
+import  "./config/passport.js";
+import connectDB from "./config/db.js";
+
 
 // Load environment variables
 dotenv.config();
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 
-// ES Modules equivalent of __dirname
+// Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Express app
 const app = express();
-const PORT = process.env.PORT || 5500;
 
-// Connect to MongoDB
 await connectDB();
+
 
 // Enhanced CORS configuration
 const corsOptions = {
@@ -48,6 +55,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(passport.initialize());
 
+{/*}
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
@@ -80,21 +88,67 @@ const upload = multer({
     }
   },
 });
+*/}
 
 // Ensure "uploads" directory exists
+app.use('/api/auth', authRoutes);
+// Ensure "uploads" directory exists
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Serve uploaded images
+app.use("/uploads", express.static(uploadDir));
+
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+const upload = multer({ storage });
+
+    
+ {/*}   
 const uploadDir = path.join(process.cwd(), "src/uploads");
 if (!fsSync.existsSync(uploadDir)) {
   fsSync.mkdirSync(uploadDir, { recursive: true });
 }
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir); // Save files in the "uploads" folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+
+
+*/ }
+
 // API Routes
-app.use("/api/filters", filterRoute);
-app.use("/api/products", productRoutes);
+app.use("/api/products", productroutes);
 app.use("/api/product-details", productDetailsRoute);
 app.use("/api/ads", advertisementRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/form", addRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/form", addRoutes);
+app.use("/api/cart", cartRouter);
+app.use("/api", addressRoutes);
+app.use("/api/admin", productRoutes);
+app.use("/api/apply", couponRouter);
+app.use("/api/order", orderRouter);
+app.use("/api", uploadRouter);
 
+// Default route
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+
+{/*
 // Image upload endpoint
 app.post(
   "/api/uploads/:folderName/images",
@@ -132,6 +186,7 @@ app.post(
     }
   }
 );
+*/}
 
 // Image serving endpoint with security enhancements
 app.get("/products/:folderName/:imageName", async (req, res) => {
@@ -156,7 +211,7 @@ app.get("/products/:folderName/:imageName", async (req, res) => {
 
     // Check file exists and is accessible
     try {
-      await fs.access(imagePath, constants.R_OK);
+      await fsPromises.access(imagePath, constants.R_OK);
     } catch {
       return res.status(404).json({
         success: false,
@@ -192,14 +247,6 @@ app.get("/products/:folderName/:imageName", async (req, res) => {
   }
 });
 
-// Serve static files (uploaded images)
-app.use("/uploads", express.static(uploadDir));
-
-// Basic route
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
-
 // Error handler middleware
 app.use((err, req, res, next) => {
   console.error(`[${new Date().toISOString()}] Error:`, err);
@@ -214,11 +261,14 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Start server
+const PORT = process.env.PORT || 5500;
+
 // Server initialization
 async function initializeServer() {
   try {
     const productsDir = path.join(__dirname, "products");
-    await fs.mkdir(productsDir, { recursive: true });
+    await fsPromises.mkdir(productsDir, { recursive: true });
     console.log(`Product images directory ready: ${productsDir}`);
 
     app.listen(PORT, () => {
@@ -307,3 +357,10 @@ app.use('/api/orders-completed',comStatsRoutes);
 app.use('/api/notifications',notificationRoutes)
 
 */
+
+
+
+// Routes
+
+
+

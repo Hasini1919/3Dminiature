@@ -1,16 +1,16 @@
 import  multer from "multer";
 import mongoose from 'mongoose';
-import Products from "../models/productModel.js"; 
+import Product from "../models/Admin_models/Product.js";
 import path  from "path";
 
    // Get product details by ID
 export const getProductDetailsById = async (req, res) => {
   try {
     const productId = req.params.id;
-    let product = await Products.findOne({ _id: productId });
+    let product = await Product.findOne({ _id: productId });
 
     if (!product && mongoose.Types.ObjectId.isValid(productId)) {
-      product = await Products.findOne({
+      product = await Product.findOne({
         $or: [
           { _id: productId },
           { _id: new mongoose.Types.ObjectId(productId) },
@@ -19,7 +19,7 @@ export const getProductDetailsById = async (req, res) => {
     }
 
     if (!product) {
-      product = await Products.findOne({
+      product = await Product.findOne({
         $expr: {
           $eq: [{ $toString: "$_id" }, productId],
         },
@@ -27,12 +27,12 @@ export const getProductDetailsById = async (req, res) => {
     }
 
     if (!product) {
-      const exampleProducts = await Products.find().limit(3);
+      const exampleProducts = await Product.find().limit(3);
       return res.status(404).json({
         message: "Product not found",
         details: {
           requestedId: productId,
-          totalProducts: await Products.countDocuments(),
+          totalProducts: await Product.countDocuments(),
           exampleIds: exampleProducts.map((p) => p._id),
           idType: typeof exampleProducts[0]?._id,
         },
@@ -41,7 +41,7 @@ export const getProductDetailsById = async (req, res) => {
 
     // NEW: Get related products (same category)
     const relatedProducts = product.category
-      ? await Products.find({
+      ? await Product.find({
           category: product.category,
           _id: { $ne: product._id },
         }).limit(6)

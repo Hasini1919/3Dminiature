@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "next/navigation";
 import ProductImageGallery from "@/components/product-details/ProductImageGallery";
 import ProductDetails from "@/components/product-details/ProductDetails";
 import ProductCarousel from "@/components/product-details/ProductCarousel";
+import axiosInstance from "@/services/api";
+import axios from "axios";
 
 interface ProductDetail {
   _id: string;
@@ -34,8 +35,8 @@ export default function ProductPage() {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get(
-          `http://localhost:5500/api/product-details/${id}`,
+        const response = await axiosInstance.get(
+          `/api/product-details/${id}`,
           { timeout: 10000 }
         );
 

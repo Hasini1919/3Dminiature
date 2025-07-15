@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import Slide from "./Slide";
-import axios from "axios";
+import axiosInstance from "@/services/api";
 
 interface Advertisement {
   _id: string;
@@ -19,7 +19,7 @@ const Advertising = () => {
 
   const fetchAdvertisements = async () => {
     try {
-      const response = await axios.get("http://localhost:5500/api/ads");
+      const response = await axiosInstance.get("/api/ads");
       return response.data;
     } catch (error) {
       console.error("Error fetching advertisements:", error);

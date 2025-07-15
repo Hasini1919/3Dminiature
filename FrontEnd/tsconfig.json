@@ -35,7 +35,7 @@
     "FrontEnd/.next/types/**/*.ts",
     "FrontEnd/next-env.d.ts",
     ".next/types/**/*.ts"
-  ],
+, "app/my-account/orders/pending", "app/my-account/orders/cancelled", "app/my-account/orders/shipped", "app/checkout"  ],
   "exclude": [
     "node_modules"
   ]

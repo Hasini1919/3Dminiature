@@ -1,3 +1,4 @@
+{/*
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -30,3 +31,5 @@ productSchema.index({
 const Products =
   mongoose.models.Product || mongoose.model("Products", productSchema);
 export default Products;
+
+*/}

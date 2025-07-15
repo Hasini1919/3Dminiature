@@ -1,6 +1,7 @@
 import React from "react";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa"; // Includes half and empty star
 import Image from "next/image"; // Next.js Image optimization
+import axiosInstance from "@/services/api";
 
 interface ProductCardProps {
   image: string[];
@@ -27,6 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Render dynamic rating stars
   const renderStars = () => {
+    const safeRating = Number.isFinite(rating) ? rating : 0;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
@@ -52,9 +54,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         if (!img.startsWith("http")) {
           const parts = img.split("/");
           if (parts.length === 2) {
-            src = `http://localhost:5500/products/${encodeURIComponent(
-              parts[0]
-            )}/${encodeURIComponent(parts[1])}`;
+            src = `${
+              axiosInstance.defaults.baseURL
+            }/products/${encodeURIComponent(parts[0])}/${encodeURIComponent(
+              parts[1]
+            )}`;
           } else {
             src = "/default-product.jpg";
           }

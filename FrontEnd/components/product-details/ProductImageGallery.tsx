@@ -14,6 +14,7 @@ import {
 interface ProductImageGalleryProps {
   image: string[];
 }
+import axiosInstance from "@/services/api";
 
 const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -69,6 +70,7 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
    * Simple image URL constructor - assumes backend serves images correctly
    */
   const getImageUrl = (imagePath: string): string => {
+
     if (!imagePath || imagePath.trim() === "") {
       return "/placeholder-image.jpg";
     }
@@ -79,12 +81,12 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
     }
 
     // If it starts with /products, it's already a proper path
-    if (imagePath.startsWith("/products/")) {
-      return `http://localhost:5500${imagePath}`;
+    if (imagePath.startsWith("/products")) {
+      return `${axiosInstance.defaults.baseURL}${imagePath}`;
     }
 
     // Otherwise, assume it's a relative path that needs the base URL
-    return `http://localhost:5500/products/${imagePath}`;
+    return `${axiosInstance.defaults.baseURL}/products/${imagePath}`;
   };
 
   const handleImageError = (index: number) => {

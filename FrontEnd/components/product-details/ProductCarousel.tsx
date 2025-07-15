@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ProductCard from "../shop-components/ProductCard";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
+import axiosInstance from "@/services/api";
 
 interface Products {
   _id: string;
@@ -32,24 +33,20 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 3;
 
-  // ✅ Fetch related products from the correct backend endpoint
+  //  Fetch related products from the correct backend endpoint
   useEffect(() => {
     const fetchProductWithRelated = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
-          `http://localhost:5500/api/product-details/${productId}`
+        const response = await axiosInstance.get(
+          `/api/product-details/${productId}`
         );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const data = response.data;
 
-        const data = await response.json();
-
-        // ✅ Set only relatedProducts
+        //  Set only relatedProducts
         setProducts(data.relatedProducts || []);
         setCurrentIndex(0); // Reset carousel index on product change
       } catch (err) {
@@ -194,8 +191,9 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                                 : (() => {
                                     const parts = product.image[0].split("/");
                                     if (parts.length === 2) {
-                                      // parts[0] = folderName, parts[1] = imageName
-                                      return `http://localhost:5500/products/${encodeURIComponent(
+                                      return `${
+                                        axiosInstance.defaults.baseURL
+                                      }/products/${encodeURIComponent(
                                         parts[0]
                                       )}/${encodeURIComponent(parts[1])}`;
                                     }

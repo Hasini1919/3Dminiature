@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import { FaChevronDown } from "react-icons/fa";
 import Link from "next/link";
+import axiosInstance from "@/services/api";
 
 interface Product {
   _id: string;
@@ -94,16 +95,12 @@ const NewProducts = ({
 
       console.log("Fetching with params:", params.toString());
 
-      const response = await fetch(
-        `http://localhost:5500/api/products?${params.toString()}`
+      const response = await axiosInstance.get(
+        `/api/products?${params.toString()}`
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Received data:", data);
+ const data = response.data;      
+ console.log("Received data:", data);
 
       setProducts(data.products || []);
       setTotalPages(data.pagination?.totalPages || 1);
@@ -250,7 +247,9 @@ const NewProducts = ({
                                 const parts = product.image[0].split("/");
                                 if (parts.length === 2) {
                                   // parts[0] = folderName, parts[1] = imageName
-                                  return `http://localhost:5500/products/${encodeURIComponent(
+                                  return `${
+                                    axiosInstance.defaults.baseURL
+                                  }/products/${encodeURIComponent(
                                     parts[0]
                                   )}/${encodeURIComponent(parts[1])}`;
                                 }

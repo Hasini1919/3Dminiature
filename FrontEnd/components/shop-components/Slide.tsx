@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import axiosInstance from "@/services/api";
 
 interface PropsType {
   img: string;
@@ -11,7 +12,7 @@ interface PropsType {
 
 const Slide: React.FC<PropsType> = ({ img, title, mainTitle, price, _id }) => {
   const cleanImage = img.replace(/^\/+|products\//g, "");
-  const imageUrl = `http://localhost:5500/products/${cleanImage}`;
+  const imageUrl = `${axiosInstance.defaults.baseURL}/products/${cleanImage}`;
 
   return (
     <div className="relative h-[600px] overflow-hidden bg-gradient-to-br from-white via-red-50 to-pink-50">
