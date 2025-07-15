@@ -1,27 +1,19 @@
 "use client";
-import Link from "next/link";
+
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import axios from "axios";
+import Link from "next/link";
+import ImageCarousel from "@/components/imageSlide/imageCarousel";
 
 interface ImageItem {
   _id: string;
   title: string;
-  imageUrl: string; // should be something like "/products/frame1.jpg"
+  imageUrl: string;
 }
 
 export default function ScrollerImg() {
-  const [images, setImages] = useState<ImageItem[]>([]);
-
-  useEffect(() => {
-    const scrollers = document.querySelectorAll(".scrollerimg");
-
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      scrollers.forEach((scrollerimg) => {
-        scrollerimg.setAttribute("data-animation", "true");
-      });
-    }
-  }, [images]);
+  const [images, setImages] = useState<ImageItem[] | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -30,32 +22,32 @@ export default function ScrollerImg() {
         setImages(response.data);
       } catch (err) {
         console.error("Failed to fetch images", err);
+        setImages([]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchImages();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="text-center mt-10 text-gray-600">
+        Loading images...
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="scrollerimg container mx-auto">
-        <ul className="text-list text-lg flex gap-8 ml-30 mx-auto overflow-hidden animate-scroll">
-          {images.map((item) => (
-  <li key={item._id} className="flex flex-col items-center text-gray-500">
-    <div className="w-[200px] h-[200px] relative rounded-lg border-4 border-red-500 shadow-md">
-      <Image
-        src={`http://localhost:5500${item.imageUrl}`}
-        alt={item.title}
-        fill
-        className="object-cover"
-      />
-    </div>
-    {item.title}
-  </li>
-))}
-
-        </ul>
-      </div>
+      {images && images.length > 0 ? (
+        <ImageCarousel images={images} />
+      ) : (
+        <div className="text-center mt-10 text-gray-500">
+          No images available.
+        </div>
+      )}
 
       <div className="mt-6 flex justify-center w-full">
         <Link href="/shop">

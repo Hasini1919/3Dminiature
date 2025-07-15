@@ -58,9 +58,9 @@ export default function Footer() {
           Privacy policy
           </Link>
           <Link href="/" className="text-black">
-            Teams of use
+            Terms of use
           </Link>
-          <Link href="/" className="text-black">
+          <Link href="/return-refund" className="text-black">
           Sales and refunds
           </Link>
         </div>

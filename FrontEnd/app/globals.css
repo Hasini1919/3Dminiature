@@ -212,5 +212,9 @@ body {
   text-decoration: none;
 }
 
+.swiper-button-next,
+.swiper-button-prev {
+  color:  #f87171 !important;
+}
 
   
