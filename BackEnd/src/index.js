@@ -16,6 +16,7 @@ import couponRouter from "./routes/coupon-routes.js";
 import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
 import "./config/passport.js";
+import feedbackRoutes from './routes/feedback-routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -88,6 +89,8 @@ app.use("/api/admin", productRoutes);
 app.use("/api/apply", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api", uploadRouter);
+app.use('/api/feedback', feedbackRoutes);
+
 
 // Default route
 app.get("/", (req, res) => {
