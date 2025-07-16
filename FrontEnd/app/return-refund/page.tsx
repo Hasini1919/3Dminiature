@@ -17,6 +17,14 @@ export default function ReturnRefundPage() {
     <main className="max-w-7xl mx-auto px-4 py-10 sm:py-16 flex flex-col md:flex-row gap-10">
       {/* Sidebar navigation */}
       <nav className="md:w-60 bg-white border border-gray-200 rounded-md shadow-sm sticky top-24 self-start">
+        {/* Sidebar Logo */}
+        <div className="flex justify-center py-4">
+          <img
+            src="Refund_and_Returns.png"
+            alt="Logo"
+            className="h-24 w-auto object-contain"
+          />
+        </div>
         <ul className="flex md:flex-col overflow-x-auto md:overflow-visible">
           {sections.map(({ id, label }) => (
             <li key={id}>
@@ -41,6 +49,7 @@ export default function ReturnRefundPage() {
         {/* Returns & Refunds */}
         {activeSection === "returns-refunds" && (
           <section id="returns-refunds" className="bg-white rounded-md shadow p-6">
+           
             <h1 className="text-4xl font-semibold mb-6 text-red-600">Returns & Refunds Policy</h1>
             <p className="text-gray-700 leading-relaxed">
               We value our customers and want you to be satisfied with your 3D miniature frame purchase. Please
@@ -54,7 +63,13 @@ export default function ReturnRefundPage() {
           <section id="how-to-return" className="bg-white rounded-md shadow p-6">
             <h2 className="text-2xl font-semibold mb-4 text-red-600">How to Return a Product</h2>
             <ol className="list-decimal list-inside space-y-2 text-gray-700 leading-relaxed">
-              <li>Contact our support team at <a href="mailto:support@example.com" className="text-red-500 underline">support@example.com</a> to initiate a return.</li>
+              <li>
+                Contact our support team at{" "}
+                <a href="mailto:tt3dlens@gmail.com" className="text-red-500 underline">
+                  tt3dlens@gmail.com
+                </a>{" "}
+                to initiate a return.
+              </li>
               <li>Pack the 3D miniature frame securely in the original packaging.</li>
               <li>Ship the package to the address provided by our support team.</li>
               <li>Keep your shipping receipt until the refund is processed.</li>
@@ -98,8 +113,8 @@ export default function ReturnRefundPage() {
             If you have any questions about our return and refund policy, please contact us at:
           </p>
           <ul className="mt-2 space-y-1 text-gray-700">
-            <li>Email: <a href="mailto:support@example.com" className="text-red-500 underline">support@example.com</a></li>
-            <li>Phone: <a href="tel:+1234567890" className="text-red-500 underline">+1 (234) 567-890</a></li>
+            <li>Email: <a href="mailto:tt3dlens@gmail.com" className="text-red-500 underline">tt3dlens@gmail.com</a></li>
+            <li>Phone: <a href="tel:0761838937" className="text-red-500 underline">076 183 8937</a></li>
           </ul>
         </section>
 

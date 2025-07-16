@@ -61,7 +61,7 @@ export default function Footer() {
             Terms of use
           </Link>
           <Link href="/return-refund" className="text-black">
-          Sales and refunds
+          Returns & refunds
           </Link>
         </div>
       </div>

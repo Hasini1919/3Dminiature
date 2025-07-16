@@ -58,7 +58,7 @@ export default function Header() {
       
         </Link>
         
-        <Message />
+        
       </div>
 
       </nav>
