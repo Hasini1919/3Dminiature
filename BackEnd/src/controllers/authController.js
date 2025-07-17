@@ -80,7 +80,8 @@ export const login = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                role: user.role 
             }
         });
     } catch (error) {
@@ -92,10 +93,10 @@ export const login = async (req, res) => {
 export const googleCallback = (req, res) => {
     try {
         const token = generateToken(req.user);
-        res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+        res.redirect(`${process.env.FRONTEND_URL}/authentication/success?token=${token}`);
     } catch (error) {
         console.error('Google callback error:', error);
-        res.redirect(`${process.env.FRONTEND_URL}/auth/error`);
+        res.redirect(`${process.env.FRONTEND_URL}/authentication/error`);
     }
 };
 
@@ -195,3 +196,17 @@ export const resetPassword = async (req, res) => {
         res.status(500).json({ message: 'Error resetting password' });
     }
 };
+// ... existing imports and code ...
+
+// NEW: Add after googleCallback
+export const facebookCallback = (req, res) => {
+    try {
+        const token = generateToken(req.user);
+        res.redirect(`${process.env.FRONTEND_URL}/authentication/success?token=${token}`);
+    } catch (error) {
+        console.error('Facebook callback error:', error);
+        res.redirect(`${process.env.FRONTEND_URL}/authentication/error`);
+    }
+};
+
+// ... rest of existing controller code ...
