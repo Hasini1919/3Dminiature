@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@jridgewell/set-array": "^1.2.1",
+    "@tailwindcss/postcss": "^4.1.11",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -20,17 +22,23 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
+    "react-toastify": "^11.0.5",
+    "react-range": "^1.10.0",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1",
+    "use-places-autocomplete": "^4.0.1",
     "swiper": "^11.2.10",
-    "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-slick": "^0.23.13",
     "@types/socket.io-client": "^1.4.36",
     "eslint": "^9",
     "eslint-config-next": "15.2.2",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5"
   },
   "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
