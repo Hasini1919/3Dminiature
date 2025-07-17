@@ -7,15 +7,10 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-
 import addRoutes from './routes/admin_routes/add_order.js';
 import facebookAuthRoutes from './routes/facebookAuthRoutes.js';
 import instagramAuthRoutes from './routes/instagramAuthRoutes.js';
-
-// ✅ Import and configure Facebook strategy
-import setupFacebookStrategy from './config/facebookStrategy.js'; // adjust path if different
-
-// ✅ Import and configure Google strategy
+import setupFacebookStrategy from './config/facebookStrategy.js'; 
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from './models/User.js';
 

@@ -1,4 +1,4 @@
-// _instagramStrategy.js
+
 import { Strategy as InstagramStrategy } from 'passport-instagram';
 import User from '../models/User.js';
 

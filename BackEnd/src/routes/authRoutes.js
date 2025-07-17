@@ -7,7 +7,7 @@ import {
     getCurrentUser,
     forgotPassword,
     resetPassword,
-    facebookCallback // NEW
+    facebookCallback 
 } from '../controllers/authController.js';
 
 const router = express.Router();
