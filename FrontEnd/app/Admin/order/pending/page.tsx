@@ -1,138 +1,65 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Order } from "@/types/admin/order";
+import { fetchPendingOrders, updateOrderStatus } from '@/utils/Admin/fetchPending';
+import OrderTable from "@/components/admin/Order/OrderTable";
 
-interface Order {
-  id: string;
-  name: string;
-  cid: string;
-  category: string;
-  frameColor: string;
-  theme: string;
-  size: string;
-  customization?: string;
-  price: number;
-  status: string;
-
-}
-
-export default function PendingOrders() {
+export default function PendingOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-
   const [search, setSearch] = useState("");
 
-  const fetchOrders = async () => {
+  const loadOrders = async () => {
     try {
-      const res = await fetch("http://localhost:5500/api/updates/pending");
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const data = await res.json();
+      const data = await fetchPendingOrders();
       setOrders(data);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-    const interval = setInterval(fetchOrders, 10000);
-    return () => clearInterval(interval);
-  }, []);
-
-
-  //chnage pending to other states
-  const handleStatusChange = async (orderId: string, pendingStatus: string) => {
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      const res = await fetch(`http://localhost:5500/api/updates/${orderId}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: pendingStatus }),
-      });
-      if (!res.ok) throw new Error("Failed to update status");
-
-      //remove in filter when new to pending
-      setOrders((prevOrders) => prevOrders.filter(order => order.id !== orderId));
+      await updateOrderStatus(orderId, newStatus);
+      setOrders(prev => prev.filter(order => order.id !== orderId));
     } catch (error) {
-      console.error("Error updating status: ", error);
+      console.error("Error updating status:", error);
     }
   };
 
+  useEffect(() => {
+    loadOrders();
+    const interval = setInterval(loadOrders, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
-  // Filter data based on search input (search by ID, CID, Customization, Category)
-  const filteredData = orders.filter((item) =>
-    Object.values(item).some(value =>
+  const filteredOrders = orders.filter(order =>
+    Object.values(order).some(value =>
       value?.toString().toLowerCase().includes(search.toLowerCase())
     )
   );
 
   return (
-    <div className="overflow-x-auto p-4 m-4 mt-24 ml-60">
-      <h2 className="w-full text-center text-2xl font-bold ml-6 text-[#a82f45]">Pending Orders</h2>
+    <div className="ml-60 mt-24 px-6 py-8 bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-bold text-[#a82f45] mb-6 text-center">Pending Orders</h2>
 
-      {/* Search Bar */}
-      <div className="mb-4 text-right">
+      <div className="flex justify-end mb-6">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search by ID, CID, Category..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-80 max-w-md p-2 border border-gray-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+          className="w-full max-w-md p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-[#a82f45] outline-none"
         />
-
-
       </div>
 
-      <table className="w-full max-w-4xl mx-auto border border-green-900 shadow-md rounded-lg mt-3 bg-white">
-        <thead>
-          <tr className="bg-[#a82f45] text-white">
-            <th className="p-2 border w-2/12">PID</th>
-            <th className="p-2 border w-2/12">Name</th>
-            <th className="p-2 border w-2/12">CID</th>
-            <th className="p-2 border w-2/12">Category</th>
-            <th className="p-2 border w-2/12">Frame Color</th>
-            <th className="p-2 border w-2/12">Theme Color</th>
-            <th className="p-2 border w-2/12">Frame Size</th>
-            <th className="p-2 border w-2/12">Customization</th>
-            <th className="p-2 border w-2/12">Price</th>
-            <th className="p-2 border w-2/12">Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((item) => (
-              <tr key={item.id} className="text-center hover:bg-red-100">
-                <td className="p-2 border">{item.id}</td>
-                <td className="p-2 border">{item.name}</td>
-                <td className="p-2 border">{item.cid}</td>
-                <td className="p-2 border">{item.category}</td>
-                <td className="p-2 border">{item.frameColor}</td>
-                <td className="p-2 border">{item.theme}</td>
-                <td className="p-2 border">{item.size}</td>
-                <td className="p-2 border">{item.customization}</td>
-                <td className="p-2 border">{item.price}</td>
-                <td className="p-2 border">
-                  <select className="rounded bg-red-300 px-4 py-1" value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value)}>
-                    <option value="pending">Pending</option>
-                    <option value="new">New</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </td>
-
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={10} className="text-center p-4 text-gray-500">
-                No results found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <OrderTable
+        data={filteredOrders}
+        onStatusChange={handleStatusChange}
+        headerColor="bg-[#a82f45]"
+        rowHoverColor="hover:bg-red-100"
+        selectBgColor="bg-red-300"
+      />
     </div>
   );
-};
-
-
+}

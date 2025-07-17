@@ -1,16 +1,17 @@
+import dotenv from 'dotenv';
+dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+
 // import multer from "multer";
 import path from "path";
-// import fs from "fs";
+import fs from "fs";
 import multer from "multer";
-import { fileURLToPath } from "url";
-import passport from "passport";
-import authRoutes from "./routes/authRoutes.js";
+import { fileURLToPath } from "url";;
 import addRoutes from "./routes/admin_routes/add_order.js";
 
 ////////////////////////////////////////////////////////////////////////
@@ -34,8 +35,11 @@ import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
 import "./config/passport.js";
 
+/////////////////////////////////////////////////////////////////////////////
+import editRoutes from "./routes/admin_routes/editRoutes.js";
+
 // Load environment variables
-dotenv.config();
+
 
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -45,7 +49,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // MongoDB connection (use only one)
-import connectDB from "./config/db.js"; // or admin_config/db.js if needed
 connectDB();
 
 // Middleware
@@ -131,6 +134,8 @@ app.use('/api/customer',customerstatsRoutes);
 app.use('/api/orders-completed',comStatsRoutes);
 
 app.use('/api/notifications',notificationRoutes)
+
+app.use("/", editRoutes);
 
 
 ///////////////////////////////////////////////////////

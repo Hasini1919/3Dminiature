@@ -23,7 +23,9 @@ export default function RootLayout({
         />
         <div className="debug">
           
-          <AppContextProvider>{children}</AppContextProvider>
+          {/* <Slidebar/> */}
+            {children}
+          
         </div>
       </body>
     </html>
