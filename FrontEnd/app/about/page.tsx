@@ -161,9 +161,7 @@ export default function About() {
     </div>
 
     </div>
-   <div>
-    <Pdf/>
-   </div>
+
 </>
     );
 }
