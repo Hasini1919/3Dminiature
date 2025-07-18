@@ -62,7 +62,7 @@ export const login = async (
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
-
+    
     if (!response.ok) {
       let errorMessage = 'Login failed';
       try {
@@ -71,7 +71,10 @@ export const login = async (
       } catch (error) {
         console.error('Error parsing response JSON:', error);
       }
+      console.log(errorMessage);
       throw new Error(errorMessage);
+      
+      
     }
 
     const data = await response.json();

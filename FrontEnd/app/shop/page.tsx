@@ -1,20 +1,46 @@
-'use client';
+"use client";
 
-export default function ShopPage() {
+import ProductsPage from "@/components/shop-components/ProductsPage";
+import Advertising from "@/components/shop-components/Advertising";
+import React, { useState } from "react";
+import { FiSearch } from "react-icons/fi";
+import { useSearchParams, useRouter } from "next/navigation";
+import SearchBar from "@/components/search/SearchBar";
+
+const ShopPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-4">
-      <h1 className="text-5xl font-extrabold mb-4 drop-shadow-lg">
-        Welcome to the Shop!
-      </h1>
-      <p className="text-lg max-w-xl text-center drop-shadow-md">
-        Thanks for logging in. Explore our awesome products and enjoy shopping.
-      </p>
-      <button
-        className="mt-8 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg shadow-lg hover:bg-indigo-100 transition"
-        onClick={() => alert('Start shopping!')}
-      >
-        Start Shopping
-      </button>
-    </main>
+    <div>
+      {/* Temporary search button - can be removed when navbar integration is complete */}
+      <div className="container mx-auto px-4 py-4 flex justify-end">
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg"
+        >
+          <FiSearch size={18} />
+          Search Products
+        </button>
+      </div>
+      
+      {/* Advertising component */}
+      <Advertising />
+
+      {/* SearchBar component */}
+      <SearchBar
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        initialQuery={searchInput}
+      />
+
+      {/* Main content */}
+      <ProductsPage searchQuery={searchQuery} />
+    </div>
   );
-}
+};
+
+export default ShopPage;

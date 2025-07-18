@@ -30,7 +30,7 @@ const Slidebar = () => {
   }, []);
 
   const unseenCount = notifications.filter( n => !n.seen).length;
-
+ 
 
   return (
     <div>

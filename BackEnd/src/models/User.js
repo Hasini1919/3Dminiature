@@ -1,60 +1,136 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
+// Schema for individual cart items
+const cartItemSchema = new mongoose.Schema(
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    productName: {
+      type: String,
+      required: true,
+    },
+    images: {
+      type: [String],
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    frameSize: {
+      type: String,
+      required: true,
+    },
+    frameColor: {
+      type: String,
+      required: true,
+    },
+    themeColor: {
+      type: String,
+      required: true,
+    },
+    uploadedImageFiles: {
+      type: [String],
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    customText: {
+      type: String,
+      default: "",
+    },
   },
+  { _id: false }
+);
 
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true
+// Coupon schema
+const couponSchema = new mongoose.Schema(
+  {
+    code: {
+      type: String,
+      required: true,
+    },
+    discountType: {
+      type: String,
+      enum: ["percentage", "fixed"],
+      required: true,
+    },
+    discountValue: {
+      type: Number,
+      required: true,
+    },
+    appliedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    discountedValue: {
+      type: Number,
+      required: true,
+    },
   },
+  { _id: false }
+);
 
-  password: {
-    type: String,
-    required: function () {
-      return !this.googleId && !this.facebookId && !this.instagramId; // Include instagramId too
-    }
+// Combined user schema
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: function () {
+        return !this.googleId;  // Required only if no Google login
+      },
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    picture: {
+      type: String,
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
+    cartData: {
+      type: [cartItemSchema],
+      default: [],
+    },
+    appliedCoupon: {
+      type: couponSchema,
+      default: null,
+    },
+    usedCoupons: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "coupons",
+      },
+    ],
   },
-
-  googleId: {
-    type: String,
-    unique: true,
-    sparse: true
-  },
-
-  facebookId: {
-    type: String,
-    unique: true,
-    sparse: true
-  },
-
-  instagramId: {
-    type: String,
-    unique: true,
-    sparse: true
-  },
-
-  picture: String,
-
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
-
-  // ✅ Role added here
-  role: {
-    type: String,
-    enum: ['customer', 'admin'],
-    default: 'customer'
+  {
+    timestamps: true,
   }
+);
 
-}, {
-  timestamps: true
-});
-
-const User = mongoose.model('User', userSchema);
+// Export the model
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;
