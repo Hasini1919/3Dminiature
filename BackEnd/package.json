@@ -24,11 +24,8 @@
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-<<<<<<< HEAD
-    "pdf-creator-node": "^2.3.5"
-=======
+    "pdf-creator-node": "^2.3.5",
     "uuid": "^11.1.0"
->>>>>>> 04822994240910ba8e7a0a432fa0e571aa39d071
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

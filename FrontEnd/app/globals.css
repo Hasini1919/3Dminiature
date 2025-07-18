@@ -109,7 +109,7 @@ body {
 .text-list {
   display: flex;
   gap: 4rem;
-  padding-block: 15px;
+  padding-block: 10px;
   flex-wrap: nowrap;  /* Prevent wrapping */
   color: #ededed;
   
@@ -148,7 +148,7 @@ body {
 }
 
 .card {
-  height: 200px;
+  height: 700px;
   width: 200px;
   padding: 2rem 1rem;
   position: relative;
@@ -201,7 +201,6 @@ body {
   bottom: 30px; /* Adjust positioning */
   left: 50%;
   transform: translateX(-50%);
-  
   text-align: center;
 }
 

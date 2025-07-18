@@ -11,6 +11,8 @@ import { Kalam } from "next/font/google";
 
 
 
+
+
 export default function RootLayout({
   children,
 }: {
@@ -25,8 +27,10 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         <div className="debug">
+          
           <Header/>
-          <AppContextProvider>{children}</AppContextProvider>
+          
+        <AppContextProvider> {children} </AppContextProvider> 
           <Footer/>
         </div>
       </body>

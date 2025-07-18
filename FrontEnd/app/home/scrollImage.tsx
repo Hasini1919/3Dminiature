@@ -12,7 +12,7 @@ interface ImageItem {
 }
 
 export default function ScrollerImg() {
-  const [images, setImages] = useState<ImageItem[] | null>(null);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,6 @@ export default function ScrollerImg() {
         setLoading(false);
       }
     };
-
     fetchImages();
   }, []);
 
@@ -41,7 +40,7 @@ export default function ScrollerImg() {
 
   return (
     <>
-      {images && images.length > 0 ? (
+      {images.length > 0 ? (
         <ImageCarousel images={images} />
       ) : (
         <div className="text-center mt-10 text-gray-500">

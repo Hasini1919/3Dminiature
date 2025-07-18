@@ -40,11 +40,11 @@ export default function About() {
             </div>
         </div>
 
-   <div className="relative mx-auto px-3 py-3 bg-gray-500 max-w-4xl mt-20 rounded-3xl overflow-visible">
+   <div className="relative mx-auto px-3 py-0 bg-gray-500 max-w-4xl mt-20 rounded-3xl overflow-visible">
   <div className="flex flex-col lg:flex-row items-center lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 w-full relative">
 
     {/* Text Section */}
-     <div className="w-full max-w-xl px-15 lg:px-12 z-10 text-left">
+     <div className="w-full max-w-xl px-15 lg:px-12 z-1 text-left">
       <h3 className="text-3xl font-bold text-white mb-4">Our Commitment to Quality</h3>
       <p className="text-white text-base leading-relaxed">
         Every element of our work demonstrates our dedication to excellence and originality.
@@ -161,6 +161,9 @@ export default function About() {
     </div>
 
     </div>
+   <div>
+    <Pdf/>
+   </div>
 </>
     );
 }

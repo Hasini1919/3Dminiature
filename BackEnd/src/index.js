@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-import express from 'express';
-import connectDB from './config/db.js';
-import { fileURLToPath } from 'url';
-import path, { dirname } from 'path';
-import { routes as enquiryRoutes } from './routes/enquiryRoutes.js';
-import { routes as subscribeRoutes } from './routes/subscribeRoutes.js';
-import { routes as imageRoutes } from './routes/imageRoutes.js';
-import { routes as pdfRoutes } from './routes/pdfRoutes.js';
-import cors from 'cors';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-=======
 // File: src/server.js (or index.js)
 import express from "express";
 import dotenv from "dotenv";
@@ -22,7 +8,7 @@ import { fileURLToPath } from "url";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import passport from "passport";
-import path from "path";
+import path, { dirname } from 'path';
 import fs from "fs";
 
 // Route imports
@@ -38,6 +24,10 @@ import couponRouter from "./routes/coupon-routes.js";
 import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
 import  "./config/passport.js";
+import { routes as enquiryRoutes } from './routes/enquiryRoutes.js';
+import { routes as subscribeRoutes } from './routes/subscribeRoutes.js';
+import { routes as imageRoutes } from './routes/imageRoutes.js';
+import { routes as pdfRoutes } from './routes/pdfRoutes.js';
 import connectDB from "./config/db.js";
 
 
@@ -47,32 +37,11 @@ dotenv.config();
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
->>>>>>> 04822994240910ba8e7a0a432fa0e571aa39d071
 
 // Express app
 const app = express();
 
-<<<<<<< HEAD
-app.use(cors({ origin: "http://localhost:3000" }));
 
-connectDB();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from /products directory
-app.use('/products', express.static(path.join(__dirname, 'products')));
-app.use('/docs', express.static(path.join(__dirname, 'docs')));
-
-// Routes
-app.use(enquiryRoutes);
-app.use(subscribeRoutes);
-app.use(imageRoutes);
-app.use(pdfRoutes);
-
-
-const PORT = process.env.PORT || 5500;
-app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
-=======
 await connectDB();
 
 
@@ -162,6 +131,9 @@ const storage = multer.diskStorage({
 
 
 */ }
+app.use('/products', express.static(path.join(__dirname, 'products')));
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
+
 
 // API Routes
 app.use("/api/products", productroutes);
@@ -177,6 +149,10 @@ app.use("/api/admin", productRoutes);
 app.use("/api/apply", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api", uploadRouter);
+app.use(enquiryRoutes);
+app.use(subscribeRoutes);
+app.use(imageRoutes);
+app.use(pdfRoutes);
 
 // Default route
 app.get("/", (req, res) => {
@@ -400,4 +376,3 @@ app.use('/api/notifications',notificationRoutes)
 
 
 
->>>>>>> 04822994240910ba8e7a0a432fa0e571aa39d071

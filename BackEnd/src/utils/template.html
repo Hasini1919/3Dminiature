@@ -3,12 +3,13 @@
 <head>
   <title>Invoice Report</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; font-size: 20px; }
-    h2 { text-align: center; font-size: 28px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 20px; }
-    th, td { border: 1px solid black; padding: 8px; text-align: left; font-size: 20px; }
-    th { background-color: #f2f2f2; font-size: 22px; }
-    .user-info { margin-bottom: 20px; padding: 10px; background: #f9f9f9; font-size: 20px; }
+    body { font-family: Arial, sans-serif; margin: 20px; font-size: 18px; }
+    h2 { text-align: center; font-size: 26px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 18px; }
+    th, td { border: 1px solid black; padding: 6px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .user-info { margin-bottom: 20px; padding: 10px; background: #f9f9f9; }
+    .address-box { background: #e8f0ff; padding: 10px; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -18,12 +19,18 @@
   {{#each prodlist}}
     <div class="user-info">
       <strong>User ID:</strong> {{this.userId}}<br>
-      <strong>Addresses:</strong>
-      <ul>
-        {{#each this.addressList}}
-          <li>{{this.street}}, {{this.city}}, {{this.postalCode}}, {{this.country}}</li>
-        {{/each}}
-      </ul>
+
+      <div class="address-box">
+        <strong>Addresses:</strong>
+        <ul>
+          {{#each this.addressList}}
+            <li>
+              {{this.FirstName}} {{this.LastName}}, {{this.HouseNo}}, {{this.Area}}, {{this.City}}, {{this.District}}<br>
+              Phone: {{this.PhoneNumber}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
     </div>
 
     <table>
@@ -38,19 +45,26 @@
           <th>Date</th>
         </tr>
       </thead>
-      <tbody>
-        {{#each this.orders}}
-          <tr>
-            <td>{{this.items.name}}</td>
-            <td>{{this.orderNumber}}</td>
-            <td>{{this.status}}</td>
-            <td>{{this.paymentMethod}}</td>
-            <td>{{this.shippingOption}}</td>
-            <td>{{this.amount}}</td>
-            <td>{{this.date}}</td>
-          </tr>
-        {{/each}}
-      </tbody>
+ <tbody>
+  {{#each this.orders}} <!-- Loop over orders -->
+    {{#each this.items}} <!-- Loop over items inside one order -->
+      <tr>
+        <!-- item-level fields -->
+        <td>{{this.name}}</td>
+        
+
+        <!-- order-level fields, from parent context -->
+        <td>{{../orderNumber}}</td>
+        <td>{{../status}}</td>
+        <td>{{../paymentMethod}}</td>
+        <td>{{../selectedShippingOption}}</td>
+        <td>{{../amount}}</td>
+        <td>{{../date}}</td>
+      </tr>
+    {{/each}}
+  {{/each}}
+</tbody>
+
       <tfoot>
         <tr>
           <td colspan="5"><strong>Subtotal</strong></td>

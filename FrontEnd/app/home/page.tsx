@@ -43,13 +43,13 @@ export default function Homepage() {
       <div className="text-center mt-20 mb-10 text-2xl font-bold">
       <h1 className="text-center mt-20 text-4xl font-bold">Top Categories</h1>
       </div>
-      <div className="wrapper container mx-auto p-5">
-  <div className="grid grid-cols-1  md:grid-cols-3 gap-20 mx-32">
-    <div className="card  mt-[20px]  ">
-      <img src="/IMG-20250309-WA0009.jpg" alt="Image 1" />
-      <p>Family</p>
+      <div className="wrapper container mx-auto p-5 ">
+  <div className="grid grid-cols-1  md:grid-cols-3 gap-20 mx-32 mb-6">
+    <div className="card  mt-[20px] ">
+      <img src="/IMG-20250309-WA0009.jpg" alt="Image 1"  className="mb-6"/>
+      <p >Family</p>
     </div>
-    <div className="card   mt-[-50px]">
+    <div className="card   mt-[-40px]">
       <img src="/IMG-20250309-WA0010.jpg" alt="Image 2" />
       <p>Baby</p>
     </div>

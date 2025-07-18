@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 {/*
->>>>>>> 04822994240910ba8e7a0a432fa0e571aa39d071
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -33,10 +30,6 @@ productSchema.index({
 // Create model
 const Products =
   mongoose.models.Product || mongoose.model("Products", productSchema);
-<<<<<<< HEAD
-export default Products;
-=======
 export default Products;
 
 */}
->>>>>>> 04822994240910ba8e7a0a432fa0e571aa39d071

@@ -1,20 +1,19 @@
 // routes/imageRoute.js
 import express from 'express';
-import Products from '../models/productModel.js'; // adjust the path if needed
+import Product from '../models/Admin_models/Product.js'; // Adjust path if needed
 
 const router = express.Router();
 
 router.get("/images", async (req, res) => {
   try {
-    const products = await Products.find()
+    const products = await Product.find()
       .sort({ createdAt: -1 }) // Most recent first
-      .limit(5);               // Limit to 5 results
+      .limit(7);               // Limit to 5 results
 
-    // Format response to match frontend expectation
     const imageData = products.map(product => ({
       _id: product._id,
       title: product.name,
-      imageUrl: product.image[0] || "", // Only send the first image
+      imageUrl: (product.images && product.images.length > 0) ? product.images[0] : "",
     }));
 
     res.json(imageData);

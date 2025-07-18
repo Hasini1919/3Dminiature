@@ -76,7 +76,7 @@ export default function Contact() {
             Call to Us
           </h5>
           <p className="text-gray-600">We are available 24/7, 7 days a week</p>
-          <p className="font-bold">Phone: 0745584599</p>
+          <p className="font-bold">Phone: 076 183 8937</p>
         </div>
 
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -87,7 +87,7 @@ export default function Contact() {
           <p className="text-gray-600">
             Fill out our form and we will contact you within 24 hours
           </p>
-          <p className="font-bold">Email: abc@gmail.com</p>
+          <p className="font-bold">Email: tt3dlens@gmail.com</p>
         </div>
       </div>
 

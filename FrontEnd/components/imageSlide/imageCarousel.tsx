@@ -16,7 +16,7 @@ interface ImageItem {
 }
 
 interface Props {
-  images: ImageItem[];  // images array expected to be always defined
+  images: ImageItem[];
 }
 
 export default function ImageCarousel({ images }: Props) {
@@ -29,6 +29,8 @@ export default function ImageCarousel({ images }: Props) {
       </div>
     );
   }
+
+  const baseUrl = "http://localhost:5500/products";
 
   return (
     <div
@@ -45,22 +47,30 @@ export default function ImageCarousel({ images }: Props) {
         onSwiper={(swiper) => (swiperRef.current = swiper)}
         className="rounded-lg overflow-hidden"
       >
-        {images.map((item) => (
-          <SwiperSlide key={item._id}>
-            <div className="relative w-full pb-[75%] bg-white">
-              <Image
-                src={`http://localhost:5500${item.imageUrl}`}
-                alt={item.title}
-                fill
-                className="object-contain p-2"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-              <div className="absolute bottom-0 bg-black bg-opacity-50 w-full text-white text-center p-2">
-                {item.title}
+        {images.map((item) => {
+          // Ensure path starts with slash
+           const cleanedPath = item.imageUrl; 
+          const fullImageUrl = `${baseUrl}/${cleanedPath}`; 
+
+
+          return (
+            <SwiperSlide key={item._id}>
+              <div className="relative w-full pb-[75%] bg-white">
+                <Image
+                  src={fullImageUrl}
+                  alt={item.title}
+                  fill
+                  className="object-contain p-2"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  
+                />
+                <div className="absolute bottom-0 bg-black bg-opacity-50 w-full text-white text-center p-2">
+                  {item.title}
+                </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </div>
   );

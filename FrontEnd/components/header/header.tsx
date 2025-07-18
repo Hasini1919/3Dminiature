@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import Search from "./search";
-import Message from "./message";
+import SearchBar from "./search";
+import SearchIcon from "@/components/search/SearchIcon";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { BiGitCompare} from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
+import { useState } from "react";
+
+
 
 
 export default function Header() {
-
+       const [isSearchOpen, setIsSearchOpen] = useState(false); 
+     
   return (
       <nav  style={{ backgroundColor: "#cb1a2e" }}  className="sm:flex justify-between items-center  mx-auto px-3 py-2">
         
@@ -34,18 +38,19 @@ export default function Header() {
 
         
         <div className=" md:block w-1/5">
-          <Search />
+          <SearchBar isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
         </div>
 
         
        <div className="flex space-x-2 items-center">
        <Link 
-    href="/login" 
+    href="/authentication/login" 
     className="flex items-center bttn1  font-medium px-2 py-2 rounded-md text-sm  transition">
     <FaUser size={20} className="mr-1 " />
     <span ></span>
   </Link>
-        <Link href="/cart" className="bttn1  flex items-center space-x-2 p-2 rounded   transition">
+         <Link href="/cart" className="bttn1  flex items-center space-x-2 p-2 rounded   transition">
           < FaShoppingCart size={20} />
       
         </Link>
