@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import axiosInstance from "@/services/api";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
 interface Address {
   FirstName: string;
   LastName: string;
@@ -198,9 +198,17 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       if (response.data.cartData) {
         setCartData(response.data.cartData);
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error fetching cart data:", error);
+      if (error.response && error.response.status === 401) {
+      // Show alert or toast
+      toast.error("Session expired. Please login again.");
+
+      // Redirect to login page
+      router.push("/");
     }
+    }
+
   };
 
   fetchCartData();
@@ -214,21 +222,26 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   
  
   useEffect(() => {
+   
     const fetchProductData = async () => {
       try {
         const response = await axiosInstance.get<Product[]>(
           "/api/admin/products"
         );
-        console.log(response.data);
-        setProducts(response.data);
+        
+         setProducts(response.data);
+         
+       
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
     fetchProductData();
+    const interval = setInterval(fetchProductData, 300000);
+    return () => clearInterval(interval);
+
   }, []);
  
-
 
 
   const addToCart = async (
@@ -269,7 +282,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           }
           
         );
-        //console.log(response.data);
+      
         if (response.data.success) {
           setCartData(response.data.cartData);
          
@@ -328,7 +341,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
     
   };
-  console.log(cartData);
+ 
   const updateCartItem = async (
     productId: string,
     frameSize: string,
@@ -394,7 +407,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     sessionStorage.removeItem("buyNowItem");
   };
  
-   console.log(cartData);
+   
  
   
   

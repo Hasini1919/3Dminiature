@@ -54,7 +54,7 @@ const Secure_CheckoutSection = () => {
         </p>
         </div>
         <div>
-        <p className="text-xs text-gray-500 text-left mt-4 bg-gray-100 rounded p-2">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <Link href="/Privacy" ><span className="text-red-500 font-bold"> Privacy policy </span></Link></p>
+        <p className="text-xs text-gray-500 text-left mt-4 bg-gray-100 rounded p-2">Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <Link href="/privacy" ><span className="text-red-500 font-bold"> Privacy policy </span></Link></p>
         </div>
         <p className="text-xs text-gray-500 text-left mt-4 bg-gray-100 rounded p-3.5">
         Pay securely by Credit or Debit card  through westerPay.

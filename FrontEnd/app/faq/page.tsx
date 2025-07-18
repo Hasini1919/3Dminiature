@@ -23,7 +23,7 @@ export default function FAQPage() {
     },
     {
       question: 'Do you ship internationally?',
-      answer: 'Yes, we ship abroad through FedEx and DHL.',
+      answer: 'No, we currently do not offer international shipping. We only deliver within Sri Lanka .',
       category: 'Shipping',
     },
     {
@@ -33,7 +33,7 @@ export default function FAQPage() {
     },
     {
       question: 'How long does delivery take?',
-      answer: '3–5 days locally, 7–12 days internationally.',
+      answer: '3–5 days locally',
       category: 'Shipping',
     },
   ];

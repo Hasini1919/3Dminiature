@@ -28,6 +28,8 @@ const addProducts = async (req, res) => {
 const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
+    console.log("product details from admin");
+    console.log(products);
    console.log(products);
     res.json(products);
   } catch (error) {

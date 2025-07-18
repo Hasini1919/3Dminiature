@@ -106,7 +106,32 @@ const Payment_Section = () => {
           toast.error(response.data.message || "Order failed. Try again.");
         }
       } else if (paymentMethod === "payhere") {
-        router.push("/OrderPlaced/Payment");
+         const stripeOrder = {
+         items: orderItems.map(item => ({
+         productName: item.name,
+         quantity: item.quantity,
+         price: totalAmount,
+    })),
+      };
+         try {
+    const response = await axiosInstance.post("/api/checkout/create-checkout-session", stripeOrder);
+
+  
+    const stripe = await (await import('@stripe/stripe-js')).loadStripe(
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+    );
+    
+  
+    if (!stripe) {
+      toast.error("Stripe failed to load.");
+      return;
+    }
+
+    await stripe.redirectToCheckout({ sessionId: response.data.id });
+  } catch (error) {
+    console.error("Stripe checkout error:", error);
+    toast.error("Payment redirection failed.");
+  }
       }
     } catch (error) {
       console.error("Order placement error:", error);
