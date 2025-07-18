@@ -9,7 +9,7 @@ const generateToken = (user) => {
     return jwt.sign(
         { id: user._id, email: user.email },
         process.env.JWT_SECRET, // In production, use environment variable
-        { expiresIn: '1d' }
+        { expiresIn: '7d' }
     );
 };
 
