@@ -6,28 +6,49 @@ import {
     googleCallback, 
     getCurrentUser,
     forgotPassword,
-    resetPassword 
+    resetPassword,
+    facebookCallback 
 } from '../controllers/authController.js';
 import authUser from "../middleware/auth.js";
 const router = express.Router();
 
+// Existing routes (unchanged)
 router.post('/signup', signup);
-
 router.post('/login', login);
-
 router.post('/forgot-password', forgotPassword);
-
 router.post('/reset-password', resetPassword);
+router.get('/me', getCurrentUser);
 
+// Google routes (unchanged)
 router.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
 );
-
 router.get('/google/callback',
     passport.authenticate('google', { session: false }),
     googleCallback
 );
 
-router.get('/me', authUser,getCurrentUser);
+router.get('/me', getCurrentUser);
+// NEW: Facebook routes
+router.get('/facebook',
+    passport.authenticate('facebook', { scope: ['email', 'public_profile'] })
+);
+router.get('/facebook/callback',
+    passport.authenticate('facebook', { session: false }),
+    facebookCallback
+);
+
+// Instagram routes
+router.get('/instagram',
+    passport.authenticate('instagram', { scope: ['user_profile'] })
+);
+
+router.get('/instagram/callback',
+    passport.authenticate('instagram', { session: false }),
+    (req, res) => {
+        // You can customize this
+        res.json({ message: 'Instagram login success', user: req.user });
+    }
+);
 
 export default router;
