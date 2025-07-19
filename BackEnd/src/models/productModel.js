@@ -1,4 +1,4 @@
-{/*
+
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
@@ -29,7 +29,6 @@ productSchema.index({
 
 // Create model
 const Products =
-  mongoose.models.Product || mongoose.model("Products", productSchema);
+  mongoose.models.products || mongoose.model("products", productSchema);
 export default Products;
 
-*/}

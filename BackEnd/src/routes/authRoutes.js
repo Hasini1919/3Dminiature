@@ -8,7 +8,7 @@ import {
     forgotPassword,
     resetPassword 
 } from '../controllers/authController.js';
-
+import authUser from "../middleware/auth.js";
 const router = express.Router();
 
 router.post('/signup', signup);
@@ -28,6 +28,6 @@ router.get('/google/callback',
     googleCallback
 );
 
-router.get('/me', getCurrentUser);
+router.get('/me', authUser,getCurrentUser);
 
 export default router;

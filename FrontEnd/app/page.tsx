@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div>
       {/* <ShopPage/> */}
-      {/* <Login /> */}
+      <Login />
       {/* <Slidebar/> */}
       {/* <OrderPlaced /> */}
       {/* <PayHere/> */}

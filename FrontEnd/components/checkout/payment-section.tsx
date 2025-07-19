@@ -59,7 +59,7 @@ const Payment_Section = () => {
             price: product.price,
             name: product.name,
             
-            imageUrl: product.imageUrl,
+            imageUrl: product.image,
           });
         }
       } else {

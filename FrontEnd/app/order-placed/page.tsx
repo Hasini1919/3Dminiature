@@ -261,7 +261,7 @@ const OrderConfirmed = () => {
                 <div key={index} className="p-6">
                   <div className="flex flex-col sm:flex-row gap-6">
                     <img
-                      src={`http://localhost:5500${item.imageUrl}`}
+                    src={`http://localhost:5500/products/${item.imageUrl[0]}`}
                       alt={item.name}
                       className="w-24 h-24 object-cover rounded-lg"
                     />

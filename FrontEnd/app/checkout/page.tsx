@@ -1,6 +1,6 @@
 "use client";
 
-import {  useRef } from "react";
+import {  useEffect, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import OrderSummary from "@/components/checkout/order-summary";
 import AddressForm from "@/components/checkout/billing-form";
@@ -18,6 +18,7 @@ const OrderPlaced = () => {
     cartData,
     isAddressComplete,
     shippingSame,
+    setIsBuyNow,
     address,
   } = useAppContext();
 
@@ -83,6 +84,11 @@ const OrderPlaced = () => {
       progressClassName: "!bg-white",
     });
   };
+   
+  useEffect(() => {
+  setIsBuyNow(false);
+  sessionStorage.removeItem("buyNowItem");
+}, []);
 
   if (!cartData && !buyNowItem) {
     return (

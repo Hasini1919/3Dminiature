@@ -10,6 +10,7 @@ import React, {
 import axiosInstance from "@/services/api";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { getCurrentUser } from "@/utils/auth-utils/api";
 interface Address {
   FirstName: string;
   LastName: string;
@@ -38,7 +39,10 @@ type Product = {
   _id: string;
   name: string;
   price: number;
-  imageUrl: string;
+  image: string[];
+  category:string,
+  themeColor:string,
+  
 };
 
 interface CartItem {
@@ -67,6 +71,7 @@ interface BuyNowItem {
   uploadedImageUrls:string[];
   quantity: number;
   customText?: string;
+  //productImage:string[];
 }
 
 interface AppContextType {
@@ -86,6 +91,7 @@ interface AppContextType {
   shippingCities: string[];
   couponCode: string;
   isBuyNow: boolean;
+   user: any;
   
   
   setIsBuyNow:React.Dispatch<React.SetStateAction<boolean>>;
@@ -104,6 +110,7 @@ interface AppContextType {
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   setCartData: React.Dispatch<React.SetStateAction<CartData>>;
   setBuyNowItem: React.Dispatch<React.SetStateAction<BuyNowItem | null>>;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
 
   addToCart: (
     productId: string,
@@ -112,7 +119,9 @@ interface AppContextType {
     themeColor: string,
     uploadedImageFile: File[],
     quantity: number,
-    customText?: string
+    isBuyNow:boolean,
+    customText?: string,
+    
   ) => void;
 
   updateCartItem: (
@@ -187,6 +196,15 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [shippingDistricts, setShippingDistricts] = useState<string[]>([]);
   const [shippingCities, setShippingCities] = useState<string[]>([]);
   const [isBuyNow, setIsBuyNow] = useState(false);
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+  const fetchUser = async () => {
+    const userData = await getCurrentUser();
+    setUser(userData);
+  };
+
+  fetchUser();
+}, []);
 
   useEffect(() => {
   const fetchCartData = async () => {
@@ -218,8 +236,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setBuyNowItem(JSON.parse(storedData));
   }
 }, []);
-
-  
+ 
  
   useEffect(() => {
    
@@ -242,7 +259,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   }, []);
  
-
+console.log(products);
 
   const addToCart = async (
     productId: string,
@@ -251,10 +268,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     themeColor: string,
     uploadedImageFile: File[],
     quantity: number,
-    customText?: string
+    isBuyNow: boolean,
+    customText?: string,
+    
   ) => {
     if (!frameSize || !frameColor || !themeColor || uploadedImageFile.length === 0 || quantity <= 0) {
-      console.error("Please fill all cart fields properly.");
+      //alert("Please select some product options before adding this product to your cart.");
+      //console.error("Please fill all cart fields properly.");
       return;
     }
 
@@ -284,13 +304,15 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         );
       
         if (response.data.success) {
-          setCartData(response.data.cartData);
+        setCartData(response.data.cartData);
+        toast.success("Added to cart successfully!");
          
         }
         
-        
+        console.log("addtocard");
       } catch (error) {
         console.error("Error adding to cart:", error);
+        toast.error("Something went wrong while adding to cart.");
       }
     }
     else{
@@ -320,18 +342,19 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         frameColor,
         themeColor,
         quantity,
-        customText,
+        customText: customText || "",
         uploadedImageUrls,
+        
       };
 
      
       sessionStorage.setItem("buyNowItem", JSON.stringify(buyNowObject));
 
-     
+     console.log("buynow");
       setBuyNowItem(buyNowObject);
 
      
-      router.push("/OrderPlaced");
+      router.push("/checkout");
     }
   } catch (error) {
     console.error("Error uploading images for buy now:", error);
@@ -341,6 +364,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
     
   };
+  console.log(buyNowItem);
  
   const updateCartItem = async (
     productId: string,
@@ -453,6 +477,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         clearBuyNow,
         discountedTotal,
         setDiscountedTotal,
+        user,
+        setUser,
         router,
       }}
     >

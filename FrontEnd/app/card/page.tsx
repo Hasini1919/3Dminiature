@@ -192,7 +192,7 @@ const Card = () => {
         </div>
 
         {isCartEmpty ? (
-          <div className="flex flex-col items-center justify-center py-8 md:py-12">
+          <div className="flex flex-col items-center justify-center py-8 md:py-12 h-[550px] ">
             <Image src={EmptyCart} alt="Empty cart" width={100} height={100} />
 
             <h2 className="text-2xl md:text-3xl font-medium text-gray-800 mt-4 mb-2">
@@ -203,8 +203,8 @@ const Card = () => {
               cart.
             </p>
             <button
-              onClick={() => router.push("/all-products")}
-              className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              onClick={() => router.push("/shop")}
+              className="px-6 py-2 bg-[#cb1a2e] text-white rounded-lg hover:bg-red-800  transition-colors"
             >
               Continue Shopping
             </button>
@@ -247,9 +247,7 @@ const Card = () => {
                             <div className="flex items-center">
                               <div className="w-16 h-16 rounded-md overflow-hidden border border-gray-200">
                                 <img
-                                  src={`${"http://localhost:5500"}${
-                                    item.images[0]
-                                  }`}
+                                  src={`http://localhost:5500/products/${item.images[0]}`}
                                   alt={item.productName}
                                   className="w-full h-full object-cover"
                                 />
@@ -435,7 +433,7 @@ const Card = () => {
               </div>
 
               <button
-                onClick={() => router.push("/all-products")}
+                onClick={() => router.push("/shop")}
                 className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors mt-8 cursor-pointer "
               >
                 <Image src={Arrow} alt="arrow" />

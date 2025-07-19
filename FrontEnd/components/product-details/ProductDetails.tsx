@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-
+import { toast } from "react-toastify";
+import { useAppContext } from "@/context/AppContext";
 interface ProductDetail {
   _id: string;
   name: string;
@@ -39,7 +40,8 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState<string | null>(null);
-
+   const [showCustomAlert, setShowCustomAlert] = useState(false);
+  const {addToCart,user,isBuyNow,setIsBuyNow}=useAppContext();
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
@@ -74,6 +76,63 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
     }));
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
   };
+//handleAddtoCart Functionality
+  const handleAddToCart = () => {
+    if(!user){
+      return;
+    }
+
+        if (
+      !customization.size ||
+      !customization.frameColor ||
+      !customization.themeColor ||
+      customization.uploadedImages.length === 0 ||
+      quantity <= 0
+    ) {
+      setShowCustomAlert(true);
+      return;
+    }
+  addToCart(
+    productId,
+    customization.size,
+    customization.frameColor,
+    customization.themeColor,
+    customization.uploadedImages,
+    quantity,
+    false,
+    customText 
+  );
+  toast.success("Product added to cart!");
+};
+// In AppContext.tsx
+const handleBuyNow = async () => {
+  if (!user) return;
+
+  if (!customization.size || !customization.frameColor || 
+      !customization.themeColor || customization.uploadedImages.length === 0 || 
+      quantity <= 0) {
+    setShowCustomAlert(true);
+    return;
+  }
+
+  try {
+    setIsBuyNow(true); 
+    addToCart(
+      productId,
+      customization.size,
+      customization.frameColor,
+      customization.themeColor,
+      customization.uploadedImages,
+      quantity,
+      true,
+      customText,
+      
+    );
+    
+  } catch (error) {
+    toast.error("Failed to process Buy Now.");
+  }
+};
 
   useEffect(() => {
     return () => {
@@ -83,6 +142,7 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
       {/* Product Header */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
@@ -422,13 +482,40 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button className="px-8 py-3 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors duration-200 transform hover:scale-105">
+        <button className="px-8 py-3 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-red-500 hover:bg-red-600 transition-colors duration-200 transform hover:scale-105"
+          onClick={handleAddToCart}
+          disabled={showCustomAlert}>
           Add to Cart
         </button>
-        <button className="px-8 py-3 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 transform hover:scale-105">
+        <button className="px-8 py-3 border border-transparent rounded-lg shadow-sm text-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 transform hover:scale-105"
+        onClick={handleBuyNow}>
           Buy Now
         </button>
       </div>
+      {showCustomAlert && (
+  <>
+    {/* Background overlay */}
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-20 z-40"
+      onClick={() => setShowCustomAlert(false)}
+    />
+    
+    {/* Alert dialog */}
+    <div className="fixed top-2  left-1/2 transform -translate-x-1/2 z-50 shadow-xl">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center animate-pop-in">
+        <p className="mb-4 font-medium text-gray-800">
+          Please select some product options before adding this product to your cart.
+        </p>
+        <button
+          onClick={() => setShowCustomAlert(false)}
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </>
+)}
     </div>
   );
 };

@@ -5,7 +5,8 @@ import Script from "next/script";
 import Slidebar from "../components/Admin_sidebar/Slidebar";
 import { AppContextProvider } from "@/context/AppContext";
 import { addProduct } from "@/utils/Admin/api";
-
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 
 
@@ -24,7 +25,9 @@ export default function RootLayout({
         />
         <div className="debug">
           
-          <AppContextProvider>{children}</AppContextProvider>
+          <AppContextProvider>{children}
+             <ToastContainer position="top-center" autoClose={3000} />
+          </AppContextProvider>
         </div>
       </body>
     </html>

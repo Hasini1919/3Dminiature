@@ -101,6 +101,7 @@ if (!fs.existsSync(uploadDir)) {
 
 // Serve uploaded images
 app.use("/uploads", express.static(uploadDir));
+app.use("/products", express.static(path.join(__dirname, "products")));
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -132,10 +133,10 @@ const storage = multer.diskStorage({
 app.use("/api/products", productroutes);
 app.use("/api/product-details", productDetailsRoute);
 app.use("/api/ads", advertisementRoutes);
-app.use("/api/auth", authRoutes);
+//app.use("/api/auth", authRoutes);
 app.use("/form", addRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/form", addRoutes);
+//app.use("/form", addRoutes);
 app.use("/api/cart", cartRouter);
 app.use("/api", addressRoutes);
 app.use("/api/admin", productRoutes);

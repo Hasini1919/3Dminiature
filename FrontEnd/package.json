@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@jridgewell/set-array": "^1.2.1",
-    "@tailwindcss/postcss": "^4.1.11",
     "@stripe/stripe-js": "^7.4.0",
+    "@tailwindcss/postcss": "^4.1.11",
     "axios": "^1.8.4",
     "lucide-react": "^0.525.0",
     "next": "^15.3.5",
@@ -19,9 +19,9 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
-    "react-toastify": "^11.0.5",
     "react-range": "^1.10.0",
     "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
     "use-places-autocomplete": "^4.0.1"
   },
