@@ -1,11 +1,10 @@
-// File: src/server.js (or index.js)
-import express from "express";
+// File: src/server.js (or index.js)import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { promises as fsPromises, constants } from "fs";
 import mime from "mime-types";
 import { fileURLToPath } from "url";
-import multer from "multer";
+import multer from 'multer';
 import { v4 as uuidv4 } from "uuid";
 import passport from "passport";
 import path, { dirname } from 'path';
@@ -16,8 +15,12 @@ import productroutes from "./routes/productRoute.js";
 import productDetailsRoute from "./routes/productDetailsRoute.js";
 import advertisementRoutes from "./routes/advertisementRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import addRoutes from "./routes/admin_routes/add_order.js";
-import addressRoutes from "./routes/address-routes.js";
+import addRoutes from './routes/admin_routes/add_order.js';
+import facebookAuthRoutes from './routes/facebookAuthRoutes.js';
+import instagramAuthRoutes from './routes/instagramAuthRoutes.js';
+import setupFacebookStrategy from './config/facebookStrategy.js'; 
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import User from './models/User.js';import addressRoutes from "./routes/address-routes.js";
 import cartRouter from "./routes/cart-routes.js";
 import productRoutes from "./routes/product-routes.js";
 import couponRouter from "./routes/coupon-routes.js";
@@ -34,9 +37,62 @@ import connectDB from "./config/db.js";
 // Load environment variables
 dotenv.config();
 
+// Log for debug
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+console.log('FB_APP_ID:', process.env.FB_APP_ID);
+
+// ✅ Setup Facebook Passport strategy
+setupFacebookStrategy(passport);
+
+// ✅ Setup Google Passport strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:5500/api/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ googleId: profile.id });
+
+    if (!user) {
+      const email = profile.emails?.[0]?.value;
+      if (email) {
+        user = await User.findOne({ email });
+      }
+
+      if (user) {
+        user.googleId = profile.id;
+        user.picture = profile.photos?.[0]?.value;
+        await user.save();
+      } else {
+        user = await User.create({
+          googleId: profile.id,
+          name: profile.displayName,
+          email,
+          picture: profile.photos?.[0]?.value,
+        });
+      }
+    }
+
+    return done(null, user);
+  } catch (error) {
+    return done(error, null);
+  }
+}));
+
+// ✅ Serialize/deserialize user (session optional)
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
+});
 
 // Express app
 const app = express();
@@ -59,6 +115,19 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(passport.initialize());
+const startServer = async () => {
+  try {
+    await connectDB();
+    console.log('MongoDB connected successfully');
+
+    app.use(cors({
+      origin: 'http://localhost:3000',
+      methods: 'GET,POST,PUT,PATCH,DELETE',
+      credentials: true
+    }));
+
+    app.use(express.json());
+    app.use(passport.initialize());
 
 {/*}
 // Configure multer for file uploads
@@ -94,7 +163,7 @@ const upload = multer({
   },
 });
 */}
-
+{/*
 // Ensure "uploads" directory exists
 app.use('/api/auth', authRoutes);
 // Ensure "uploads" directory exists
@@ -102,6 +171,19 @@ const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+    // Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/auth', facebookAuthRoutes);
+
+    app.get('/', (req, res) => {
+      res.send('API is running...');
+    });
+
+    // Ensure uploads folder exists
+    const uploadDir = path.join(process.cwd(), 'src/uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
 
 // Serve uploaded images
 app.use("/uploads", express.static(uploadDir));
@@ -376,3 +458,18 @@ app.use('/api/notifications',notificationRoutes)
 
 
 
+    app.use('/uploads', express.static(uploadDir));
+    app.use('/form', addRoutes);
+    app.use('/api/auth', instagramAuthRoutes);
+
+   
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      console.log('✅ Facebook and Google OAuth strategies configured.');
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+  }
+};
+
+startServer();
