@@ -7,7 +7,7 @@ const RefundRequestSchema = new mongoose.Schema({
   email: { type: String, required: true },
   requestDate: { type: Date, required: true },
   productName: { type: String, required: true },
-  productId: { type: String, required: true },
+  orderId: { type: String, required: true },
   refundReason: { type: String, required: true },
   invoice: { type: String, enum: ["yes", "no"], required: true },
   readPolicy: { type: String, enum: ["yes", "no"], required: true },
