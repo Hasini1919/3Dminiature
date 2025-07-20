@@ -3,23 +3,23 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import {
-  FaHeart,
-  FaRegHeart,
-  FaBalanceScale,
   FaExpand,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-
-interface ProductImageGalleryProps {
-  image: string[];
-}
 import axiosInstance from "@/services/api";
+import AddToWish from "../addtowish/AddToWish";
+import AddReview from "../review/AddReview";
+import ProductReviews from "../review/ProductReviews";
 
-const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
+const ProductImageGallery = ({
+  images,
+  product,
+}: {
+  images: string[];
+  product: any;
+}) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isInCompare, setIsInCompare] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<
     Record<number, boolean>
@@ -32,8 +32,8 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
   const THUMBNAILS_PER_PAGE = 3;
 
   // Filter out empty/invalid images
-  const validImages = Array.isArray(image)
-    ? image.filter((img) => img && typeof img === "string" && img.trim() !== "")
+  const validImages = Array.isArray(images)
+    ? images.filter((img) => img && typeof img === "string" && img.trim() !== "")
     : [];
 
   // Reset when images change
@@ -41,10 +41,8 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
     setSelectedImageIndex(0);
     setImageLoadErrors({});
     setThumbnailStartIndex(0);
-  }, [image]);
+  }, [images]);
 
-  const handleWishlist = () => setIsWishlisted(!isWishlisted);
-  const handleCompare = () => setIsInCompare(!isInCompare);
   const handleZoom = () => setIsZoomed(!isZoomed);
 
   // Handle mouse movement for zoom effect
@@ -70,7 +68,6 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
    * Simple image URL constructor - assumes backend serves images correctly
    */
   const getImageUrl = (imagePath: string): string => {
-
     if (!imagePath || imagePath.trim() === "") {
       return "/placeholder-image.jpg";
     }
@@ -150,12 +147,7 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
             <p className="text-lg font-medium">No Image Available</p>
           </div>
         </div>
-        <ActionButtons
-          isWishlisted={isWishlisted}
-          isInCompare={isInCompare}
-          onWishlist={handleWishlist}
-          onCompare={handleCompare}
-        />
+        <AddToWish productId={product._id} variant="button" />
       </div>
     );
   }
@@ -174,7 +166,7 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
       <div className="relative group">
         <div
           ref={imageRef}
-          className="relative w-full h-96 bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in"
+          className="relative w-full h-96 bg-neutral-200 overflow-hidden rounded-xl"
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -190,11 +182,13 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
               className="object-cover transition-transform duration-300"
               style={{
                 transform: isHovering
-                  ? `scale(2) translate(${25 - mousePosition.x / 2}%, ${
-                      25 - mousePosition.y / 2
-                    }%)`
+                  ? `scale(1.4) translate(
+                  ${Math.max(-5, Math.min(5, 5 - mousePosition.x / 10))}%,
+                  ${Math.max(-5, Math.min(5, 5 - mousePosition.y / 10))}%
+                  )`
                   : "scale(1)",
                 transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
+                transition: "transform 0.3s ease",
               }}
               unoptimized
               priority={selectedImageIndex === 0}
@@ -228,13 +222,7 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
             </div>
           )}
         </div>
-
-        <ActionButtons
-          isWishlisted={isWishlisted}
-          isInCompare={isInCompare}
-          onWishlist={handleWishlist}
-          onCompare={handleCompare}
-        />
+        <AddToWish productId={product._id} variant="button" />
       </div>
 
       {/* Thumbnails */}
@@ -348,47 +336,16 @@ const ProductImageGallery = ({ image }: ProductImageGalleryProps) => {
           </div>
         </div>
       )}
+
+     {/* Reviews and Add Review Component */}
+      <AddReview productId={product._id} />
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
+        <ProductReviews productId={product._id} />
+      </div>
     </div>
   );
 };
 
-// Action Buttons Component
-const ActionButtons = ({
-  isWishlisted,
-  isInCompare,
-  onWishlist,
-  onCompare,
-}: {
-  isWishlisted: boolean;
-  isInCompare: boolean;
-  onWishlist: () => void;
-  onCompare: () => void;
-}) => (
-  <div className="flex justify-center space-x-4 mt-4">
-    <button
-      onClick={onWishlist}
-      className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 ${
-        isWishlisted
-          ? "bg-red-500 text-white shadow-lg"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-      }`}
-    >
-      {isWishlisted ? <FaHeart /> : <FaRegHeart />}
-      <span>Wishlist</span>
-    </button>
-
-    <button
-      onClick={onCompare}
-      className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 ${
-        isInCompare
-          ? "bg-blue-500 text-white shadow-lg"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-      }`}
-    >
-      <FaBalanceScale />
-      <span>Compare</span>
-    </button>
-  </div>
-);
 
 export default ProductImageGallery;

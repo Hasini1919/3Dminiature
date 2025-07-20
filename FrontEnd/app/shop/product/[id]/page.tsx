@@ -14,7 +14,7 @@ interface ProductDetail {
   price: number;
   discount?: number;
   rating: number;
-  image: string[];
+  images: string[];
   frameColorOptions?: string[] | { name: string; code: string }[];
   themeColorOptions?: string[] | { name: string; code: string }[];
   sizeOptions?: string[];
@@ -46,15 +46,15 @@ export default function ProductPage() {
         // Process images - handle both string and array formats
         let images: string[] = [];
 
-        if (productData.image) {
-          if (Array.isArray(productData.image)) {
+        if (productData.images) {
+          if (Array.isArray(productData.images)) {
             // If image is already an array
             images = productData.image.filter(
               (img : string) => img && img.trim() !== ""
             );
-          } else if (typeof productData.image === "string") {
+          } else if (typeof productData.images === "string") {
             // If image is a string, add it to array
-            images = [productData.image];
+            images = [productData.images];
           }
         }
 
@@ -185,11 +185,11 @@ export default function ProductPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Product Images
               <span className="text-sm font-normal text-gray-500 ml-2">
-                ({product.image.length} image
-                {product.image.length !== 1 ? "s" : ""})
+                ({product.images.length} images
+                {product.images.length !== 1 ? "s" : ""})
               </span>
             </h2>
-            <ProductImageGallery image={product.image} />
+            <ProductImageGallery images={product.images} product={product} />
           </div>
 
           {/* Product Details */}

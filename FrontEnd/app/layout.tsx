@@ -5,7 +5,7 @@ import Script from "next/script";
 import Slidebar from "../components/Admin_sidebar/Slidebar";
 import { AppContextProvider } from "@/context/AppContext";
 import { addProduct } from "@/utils/Admin/api";
-
+import { WishlistProvider } from "@/context/WishlistContext";
 
 
 
@@ -23,8 +23,9 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         <div className="debug">
-          
-          <AppContextProvider>{children}</AppContextProvider>
+          <AppContextProvider>
+            <WishlistProvider>{children}</WishlistProvider>
+          </AppContextProvider>
         </div>
       </body>
     </html>

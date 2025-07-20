@@ -5,17 +5,20 @@ import OrderPlaced from "./checkout/page";
 import OrderConfirmed from "./order-placed/page";
 import PayHere from "./payment/page";
 import Card from "./card/page";
+import WishlistPage from "./wishlist/page";
 
 export default function Home() {
   return (
     <div>
-      {/* <ShopPage/> */}
+      <ShopPage/>
       {/* <Login /> */}
       {/* <Slidebar/> */}
       {/* <OrderPlaced /> */}
       {/* <PayHere/> */}
       {/* <OrderConfirmed/> */}
       {/* <Card/> */}
+      {/* <WishlistPage /> */}
+  
     </div>
   );
 }

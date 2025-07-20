@@ -6,13 +6,15 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
 import axiosInstance from "@/services/api";
 
-interface Products {
+interface Product {
   _id: string;
   name: string;
   description: string;
   price: number;
-  image: string;
+  images: string[];
   rating: number;
+  averageRating: number;
+  discountPercentage?: number;
 }
 
 interface ProductCarouselProps {
@@ -26,10 +28,10 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   title = "YOU MIGHT ALSO LIKE",
   className = "",
 }) => {
-  const [products, setProducts] = useState<Products[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
+  const [visibleProducts, setVisibleProducts] = useState<Product[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 3;
 
@@ -183,13 +185,13 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                 >
                   <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100">
                     <ProductCard
-                      image={
-                        product.image && product.image.length > 0
+                      images={
+                        product.images && product.images.length > 0
                           ? [
-                              product.image[0].startsWith("http")
-                                ? product.image[0]
+                              product.images[0].startsWith("http")
+                                ? product.images[0]
                                 : (() => {
-                                    const parts = product.image[0].split("/");
+                                    const parts = product.images[0].split("/");
                                     if (parts.length === 2) {
                                       return `${
                                         axiosInstance.defaults.baseURL
@@ -202,10 +204,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                             ]
                           : ["/default-product.jpg"]
                       }
-                      title={product.name}
+                      _id={product._id}
                       desc={product.description}
-                      rating={product.rating}
+                      averageRating={product.averageRating} // or product.averageRating ?? undefined if unsure
+                      title={product.name}
                       price={product.price}
+                      discountPercentage={product.discountPercentage || 0}
                       className="shadow-none transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>

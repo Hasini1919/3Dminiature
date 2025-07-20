@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema(
     },
 
     frameSize: {
-      type: String,
+      type: [String],
       required: true,
     },
 
@@ -41,9 +41,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    rating: { 
-        type: Number, 
-        required: true 
+
+    discountPercentage: {
+      type: Number,
+      default: 0, // optional
     },
 
     detailed_description: {
@@ -56,7 +57,6 @@ const productSchema = new mongoose.Schema(
 
 // Indexes
 productSchema.index({ category: 1 });
-productSchema.index({ rating: -1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({
   name: "text",

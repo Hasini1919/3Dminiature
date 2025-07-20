@@ -1,5 +1,6 @@
 import ProductService from "../service/productService.js";
-
+import Advertisement from "../models/Advertisement.js";
+import Product from "../models/Admin_models/Product.js";
 export const getProducts = async (req, res) => {
   const {
     search,
@@ -71,10 +72,17 @@ export const getProducts = async (req, res) => {
 
     // Sorting logic
     let sortOption = {};
-    if (sortBy === "asc") sortOption.price = 1;
-    else if (sortBy === "desc") sortOption.price = -1;
-    else sortOption.rating = -1;
 
+    if (sortBy === "rating") {
+      sortOption = { averageRating: -1 };
+    } else if (sortBy === "desc") {
+      sortOption = { price: -1 };
+    } else if (sortBy === "asc") {
+      sortOption = { price: 1 };
+    } else {
+      sortOption = { _id: -1 };
+    }
+    
     // Execute query with pagination
     const { products, pagination } = await ProductService.getPaginatedProducts(
       filters,
@@ -101,5 +109,29 @@ export const getProducts = async (req, res) => {
     });
   }
 };
-// Note: The ProductService.getPaginatedProducts method should handle pagination logic
-// and return the products along with pagination details like total count, current page, etc.
+
+export const getProductWithAd = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const ad = await Advertisement.findOne({ productId });
+
+    let discount = product.discount || 0;
+    if (ad && ad.discountPercentage) {
+      discount = ad.discountPercentage;
+    }
+
+    const discountedPrice = Math.round(product.price - (product.price * discount / 100));
+
+    res.json({
+      ...product.toObject(),
+      discount,
+      discountedPrice,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

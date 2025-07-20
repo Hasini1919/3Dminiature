@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 interface ProductDetail {
@@ -8,6 +8,8 @@ interface ProductDetail {
   name: string;
   price: number;
   discount?: number;
+  advertisementDiscount?: number;
+  discountedPrice?: number;
   rating: number;
   frameColorOptions?: string[] | { name: string; code: string }[];
   themeColorOptions?: string[] | { name: string; code: string }[];
@@ -28,7 +30,16 @@ interface CustomizationData {
   uploadedImages: File[];
 }
 
-const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
+const  calculateDiscountedPrice = (
+  price: number,
+  productDiscount?: number,
+  advertisementDiscount?: number
+): number => {
+  const discount = advertisementDiscount ?? productDiscount ?? 0;
+  return price - (price * discount) / 100;
+}
+
+const ProductDetails: React.FC<ProductDetailsProps> = ({ product, productId }) => {
   const [customization, setCustomization] = useState<CustomizationData>({
     frameColor: "",
     themeColor: "",
@@ -39,6 +50,7 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [discountedPrice, setDiscountedPrice] = useState<number>(product.price);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -74,6 +86,16 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
     }));
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
   };
+
+useEffect(() => {
+  const price = calculateDiscountedPrice(
+    product.price,
+    product.discount,
+    product.advertisementDiscount
+  );
+  setDiscountedPrice(price);
+}, [product.price, product.discount, product.advertisementDiscount]);
+
 
   useEffect(() => {
     return () => {
@@ -113,23 +135,26 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
         </div>
 
         {/* Price */}
-        <div className="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          {product.discount ? (
-            <div className="flex items-center flex-wrap gap-2">
-              <span className="text-4xl font-bold text-red-600">
-                LKR {(product.price - product.discount).toFixed(2)}
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">{product.name}</h2>
+          {product.discount || product.advertisementDiscount ? (
+            <div className="flex items-center space-x-2">
+              <span className="text-red-500 font-bold text-lg">
+                LKR {discountedPrice.toFixed(2)}
               </span>
-              <span className="text-2xl text-gray-500 line-through">
+              <span className="line-through text-gray-500 text-sm">
                 LKR {product.price.toFixed(2)}
               </span>
-              <span className="bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full">
-                Save LKR {product.discount.toFixed(2)}
-              </span>
+              {product.discount && product.discount > 0 && (
+                <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">
+                  {product.discount}% off
+                </span>
+              )}
             </div>
           ) : (
-            <span className="text-4xl font-bold text-red-600">
+            <div className="text-lg font-bold">
               LKR {product.price.toFixed(2)}
-            </span>
+            </div>
           )}
         </div>
       </div>

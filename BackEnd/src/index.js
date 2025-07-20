@@ -25,7 +25,8 @@ import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
 import  "./config/passport.js";
 import connectDB from "./config/db.js";
-
+import wishlistRoutes from "./routes/wishlistRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -108,7 +109,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-    
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));    
  {/*}   
 const uploadDir = path.join(process.cwd(), "src/uploads");
 if (!fsSync.existsSync(uploadDir)) {
@@ -141,6 +142,8 @@ app.use("/api/admin", productRoutes);
 app.use("/api/apply", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api", uploadRouter);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Default route
 app.get("/", (req, res) => {

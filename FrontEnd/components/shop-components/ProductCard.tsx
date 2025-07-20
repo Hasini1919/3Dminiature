@@ -1,93 +1,197 @@
 import React from "react";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa"; // Includes half and empty star
-import Image from "next/image"; // Next.js Image optimization
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { FiHeart, FiShoppingCart } from "react-icons/fi";
+import Image from "next/image";
 import axiosInstance from "@/services/api";
+import AddToWish from "@/components/addtowish/AddToWish";
 
 interface ProductCardProps {
-  image: string[];
+  _id: string;
   title: string;
+  images: string[];
   desc: string;
-  rating: number;
+  averageRating?: number;
   price: number;
-  className?: string; // Optional extra classes
+  discountPercentage?: number;
+  className?: string;
 }
 
+
 const ProductCard: React.FC<ProductCardProps> = ({
-  image,
-  title,
+  _id,
+  images,
   desc,
-  rating,
+  title,
+  averageRating,
   price,
+  discountPercentage = 0,
   className = "",
 }) => {
-  // Format price in LKR
-  const formattedPrice = price.toLocaleString("en-US", {
+  // Discount logic
+  const hasDiscount = discountPercentage > 0;
+  const discountedPrice = hasDiscount
+    ? Math.round(price - price * (discountPercentage / 100))
+    : price;
+
+  const formattedPrice = discountedPrice.toLocaleString("en-US", {
     style: "currency",
     currency: "LKR",
   });
 
-  // Render dynamic rating stars
-  const renderStars = () => {
-    const safeRating = Number.isFinite(rating) ? rating : 0;
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const originalPrice = price.toLocaleString("en-US", {
+    style: "currency",
+    currency: "LKR",
+  });
+
+  // Render rating stars only if averageRating is valid
+  const renderStars = (averageRating?: number) => {
+    // Return null if rating is missing, undefined, null, or not a number
+    if (
+      typeof averageRating !== "number" ||
+      isNaN(averageRating) ||
+      averageRating < 0
+    ) {
+      return (
+        <div className="flex items-center space-x-1 text-xs mb-2 text-gray-400">
+          <span className="text-gray-400"></span>
+        </div>
+      );
+    }
+
+    // Clamp rating between 0 and 5
+    const clampedRating = Math.max(0, Math.min(5, averageRating));
+    const fullStars = Math.floor(clampedRating);
+    const hasHalfStar = clampedRating % 1 >= 0.5;
+    const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
 
     return (
-      <div className="flex items-center space-x-1 text-sm sm:text-base">
-        {[...Array(fullStars)].map((_, index) => (
-          <FaStar key={`full-${index}`} className="text-yellow-500" />
-        ))}
-        {hasHalfStar && <FaStarHalfAlt key="half" className="text-yellow-500" />}
-        {[...Array(emptyStars)].map((_, index) => (
-          <FaRegStar key={`empty-${index}`} className="text-gray-300" />
-        ))}
-        <span className="ml-2 text-gray-600 font-medium">({rating.toFixed(1)})</span>
+      <div className="flex items-center space-x-1 text-xs mb-2">
+        <div className="flex">
+          {[...Array(fullStars)].map((_, index) => (
+            <FaStar key={`full-${index}`} className="text-yellow-400 text-xs" />
+          ))}
+          {hasHalfStar && (
+            <FaStarHalfAlt key="half" className="text-yellow-400 text-xs" />
+          )}
+          {[...Array(emptyStars)].map((_, index) => (
+            <FaRegStar
+              key={`empty-${index}`}
+              className="text-gray-300 text-xs"
+            />
+          ))}
+        </div>
+        <span className="text-gray-500 text-xs font-medium">
+          ({clampedRating.toFixed(1)})
+        </span>
       </div>
     );
   };
 
   return (
-    <div className={`bg-white p-4 rounded-lg shadow-md ${className}`}>
-      {image.map((img: string, index: number) => {
-        let src = img;
-        if (!img.startsWith("http")) {
-          const parts = img.split("/");
-          if (parts.length === 2) {
-            src = `${
-              axiosInstance.defaults.baseURL
-            }/products/${encodeURIComponent(parts[0])}/${encodeURIComponent(
-              parts[1]
-            )}`;
-          } else {
-            src = "/default-product.jpg";
+    <div
+      className={`group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 ${className}`}
+    >
+      <div className="relative overflow-hidden">
+        {images.map((img: string, index: number) => {
+          let src = img;
+          if (!img.startsWith("http")) {
+            const parts = img.split("/");
+            if (parts.length === 2) {
+              src = `${
+                axiosInstance.defaults.baseURL
+              }/products/${encodeURIComponent(parts[0])}/${encodeURIComponent(
+                parts[1]
+              )}`;
+            } else {
+              src = "/default-product.jpg";
+            }
           }
-        }
-        return (
-          <Image
-            key={img}
-            src={src}
-            alt={title || "Product image"}
-            className="w-full h-48 object-cover rounded-md mb-4"
-            width={500}
-            height={500}
-            unoptimized={true}
-            priority={index === 0}
-            onError={(e) => {
-              const target = e.currentTarget as HTMLImageElement;
-              target.src = "/default-product.jpg";
-              target.onerror = null;
-            }}
-          />
-        );
-      })}
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-600 mb-4 line-clamp-2">{desc}</p>
 
-      {/* Show dynamic rating */}
-      <div className="mb-4">{renderStars()}</div>
+          return (
+            <div key={img} className="relative">
+              {/* Discount badge - positioned in top left */}
+              {hasDiscount && (
+                <div className="absolute top-3 left-3 z-20">
+                  <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-lg">
+                    -{discountPercentage}%
+                  </span>
+                </div>
+              )}
 
-      <p className="text-lg font-semibold">{formattedPrice}</p>
+              {/* Like button */}
+              <div>
+                {/* <FiHeart className="text-gray-600 hover:text-red-500 transition-colors text-sm" />{" "} */}
+                <AddToWish productId={_id} variant="icon-only" />{" "}
+              </div>
+
+              {/* Enhanced image with overlay effects */}
+              <div className="relative overflow-hidden">
+                <Image
+                  src={src}
+                  alt="Product image"
+                  className="w-full h-56 sm:h-48 md:h-64 lg:h-56 xl:h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                  width={500}
+                  height={500}
+                  unoptimized={true}
+                  priority={index === 0}
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    target.src = "/default-product.jpg";
+                    target.onerror = null;
+                  }}
+                />
+                {/* Subtle overlay on hover */}
+                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Content section with increased font sizes */}
+      <div className="p-3 space-y-2">
+        {/* Title - increased font size */}
+        <h3 className="font-semibold text-gray-900 text-base leading-tight line-clamp-2 group-hover:text-red-600 transition-colors">
+          {title}
+        </h3>
+
+        {/* Description - increased font size */}
+        <p className="text-gray-600 text-base line-clamp-2 leading-relaxed">
+          {desc}
+        </p>
+
+        {/* Rating */}
+        {averageRating !== undefined &&
+          averageRating !== null &&
+          renderStars(averageRating)}
+
+        {/* Price and cart section */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex flex-col">
+            <div className="flex items-center space-x-2">
+              {/* Updated price color to red-600 */}
+              <span className="text-lg font-bold text-red-600">
+                {formattedPrice}
+              </span>
+              {hasDiscount && (
+                <span className="text-xs text-gray-400 line-through">
+                  {originalPrice}
+                </span>
+              )}
+            </div>
+            {hasDiscount && (
+              <span className="text-xs text-green-600 font-medium">
+                Save {(((price - discountedPrice) / price) * 100).toFixed(0)}%
+              </span>
+            )}
+          </div>
+
+          {/* Cart button */}
+          <button className="p-2 rounded-full bg-red-50 hover:bg-red-500 text-red-500 hover:text-white transition-all duration-200 hover:scale-110 shadow-sm hover:shadow-md">
+            <FiShoppingCart className="text-sm" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
