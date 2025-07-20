@@ -26,12 +26,13 @@ import productRoutes from "./routes/product-routes.js";
 import couponRouter from "./routes/coupon-routes.js";
 import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
-import  "./config/passport.js";
+//import  "./config/passport.js";
 import { routes as enquiryRoutes } from './routes/enquiryRoutes.js';
 import { routes as subscribeRoutes } from './routes/subscribeRoutes.js';
 import { routes as imageRoutes } from './routes/imageRoutes.js';
 import { routes as pdfRoutes } from './routes/pdfRoutes.js';
 import connectDB from "./config/db.js";
+import refundRoutes from "./routes/refundRoutes.js";
 
 
 // Load environment variables
@@ -235,7 +236,7 @@ app.use(enquiryRoutes);
 app.use(subscribeRoutes);
 app.use(imageRoutes);
 app.use(pdfRoutes);
-
+app.use("/api", refundRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("API is running...");
