@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-     "typeRoots": ["./types", "./node_modules/@types"],    "target": "ES2017",
+    "target": "ES2017",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    
-    
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -29,18 +27,21 @@
       "@/*": [
         "./*"
       ]
-      
     }
-    
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "FrontEnd/.next/types/**/*.ts",
     "FrontEnd/next-env.d.ts",
-    ".next/types/**/*.ts"
-, "app/my-account/orders/pending", "app/my-account/orders/cancelled", "app/my-account/orders/shipped", "app/checkout"  ],
+    ".next/types/**/*.ts",
+    "app/my-account/orders/pending",
+    "app/my-account/orders/cancelled",
+    "app/my-account/orders/shipped",
+    "app/checkout"
+  ],
   "exclude": [
     "node_modules"
   ]
 }
+

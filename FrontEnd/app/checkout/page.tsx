@@ -1,6 +1,6 @@
 "use client";
 
-import {  useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import OrderSummary from "@/components/checkout/order-summary";
 import AddressForm from "@/components/checkout/billing-form";
@@ -9,6 +9,8 @@ import PaymentSection from "@/components/checkout/payment-section";
 import CouponSection from "@/components/checkout/coupon-section";
 import SecureCheckoutSection from "@/components/checkout/secure-checkout";
 import { ToastContainer, toast } from "react-toastify";
+import Header from "@/components/header/header";
+import Footer from "@/components/footer/footer";
 
 const OrderPlaced = () => {
   const {
@@ -54,17 +56,17 @@ const OrderPlaced = () => {
     if (!address.PhoneNumber?.trim())
       newErrors.Provience = "PhoneNumber is required !";
     else if (!isValidPhoneNumber) {
-      newErrors.PhoneNumber = "Phone number must be  exactly 10 digits and correct format !";
+      newErrors.PhoneNumber = "Phone number must be exactly 10 digits and correct format !";
     }
     if (!address.Provience?.trim())
       newErrors.Provience = "Province is required !";
     if (!address.City?.trim()) newErrors.City = "City is required !";
     if (!address.Area?.trim()) newErrors.Area = "Area is required !";
     if (!address.HouseNo?.trim())
-      newErrors.HouseNo = " House No / Street No is required !";
+      newErrors.HouseNo = "House No / Street No is required !";
     else if (!AreaPattern) {
       newErrors.HouseNo =
-        "House No/ Street No must be house or Street Number and should contain atleast 2 or more Characters !";
+        "House No/ Street No must contain numbers and at least 3 characters!";
     }
     if (!address.District?.trim())
       newErrors.District = "District is required !";
@@ -84,11 +86,11 @@ const OrderPlaced = () => {
       progressClassName: "!bg-white",
     });
   };
-   
+
   useEffect(() => {
-  setIsBuyNow(false);
-  sessionStorage.removeItem("buyNowItem");
-}, []);
+    setIsBuyNow(false);
+    sessionStorage.removeItem("buyNowItem");
+  }, []);
 
   if (!cartData && !buyNowItem) {
     return (
@@ -98,11 +100,12 @@ const OrderPlaced = () => {
 
   return (
     <>
-      <div>
-        <ToastContainer />
-      </div>
-      <div className="w-full px-[90px] py-[54px]">
-        <div className="flex items-center justify-center mb-16 relative  ">
+      <Header />
+      <ToastContainer />
+
+      <main className="w-full px-[90px] py-[54px]  min-h-[calc(100vh-200px)]">
+        {/* Progress Indicator */}
+        <div className="flex items-center justify-center mb-16 relative">
           <div className="w-full max-w-xl relative">
             <div className="flex items-center justify-between relative">
               <div className="absolute top-5 left-5 right-[50%] h-0.5 bg-[#cb1a2e] z-0"></div>
@@ -136,14 +139,16 @@ const OrderPlaced = () => {
           </div>
         </div>
 
-        <div className="w-full flex justify-between gap-[120px] ">
-          <div className="w-2/4 ">
+        {/* Main Content: Billing + Summary */}
+        <div className="w-full flex justify-between gap-[120px]">
+          {/* Left Side: Billing, Shipping, Payment */}
+          <div className="w-2/4">
             {/* Billing Address */}
             <div
-              className="bg-white rounded-lg drop-shadow-lg  overflow-hidden"
+              className="bg-white rounded-lg drop-shadow-lg overflow-hidden"
               ref={billingRef}
             >
-              <div className="px-[36px] py-[32px]  overflow-y-auto">
+              <div className="px-[36px] py-[32px] overflow-y-auto">
                 <h2
                   className="text-xl text-black mb-6 cursor-pointer flex items-center gap-2"
                   onClick={() => {
@@ -160,8 +165,9 @@ const OrderPlaced = () => {
                   Billing Details
                 </h2>
 
-                {activeSection === "Billing_Details" &&
-                  shippingSame === true && <AddressForm />}
+                {activeSection === "Billing_Details" && shippingSame && (
+                  <AddressForm />
+                )}
               </div>
             </div>
 
@@ -217,14 +223,16 @@ const OrderPlaced = () => {
             </div>
           </div>
 
-          {/* Order Summary */}
-          <div className="w-2/4 ">
+          {/* Right Side: Order Summary */}
+          <div className="w-2/4">
             <CouponSection />
             <OrderSummary />
             <SecureCheckoutSection />
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </>
   );
 };

@@ -220,9 +220,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error fetching cart data:", error);
       if (error.response && error.response.status === 401) {
       // Show alert or toast
-      toast.error("Session expired. Please login again.");
-
-      // Redirect to login page
+      toast.error("Please check the NetConnection.cart Data fetching failed");
       router.push("/");
     }
     }
@@ -416,7 +414,7 @@ console.log(products);
       console.error("Error updating cart item:", error);
     }
   };
-  
+  console.log(user);
 
   const getCartCount = () => {
     return cartData.reduce((total, item) => total + item.quantity, 0);

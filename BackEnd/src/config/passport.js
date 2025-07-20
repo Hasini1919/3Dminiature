@@ -8,7 +8,7 @@ import User from '../models/User.js';
 
 configureInstagramStrategy(passport);
 
-// 🔐 Google Strategy
+//  Google Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -46,7 +46,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
 }));
 
-// 🔵 Facebook Strategy
+
 passport.use(new FacebookStrategy({
     clientID: process.env.FB_APP_ID,
     clientSecret: process.env.FB_APP_SECRET,
@@ -84,7 +84,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
 }));
 
-// ✅ Serialize / Deserialize
+
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });

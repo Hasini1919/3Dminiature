@@ -17,7 +17,7 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-router.get('/me', getCurrentUser);
+router.get('/me', authUser,getCurrentUser);
 
 // Google routes (unchanged)
 router.get('/google',
@@ -28,7 +28,7 @@ router.get('/google/callback',
     googleCallback
 );
 
-router.get('/me', getCurrentUser);
+
 // NEW: Facebook routes
 router.get('/facebook',
     passport.authenticate('facebook', { scope: ['email', 'public_profile'] })

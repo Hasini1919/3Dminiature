@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { useAppContext } from "@/context/AppContext";
 interface ProductDetail {
   _id: string;
@@ -81,7 +81,7 @@ const ProductDetails = ({ product, productId }: ProductDetailsProps) => {
     if(!user){
       return;
     }
-
+    console.log("add to cart ");
         if (
       !customization.size ||
       !customization.frameColor ||
@@ -142,7 +142,7 @@ const handleBuyNow = async () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      
+      <ToastContainer position="top-center" autoClose={2000} />
       {/* Product Header */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
