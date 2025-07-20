@@ -1,4 +1,4 @@
-// File: src/server.js (or index.js)import express from "express";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { promises as fsPromises, constants } from "fs";
@@ -29,11 +29,12 @@ import uploadRouter from "./routes/userimage-routes.js";
 import  "./config/passport.js";
 import { routes as enquiryRoutes } from './routes/enquiryRoutes.js';
 import { routes as subscribeRoutes } from './routes/subscribeRoutes.js';
-import { routes as imageRoutes } from './routes/imageRoutes.js';
+import  imageRoutes  from './routes/imageRoutes.js';
 import { routes as pdfRoutes } from './routes/pdfRoutes.js';
 import connectDB from "./config/db.js";
 
-
+import feedbackRoutes from './routes/feedback-routes.js';
+import checkoutRoutes from './routes/checkout.js'
 // Load environment variables
 dotenv.config();
 
@@ -41,12 +42,12 @@ dotenv.config();
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log('FB_APP_ID:', process.env.FB_APP_ID);
 
-// ✅ Setup Facebook Passport strategy
+const PORT = process.env.PORT || 5500;
+
 setupFacebookStrategy(passport);
 
-// ✅ Setup Google Passport strategy
+
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -81,7 +82,7 @@ passport.use(new GoogleStrategy({
   }
 }));
 
-// ✅ Serialize/deserialize user (session optional)
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -94,7 +95,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Express app
+
 const app = express();
 
 
@@ -129,102 +130,18 @@ const startServer = async () => {
     app.use(express.json());
     app.use(passport.initialize());
 
-{/*}
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    try {
-      const folderName = req.params.folderName || uuidv4();
-      const uploadDir = path.join(__dirname, "uploads", folderName);
-
-      await fs.mkdir(uploadDir, { recursive: true });
-      req.uploadDir = uploadDir; // store dir in request for reuse in filename if needed
-      cb(null, uploadDir);
-    } catch (err) {
-      cb(err);
-    }
-  },
-  filename: (req, file, cb) => {
-    const filename = Date.now() + "-" + file.originalname;
-    cb(null, filename);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Invalid file type"), false);
-    }
-  },
-});
-*/}
-{/*
-// Ensure "uploads" directory exists
-app.use('/api/auth', authRoutes);
-// Ensure "uploads" directory exists
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-    // Routes
-    app.use('/api/auth', authRoutes);
-    app.use('/api/auth', facebookAuthRoutes);
-
-    app.get('/', (req, res) => {
-      res.send('API is running...');
-    });
-
-    // Ensure uploads folder exists
-    const uploadDir = path.join(process.cwd(), 'src/uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-// Serve uploaded images
-app.use("/uploads", express.static(uploadDir));
-
-// Multer setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-});
-const upload = multer({ storage });
-
-    
- {/*}   
-const uploadDir = path.join(process.cwd(), "src/uploads");
-if (!fsSync.existsSync(uploadDir)) {
-  fsSync.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir); // Save files in the "uploads" folder
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
-    },
-});
-
-
-*/ }
 app.use('/products', express.static(path.join(__dirname, 'products')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API Routes
 app.use("/api/products", productroutes);
 app.use("/api/product-details", productDetailsRoute);
 app.use("/api/ads", advertisementRoutes);
-app.use("/api/auth", authRoutes);
+//app.use("/api/auth", authRoutes);
 app.use("/form", addRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/form", addRoutes);
+//app.use("/form", addRoutes);
 app.use("/api/cart", cartRouter);
 app.use("/api", addressRoutes);
 app.use("/api/admin", productRoutes);
@@ -233,8 +150,11 @@ app.use("/api/order", orderRouter);
 app.use("/api", uploadRouter);
 app.use(enquiryRoutes);
 app.use(subscribeRoutes);
-app.use(imageRoutes);
+app.use("/api",imageRoutes);
 app.use(pdfRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/checkout', checkoutRoutes);
+
 
 // Default route
 app.get("/", (req, res) => {
@@ -242,45 +162,7 @@ app.get("/", (req, res) => {
 });
 
 
-{/*
-// Image upload endpoint
-app.post(
-  "/api/uploads/:folderName/images",
-  upload.array("images", 5),
-  async (req, res) => {
-    try {
-      const folderName = req.params.folderName;
-      const files = req.files;
 
-      if (!files || files.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: "No files uploaded",
-        });
-      }
-
-      const imageUrls = files.map((file) => ({
-        url: `/uploads/${folderName}/${file.filename}`,
-        filename: file.filename,
-        path: file.path,
-      }));
-
-      return res.status(201).json({
-        success: true,
-        message: "Images uploaded successfully",
-        folderName,
-        images: imageUrls,
-      });
-    } catch (err) {
-      console.error("Image upload error:", err);
-      return res.status(500).json({
-        success: false,
-        error: "Internal server error",
-      });
-    }
-  }
-);
-*/}
 
 // Image serving endpoint with security enhancements
 app.get("/products/:folderName/:imageName", async (req, res) => {
@@ -356,7 +238,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5500;
+
 
 // Server initialization
 async function initializeServer() {
@@ -399,6 +281,153 @@ process.on("uncaughtException", (err) => {
 // Start the server
 await initializeServer();
 
+
+
+// Routes
+
+
+
+    app.use('/uploads', express.static(uploadDir));
+    app.use('/form', addRoutes);
+    app.use('/api/auth', instagramAuthRoutes);
+
+   
+    app.listen(PORT, () => {
+      console.log(` Server running at http://localhost:${PORT}`);
+      console.log('Facebook and Google OAuth strategies configured.');
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+  }
+};
+
+startServer();
+
+
+{/*}
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    try {
+      const folderName = req.params.folderName || uuidv4();
+      const uploadDir = path.join(__dirname, "uploads", folderName);
+
+      await fs.mkdir(uploadDir, { recursive: true });
+      req.uploadDir = uploadDir; // store dir in request for reuse in filename if needed
+      cb(null, uploadDir);
+    } catch (err) {
+      cb(err);
+    }
+  },
+  filename: (req, file, cb) => {
+    const filename = Date.now() + "-" + file.originalname;
+    cb(null, filename);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type"), false);
+    }
+  },
+});
+*/}
+{/*
+// Ensure "uploads" directory exists
+app.use('/api/auth', authRoutes);
+// Ensure "uploads" directory exists
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+    // Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/auth', facebookAuthRoutes);
+
+    app.get('/', (req, res) => {
+      res.send('API is running...');
+    });
+
+    // Ensure uploads folder exists
+    const uploadDir = path.join(process.cwd(), 'src/uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+// Serve uploaded images
+app.use("/uploads", express.static(uploadDir));
+app.use("/products", express.static(path.join(__dirname, "products")));
+
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+const upload = multer({ storage });
+
+    
+ {/*}   
+const uploadDir = path.join(process.cwd(), "src/uploads");
+if (!fsSync.existsSync(uploadDir)) {
+  fsSync.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir); // Save files in the "uploads" folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+
+
+*/ }
+{/*
+// Image upload endpoint
+app.post(
+  "/api/uploads/:folderName/images",
+  upload.array("images", 5),
+  async (req, res) => {
+    try {
+      const folderName = req.params.folderName;
+      const files = req.files;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: "No files uploaded",
+        });
+      }
+
+      const imageUrls = files.map((file) => ({
+        url: `/uploads/${folderName}/${file.filename}`,
+        filename: file.filename,
+        path: file.path,
+      }));
+
+      return res.status(201).json({
+        success: true,
+        message: "Images uploaded successfully",
+        folderName,
+        images: imageUrls,
+      });
+    } catch (err) {
+      console.error("Image upload error:", err);
+      return res.status(500).json({
+        success: false,
+        error: "Internal server error",
+      });
+    }
+  }
+);
+*/}
 /*
 
 import orderRoutes from './orders.js';
@@ -452,24 +481,3 @@ app.use('/api/notifications',notificationRoutes)
 
 */
 
-
-
-// Routes
-
-
-
-    app.use('/uploads', express.static(uploadDir));
-    app.use('/form', addRoutes);
-    app.use('/api/auth', instagramAuthRoutes);
-
-   
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
-      console.log('✅ Facebook and Google OAuth strategies configured.');
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-  }
-};
-
-startServer();

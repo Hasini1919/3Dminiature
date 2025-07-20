@@ -1,4 +1,4 @@
-import Product from "../models/Admin_models/Product.js";
+import Product from "../models/productModel.js";
 const getProducts = async (req, res) => {
     try {
         const products = await Product.find();
@@ -12,4 +12,4 @@ const getProducts = async (req, res) => {
     }
 };
 
-export  { getProducts };
+export  default  getProducts;

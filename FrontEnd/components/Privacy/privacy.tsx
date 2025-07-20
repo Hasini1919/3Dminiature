@@ -7,7 +7,7 @@ const PrivacyModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-[95%] md:w-[800px] max-h-[90vh] overflow-y-auto border border-gray-200">
+      <div className="bg-white rounded-xl shadow-lg p-8  max-w-6xl  max-h-[90vh] overflow-y-auto border border-gray-200">
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-[#cb1a2e] mb-2 flex items-center">
             Privacy Policy
