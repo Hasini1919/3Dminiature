@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5500",
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use((config) => {
