@@ -10,7 +10,7 @@ const RefundForm = () => {
     email: "",
     requestDate: "",
     productName: "",
-    orderId: "",
+    orderNum: "",
     refundReason: "",
     invoice: "",
     readPolicy: "",
@@ -54,7 +54,7 @@ const RefundForm = () => {
         email: "",
         requestDate: "",
         productName: "",
-        orderId: "",
+        orderNum: "",
         refundReason: "",
         invoice: "",
         readPolicy: "",
@@ -186,15 +186,15 @@ const RefundForm = () => {
 
         {/* order ID */}
         <div className="grid grid-cols-2 gap-4 items-center">
-          <label htmlFor="orderId" className="font-semibold text-left">
-            Order ID
+          <label htmlFor="orderNum" className="font-semibold text-left">
+            Order No
           </label>
           <input
             type="text"
-            id="orderId"
-            name="orderId"
+            id="orderNum"
+            name="orderNum"
             required
-            value={formData.orderId}
+            value={formData.orderNum}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg shadow-sm"
           />
