@@ -10,7 +10,7 @@ import connectDB from './config/db.js';
 import { promises as fsPromises, constants } from "fs";
 import mime from "mime-types";
 import { fileURLToPath } from "url";
-import multer from "multer";
+import multer from 'multer';
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
@@ -20,7 +20,7 @@ import productroutes from "./routes/productRoute.js";
 import productDetailsRoute from "./routes/productDetailsRoute.js";
 import advertisementRoutes from "./routes/advertisementRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import addRoutes from "./routes/admin_routes/add_order.js";
+import addRoutes from './routes/admin_routes/add_order.js';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -35,13 +35,21 @@ import comRoutes from './routes/admin_routes/completed.js'
 import notificationRoutes from './routes/admin_routes/notification.js'
 
 /////////////////////////////////////////////////////////////////////////////
-import addressRoutes from "./routes/address-routes.js";
+import facebookAuthRoutes from './routes/facebookAuthRoutes.js';
+import instagramAuthRoutes from './routes/instagramAuthRoutes.js';
+import setupFacebookStrategy from './config/facebookStrategy.js'; 
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import User from './models/User.js';import addressRoutes from "./routes/address-routes.js";
 import cartRouter from "./routes/cart-routes.js";
 import productRoutes from "./routes/product-routes.js";
 import couponRouter from "./routes/coupon-routes.js";
 import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
 import  "./config/passport.js";
+import { routes as enquiryRoutes } from './routes/enquiryRoutes.js';
+import { routes as subscribeRoutes } from './routes/subscribeRoutes.js';
+import  imageRoutes  from './routes/imageRoutes.js';
+import { routes as pdfRoutes } from './routes/pdfRoutes.js';
 
 /////////////////////////////////////////////////////////////////////////////
 import editRoutes from "./routes/admin_routes/editRoutes.js";
@@ -62,16 +70,71 @@ import dyn_orderRoutes from "./routes/admin_routes/orderdynamic_rout.js";
 
 /////////////////////////////finish
 
-
+import feedbackRoutes from './routes/feedback-routes.js';
+import checkoutRoutes from './routes/checkout.js'
 // Load environment variables
 
 
+// Log for debug
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Express app
+const PORT = process.env.PORT || 5500;
+
+setupFacebookStrategy(passport);
+
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:5500/api/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ googleId: profile.id });
+
+    if (!user) {
+      const email = profile.emails?.[0]?.value;
+      if (email) {
+        user = await User.findOne({ email });
+      }
+
+      if (user) {
+        user.googleId = profile.id;
+        user.picture = profile.photos?.[0]?.value;
+        await user.save();
+      } else {
+        user = await User.create({
+          googleId: profile.id,
+          name: profile.displayName,
+          email,
+          picture: profile.photos?.[0]?.value,
+        });
+      }
+    }
+
+    return done(null, user);
+  } catch (error) {
+    return done(error, null);
+  }
+}));
+
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
+});
+
+
 const app = express();
+
 
 await connectDB();
 
@@ -147,26 +210,52 @@ const upload = multer({ storage });
     
     
 
+const startServer = async () => {
+  try {
+    await connectDB();
+    console.log('MongoDB connected successfully');
+
+    app.use(cors({
+      origin: 'http://localhost:3000',
+      methods: 'GET,POST,PUT,PATCH,DELETE',
+      credentials: true
+    }));
+
+    app.use(express.json());
+    app.use(passport.initialize());
+
+app.use('/products', express.static(path.join(__dirname, 'products')));
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API Routes
 app.use("/api/products", productroutes);
 app.use("/api/product-details", productDetailsRoute);
 app.use("/api/ads", advertisementRoutes);
-app.use("/api/auth", authRoutes);
+//app.use("/api/auth", authRoutes);
 app.use("/form", addRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/form", addRoutes);
+//app.use("/form", addRoutes);
 app.use("/api/cart", cartRouter);
 app.use("/api", addressRoutes);
 app.use("/api/admin", productRoutes);
 app.use("/api/apply", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api", uploadRouter);
+app.use(enquiryRoutes);
+app.use(subscribeRoutes);
+app.use("/api",imageRoutes);
+app.use(pdfRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/checkout', checkoutRoutes);
+
 
 // Default route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
+
 
 
 // Image serving endpoint with security enhancements
@@ -243,7 +332,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5500;
+
 
 // Server initialization
 async function initializeServer() {
@@ -315,4 +404,204 @@ process.on("uncaughtException", (err) => {
 
 // Start the server
 await initializeServer();
+
+
+
+// Routes
+
+
+
+    app.use('/uploads', express.static(uploadDir));
+    app.use('/form', addRoutes);
+    app.use('/api/auth', instagramAuthRoutes);
+
+   
+    app.listen(PORT, () => {
+      console.log(` Server running at http://localhost:${PORT}`);
+      console.log('Facebook and Google OAuth strategies configured.');
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+  }
+};
+
+startServer();
+
+
+{/*}
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    try {
+      const folderName = req.params.folderName || uuidv4();
+      const uploadDir = path.join(__dirname, "uploads", folderName);
+
+      await fs.mkdir(uploadDir, { recursive: true });
+      req.uploadDir = uploadDir; // store dir in request for reuse in filename if needed
+      cb(null, uploadDir);
+    } catch (err) {
+      cb(err);
+    }
+  },
+  filename: (req, file, cb) => {
+    const filename = Date.now() + "-" + file.originalname;
+    cb(null, filename);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type"), false);
+    }
+  },
+});
+*/}
+{/*
+// Ensure "uploads" directory exists
+app.use('/api/auth', authRoutes);
+// Ensure "uploads" directory exists
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+    // Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/auth', facebookAuthRoutes);
+
+    app.get('/', (req, res) => {
+      res.send('API is running...');
+    });
+
+    // Ensure uploads folder exists
+    const uploadDir = path.join(process.cwd(), 'src/uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+// Serve uploaded images
+app.use("/uploads", express.static(uploadDir));
+app.use("/products", express.static(path.join(__dirname, "products")));
+
+// Multer setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+const upload = multer({ storage });
+
+    
+ {/*}   
+const uploadDir = path.join(process.cwd(), "src/uploads");
+if (!fsSync.existsSync(uploadDir)) {
+  fsSync.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir); // Save files in the "uploads" folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+
+
+*/ }
+{/*
+// Image upload endpoint
+app.post(
+  "/api/uploads/:folderName/images",
+  upload.array("images", 5),
+  async (req, res) => {
+    try {
+      const folderName = req.params.folderName;
+      const files = req.files;
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: "No files uploaded",
+        });
+      }
+
+      const imageUrls = files.map((file) => ({
+        url: `/uploads/${folderName}/${file.filename}`,
+        filename: file.filename,
+        path: file.path,
+      }));
+
+      return res.status(201).json({
+        success: true,
+        message: "Images uploaded successfully",
+        folderName,
+        images: imageUrls,
+      });
+    } catch (err) {
+      console.error("Image upload error:", err);
+      return res.status(500).json({
+        success: false,
+        error: "Internal server error",
+      });
+    }
+  }
+);
+*/}
+/*
+
+import orderRoutes from './orders.js';
+
+import pendingRoutes from './pending.js'
+
+import comRoutes from './completed.js'
+
+import customRoutes from './customer.js'
+import newStatsRoutes from './newstats.js'
+import pendingStatsRoutes from './pendingstats.js'
+import comStatsRoutes from './comstats.js'
+import customerstatsRoutes from './customerstats.js'
+
+import notificationRoutes from './notification.js'
+
+*/
+
+// app.use(bodyParser.json());
+
+//routes
+
+// app.get("/" ,(req , res) => {
+//     res.send("Express backend is running");
+
+// app.listen(PORT ,() =>{
+//     console.log(`Backend server running on http://localhost:${PORT}`);
+// });
+
+/*
+
+app.use('/api/orders',orderRoutes)
+
+app.use('/api/updates',pendingRoutes)
+
+app.use('/api/updates',comRoutes)
+
+app.use('/api',customRoutes)
+
+app.use('/api/order-stats',newStatsRoutes);
+
+app.use('/api/pending-stats',pendingStatsRoutes);
+
+app.use('/api/completed-stats',comStatsRoutes);
+
+app.use('/api/customer',customerstatsRoutes);
+
+app.use('/api/orders-completed',comStatsRoutes);
+
+app.use('/api/notifications',notificationRoutes)
+
+*/
 

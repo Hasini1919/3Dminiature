@@ -27,25 +27,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
   });
 
   // Render dynamic rating stars
-  const renderStars = () => {
-    const safeRating = Number.isFinite(rating) ? rating : 0;
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+const renderStars = () => {
+  const safeRating = Number.isFinite(rating) ? rating : 0;
+  const fullStars = Math.floor(safeRating);
+  const hasHalfStar = safeRating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
-    return (
-      <div className="flex items-center space-x-1 text-sm sm:text-base">
-        {[...Array(fullStars)].map((_, index) => (
-          <FaStar key={`full-${index}`} className="text-yellow-500" />
-        ))}
-        {hasHalfStar && <FaStarHalfAlt key="half" className="text-yellow-500" />}
-        {[...Array(emptyStars)].map((_, index) => (
-          <FaRegStar key={`empty-${index}`} className="text-gray-300" />
-        ))}
-        <span className="ml-2 text-gray-600 font-medium">({rating.toFixed(1)})</span>
-      </div>
-    );
-  };
+  return (
+    <div className="flex items-center space-x-1 text-sm sm:text-base">
+      {[...Array(fullStars)].map((_, index) => (
+        <FaStar key={`full-${index}`} className="text-yellow-500" />
+      ))}
+      {hasHalfStar && <FaStarHalfAlt key="half" className="text-yellow-500" />}
+      {[...Array(emptyStars)].map((_, index) => (
+        <FaRegStar key={`empty-${index}`} className="text-gray-300" />
+      ))}
+      <span className="ml-2 text-gray-600 font-medium">({safeRating.toFixed(1)})</span>
+    </div>
+  );
+};
+
 
   return (
     <div className={`bg-white p-4 rounded-lg shadow-md ${className}`}>
