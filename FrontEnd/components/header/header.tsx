@@ -3,7 +3,6 @@
 import Link from "next/link";
 import SearchBar from "./search";
 import SearchIcon from "@/components/search/SearchIcon";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { BiGitCompare} from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
