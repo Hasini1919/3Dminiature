@@ -48,6 +48,8 @@ const cartItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
+
+
 // Coupon schema
 const couponSchema = new mongoose.Schema(
   {
@@ -76,6 +78,20 @@ const couponSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const addressSchema = new mongoose.Schema(
+  {
+    FirstName: { type: String, required: true },
+    LastName: { type: String, required: true },
+    PhoneNumber: { type: String, required: true },
+    Provience: { type: String, required: true }, 
+    District: { type: String, required: true },
+    Area: { type: String, required: true },
+    City: { type: String, required: true },
+    HouseNo: { type: String, required: true },
+    AnyInformation: { type: String, default: "" },
+  },
+  { _id: false }
+);
 // Combined user schema
 const userSchema = new mongoose.Schema(
   {
@@ -125,6 +141,10 @@ const userSchema = new mongoose.Schema(
         ref: "coupons",
       },
     ],
+     address: {
+      type: addressSchema,
+      default: null, 
+    },
   },
   {
     timestamps: true,

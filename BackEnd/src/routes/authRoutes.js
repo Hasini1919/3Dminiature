@@ -9,7 +9,7 @@ import {
     resetPassword,
     facebookCallback 
 } from '../controllers/authController.js';
-
+import authUser from "../middleware/auth.js";
 const router = express.Router();
 
 // Existing routes (unchanged)
@@ -17,7 +17,7 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-router.get('/me', getCurrentUser);
+router.get('/me', authUser,getCurrentUser);
 
 // Google routes (unchanged)
 router.get('/google',
@@ -27,6 +27,7 @@ router.get('/google/callback',
     passport.authenticate('google', { session: false }),
     googleCallback
 );
+
 
 // NEW: Facebook routes
 router.get('/facebook',

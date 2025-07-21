@@ -144,9 +144,38 @@ export const resetPassword = async (
   }
 };
 
+
+
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user");
+    }
+
+    const user = await response.json();
+   
+
+    return user;
+  } catch (error) {
+    console.error("Error getting current user:", error);
+    return null;
+  }
+};
+
 // ======================
 // Social Login Utilities
 // ======================
+
+
 export const initiateFacebookLogin = (): void => {
   window.location.href = `${API_URL}/auth/facebook`;
 };

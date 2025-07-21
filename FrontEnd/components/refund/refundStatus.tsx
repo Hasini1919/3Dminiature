@@ -1,102 +1,79 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-interface RefundRequest {
-  _id: string;
-  productName: string;
-  productId: string;
-  requestDate: string;
-  status: "Pending" | "Approved" | "Rejected";
-  requestedAmount: number;
-  notes?: string;
-}
+const RefundStatusPanel = () => {
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-const RefundStatusCheck: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [requests, setRequests] = useState<RefundRequest[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const email = localStorage.getItem("userEmail") || "";
+        const orderNum = localStorage.getItem("orderNumber") || "";
 
-  const checkStatus = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get("/api/return-refund", {
-        params: { email },
-      });
-      setRequests(res.data.requests || []);
-    } catch (err) {
-      alert("Failed to fetch refund requests.");
-      setRequests([]);
-    } finally {
-      setLoading(false);
+        if (!email || !orderNum) {
+          setError("Missing email or order number.");
+          setLoading(false);
+          return;
+        }
+
+        const res = await axios.post("/api/refund-status", {
+          email,
+          orderNum,
+        });
+
+        if (res.data?.status) {
+          setStatus(res.data.status);
+        } else {
+          setError("No refund request found.");
+        }
+      } catch (err) {
+        setError("Server error.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStatus();
+  }, []);
+
+  const renderMessagePanel = () => {
+    switch (status) {
+      case "Approved":
+        return (
+          <div className="bg-green-100 text-green-700 p-4 mt-4 rounded shadow text-center">
+            Your refund request has been <strong>Approved</strong>.
+          </div>
+        );
+      case "Pending":
+        return (
+          <div className="bg-yellow-100 text-yellow-800 p-4 mt-4 rounded shadow text-center">
+            Your refund request is <strong>Pending</strong>.
+          </div>
+        );
+      case "Rejected":
+        return (
+          <div className="bg-red-100 text-red-700 p-4 mt-4 rounded shadow text-center">
+            Your refund request has been <strong>Rejected</strong>.
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-8 p-6 border rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">Check Refund Status</h2>
+    <div className="max-w-md mx-auto mt-10 bg-white p-6 shadow-lg rounded-xl">
+      <h2 className="text-xl font-semibold mb-4 text-center">Your Refund Status</h2>
 
-      <div className="flex gap-2 mb-4">
-        <input
-          type="email"
-          placeholder="Enter your email"
-          className="flex-grow border px-3 py-2 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button
-          onClick={checkStatus}
-          disabled={!email || loading}
-          className="bg-blue-600 text-white px-4 rounded disabled:bg-gray-400"
-        >
-          {loading ? "Checking..." : "Check Status"}
-        </button>
-      </div>
-
-      {requests && requests.length === 0 && (
-        <p>No refund requests found for this email.</p>
-      )}
-
-      {requests && requests.length > 0 && (
-        <ul className="space-y-4">
-          {requests.map((r: RefundRequest) => (
-            <li key={r._id} className="border p-4 rounded shadow-sm">
-              <p>
-                <strong>Product:</strong> {r.productName} (ID: {r.productId})
-              </p>
-              <p>
-                <strong>Request Date:</strong>{" "}
-                {new Date(r.requestDate).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Status:</strong>
-                <span
-                  className={`font-semibold ml-2 ${
-                    r.status === "Approved"
-                      ? "text-green-600"
-                      : r.status === "Rejected"
-                      ? "text-red-600"
-                      : "text-yellow-600"
-                  }`}
-                >
-                  {r.status}
-                </span>
-              </p>
-              <p>
-                <strong>Requested Amount:</strong> ${r.requestedAmount}
-              </p>
-              {r.notes && (
-                <p>
-                  <strong>Notes:</strong> {r.notes}
-                </p>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+      {loading && <p className="text-center">Checking status...</p>}
+      {error && <div className="text-center text-red-600">{error}</div>}
+      {!loading && !error && status && renderMessagePanel()}
     </div>
   );
 };
 
-export default RefundStatusCheck;
+export default RefundStatusPanel;

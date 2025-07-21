@@ -1,5 +1,5 @@
 import User from  "../models/User.js"
-import Product from  "../models/Admin_models/Product.js";
+import Products from  "../models/productModel.js";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -36,9 +36,11 @@ const addToCart = async (req, res) => {
     const user = await User.findById(userId);
     console.log(productId);
     
-    const product = await Product.findById(productId);
-    console.log("product detauils");
-    console.log(product);
+    const product = await Products.findById(productId);
+    console.log("product detauils for me");
+    console.log(product.image);
+    console.log(product.rating);
+    console.log(product.description);
 
     if (!user || !product) {
       
@@ -66,7 +68,7 @@ const addToCart = async (req, res) => {
       const newCartItem = {
         productId,
         productName: product.name,
-        images: product.images,
+        images: product.image,
         price: product.price,
         frameSize,
         frameColor,

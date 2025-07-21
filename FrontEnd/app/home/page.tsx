@@ -1,104 +1,139 @@
-"use client"
+"use client";
+
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 import Scroller from "./scrolltxt";
 import ScrollerImg from "./scrollImage";
-
-
-
+import Header from "@/components/header/header";
+import Footer from "@/components/footer/footer";
 
 export default function Homepage() {
- 
-
-
   return (
-   
-      <>  
-      <div className=" mx-auto px-4 py-6 h-screen h-fit  bg-center bg-fixed text-white " style={{ backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/picture.avif')" }}>
-        <h1 className="text-5xl font-bold  mb-12 px-60 py-6  text-center">Modern frames, your way
-        design, customize, and cherish in 3D!</h1>
-       
-          {/* Container for 3 Columns */}
-  <div className="grid grid-cols-3 gap-6 place-items-center ">
-    {/* Image Column 1 */}
-    <div className="text-center">
-      <Image src="/frame2.jpg" width={250} height={450} alt="pic" className="rounded-md" />
-      
-    </div>
-    {/* Image Column 2 */}
-    <div className="text-center ">
-      <Image src="/IMG-20250309-WA0004.jpg" width={250} height={200} alt="pic" className="rounded-lg" />
-    </div>
-    {/* Image Column 3 */}
-    <div className="text-center">
-      <Image src="/frame2.jpg" width={250} height={450} alt="pic" className="rounded-lg" />
-    </div>
-  </div>
-      </div>
-      <div className=" mx-auto px-0 py-0">
-      <Scroller/>
-      </div>
-       
-      
-      <div className="text-center mt-20 mb-10 text-2xl font-bold">
-      <h1 className="text-center mt-20 text-4xl font-bold">Top Categories</h1>
-      </div>
-      <div className="wrapper container mx-auto p-5 ">
-  <div className="grid grid-cols-1  md:grid-cols-3 gap-20 mx-32 mb-6">
-    <div className="card  mt-[20px] ">
-      <img src="/IMG-20250309-WA0009.jpg" alt="Image 1"  className="mb-6"/>
-      <p >Family</p>
-    </div>
-    <div className="card   mt-[-40px]">
-      <img src="/IMG-20250309-WA0010.jpg" alt="Image 2" />
-      <p>Baby</p>
-    </div>
-    <div className="card  mt-[20px]">
-      <img src="/IMG-20250309-WA0008.jpg" alt="Image 3" />
-      <p>Wedding</p>
-    </div>
-  </div>
-</div>
-
-
-
+    <>
+     
+      <Header />
 
      
-      <div className="text-center mt-20 ">
-        <h1 className="text-center text-4xl font-bold">Our Frame Process</h1>
+      <section
+        className="relative bg-cover bg-center bg-no-repeat  pt-44 pb-40 px-6 md:px-16 shadow-xl"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/Red.png')",
+        }}
+      >
+        <div className="relative left-5 top-20 max-w-xl  text-left bg-white/90 shadow-xl  rounded-xl p-8">
+          <p className="uppercase  text-sm mb-4 ">
+            Welcome to Tiny Treasure
+          </p>
+          <h1 className="text-2xl md:text-xl font-extrabold leading-tight mb-8">
+            Modern frames, your way design, customize, and cherish in 3D!
+          </h1>
+          <p className="text-[16px] mb-8">
+            Discover our unique collection of beautifully crafted frames that bring
+            your memories to life.
+          </p>
+          <button className="px-6 py-3 bg-red-700 text-white font-semibold rounded shadow hover:bg-red-800 transition border border-orange-400">
+            Learn More
+          </button>
         </div>
-      <div className="container mx-auto flex flex-col md:flex-row sm:gap-12 mt-12 ">
-        <div className="md:w-1/3 text-center flex flex-col items-center">
-          <h3 className="text-2xl mb-2 font-bold">Take a Order</h3>
-          <img className="h-28 w-28 rounded-full border-4 border-red-500" src="/take.svg" alt="" />
-          <p className=" font-bold  ">We start by understanding your unique frame needs</p>
-        </div>
-        <div className="md:w-1/3 text-center flex flex-col items-center">
-          <h3 className="text-2xl mb-2 font-bold">make Product</h3>
-          <img className="h-28 w-28 rounded-full border-4 border-red-500" src="/process.svg" alt="" />
-          <p className="font-bold">Our team crafts your frame with precision and care</p>
-        </div>
-        <div  className="md:w-1/3 text-center flex flex-col items-center">
-          <h3 className="text-2xl mb-2 font-bold">Deliver Product</h3>
-          <img className="h-28 w-28 rounded-full border-4 border-red-500" src="/deliver.svg" alt="" />
-          <p className="font-bold">Your beautifully  frame is  delivered to your doorstep</p>
-        </div>
+      </section>
+
+      {/* Scrolling Text Section */}
+      <div className="p-28 font-semibold">
+        <Scroller />
       </div>
 
-      <div className="text-center mt-20 mb-15 ">
-        <h1 className="text-center text-4xl font-bold">Our frames in Action</h1>
-        </div>
-        <div className="container mx-auto flex flex-col md:flex-row sm:gap-12 mt-12 text-center">
-                   <p className=" text-center font-bold px-30 text-xl ">
-    Explore our portfolio to see how our app brings memories to life. From heartfelt family moments
-    to modern 3D creations, our designs highlight the beauty and versatility of our app.
-                   </p>
+      {/* Top Categories Section */}
+      <section className="text-center mt-18 p-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-4xl font-bold mb-4 uppercase">Top Categories</h2>
+          <p className="text-lg mb-12">
+            Explore our most loved themes, crafted to fit your every memory.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            {[
+              { src: "/IMG-20250309-WA0009.jpg", label: "Family" },
+              { src: "/IMG-20250309-WA0010.jpg", label: "Baby" },
+              { src: "/IMG-20250309-WA0008.jpg", label: "Wedding" },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
+              >
+                <div className="relative h-[250px] w-full">
+                  <Image
+                    src={item.src}
+                    alt={item.label}
+                    layout="fill"
+                    objectFit="cover"
+                    className="transform group-hover:scale-105 transition duration-500 ease-in-out"
+                  />
+                </div>
+                <div className="py-4 bg-white">
+                  <p className="text-lg font-semibold text-gray-800">
+                    {item.label}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className=" mx-auto px-0 py-0">
-      <ScrollerImg/>
-      </div>
+        </div>
+      </section>
 
-      
+      {/* Frame Process Section */}
+      <section className="mt-28 px-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl font-extrabold text-gray-800 mb-12">
+            Our Frame Process
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
+            {[
+              {
+                title: "Take an Order",
+                img: "/take.svg",
+                desc: "We start by understanding your unique frame needs.",
+              },
+              {
+                title: "Make the Product",
+                img: "/process.svg",
+                desc: "Our team crafts your frame with precision and care.",
+              },
+              {
+                title: "Deliver the Product",
+                img: "/deliver.svg",
+                desc: "Your beautifully crafted frame is delivered to your doorstep.",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col items-center text-center transition-transform duration-300 hover:-translate-y-1"
+              >
+                <div className="h-28 w-28 mb-5 rounded-full border-4 border-red-500 flex items-center justify-center bg-white shadow-lg hover:shadow-xl transition duration-300">
+                  <Image
+                    src={item.img}
+                    alt={item.title}
+                    width={60}
+                    height={60}
+                    className="object-contain"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">{item.title}</h3>
+                <p className="text-gray-600 max-w-xs">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Our Frames in Action */}
+      <section className="text-center mt-24">
+        <div className="mt-10">
+          <ScrollerImg />
+        </div>
+      </section>
+
+     
+      <Footer />
     </>
   );
 }
