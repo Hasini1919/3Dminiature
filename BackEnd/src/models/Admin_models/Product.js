@@ -7,14 +7,15 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
+
     name: {
       type: String,
       required: true,
     },
 
     frameSize: {
-        type: [String],
-        required: true,
+      type: [String],
+      required: true,
     },
 
     description: {
@@ -40,10 +41,6 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-    },
-    rating: { 
-        type: Number, 
-        required: true 
     },
 
     detailed_description: {

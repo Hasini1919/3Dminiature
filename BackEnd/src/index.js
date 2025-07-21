@@ -5,7 +5,6 @@ import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import connectDB from './config/db.js';
-import authRoutes from './routes/authRoutes.js';
 
 // import multer from "multer";
 import { promises as fsPromises, constants } from "fs";
@@ -13,7 +12,6 @@ import mime from "mime-types";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
-import passport from "passport";
 import path from "path";
 import fs from "fs";
 
@@ -29,11 +27,11 @@ import addRoutes from "./routes/admin_routes/add_order.js";
 import orderRoutes from './routes/admin_routes/orders.js';
 import pendingRoutes from './routes/admin_routes/pending.js'
 import comRoutes from './routes/admin_routes/completed.js'
-import customRoutes from './routes/admin_routes/customer.js'
-import newStatsRoutes from './routes/admin_routes/newstats.js'
-import pendingStatsRoutes from './routes/admin_routes/pendingstats.js'
-import comStatsRoutes from './routes/admin_routes/comstats.js'
-import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
+// import customRoutes from './routes/admin_routes/customer.js'
+// import newStatsRoutes from './routes/admin_routes/newstats.js'
+// import pendingStatsRoutes from './routes/admin_routes/pendingstats.js'
+// import comStatsRoutes from './routes/admin_routes/comstats.js'
+// import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
 import notificationRoutes from './routes/admin_routes/notification.js'
 
 /////////////////////////////////////////////////////////////////////////////
@@ -47,7 +45,22 @@ import  "./config/passport.js";
 
 /////////////////////////////////////////////////////////////////////////////
 import editRoutes from "./routes/admin_routes/editRoutes.js";
-import connectDB from "./config/db.js";
+
+
+////////////////////testing
+
+ import orderRoute from "./routes/admin_routes/testing/new_Order.js";
+ import customersRoutes from "./routes/admin_routes/customer.js";
+ import dashboardRoute from "./routes/admin_routes/testing/dashboardroutes.js";
+ import couponRoutes from "./routes/admin_routes/testing/create_coup.js";
+//  import couponRoute from "./routes/admin_routes/testing/coupon_routes.js";
+//  import coupRoutes from "./routes/admin_routes/testing/create_coup.js";
+import adRoutes from './routes/admin_routes/advertRoutes.js';
+import adminProfileRoutes from './routes/admin_routes/admin_profile.js';
+import dyn_orderRoutes from "./routes/admin_routes/orderdynamic_rout.js";
+
+
+/////////////////////////////finish
 
 
 // Load environment variables
@@ -85,40 +98,29 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(passport.initialize());
 
-{/*}
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    try {
-      const folderName = req.params.folderName || uuidv4();
-      const uploadDir = path.join(__dirname, "uploads", folderName);
+////////////////////////////////////////////////////////////////////////////////////////////////////mine
 
-      await fs.mkdir(uploadDir, { recursive: true });
-      req.uploadDir = uploadDir; // store dir in request for reuse in filename if needed
-      cb(null, uploadDir);
-    } catch (err) {
-      cb(err);
-    }
-  },
-  filename: (req, file, cb) => {
-    const filename = Date.now() + "-" + file.originalname;
-    cb(null, filename);
-  },
-});
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Invalid file type"), false);
-    }
-  },
-});
-*/}
+app.use('/api/notifications',notificationRoutes)
+app.use("/", editRoutes);
+app.use("/form",addRoutes);
+app.use('/api/orders',orderRoutes)
+app.use('/api/updates',pendingRoutes)
+app.use('/api/updates',comRoutes)
+app.use("/api/orders", orderRoute);
+app.use("/api/customers", customersRoutes);
+app.use("/api", dashboardRoute);
+app.use("/api/coupons", couponRoutes);
+app.use("/src", express.static(path.join(__dirname, "src")));
+app.use('/api/ads', adRoutes);
+app.use('/images', express.static(path.join(__dirname, '../src/products')));
+app.use('/api/admin/profile', adminProfileRoutes);
+app.use("/api/orders", dyn_orderRoutes);
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////mine end
 
 // Ensure "uploads" directory exists
 app.use('/api/auth', authRoutes);
@@ -141,24 +143,10 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
-{/*
+
     
     
-const uploadDir = path.join(process.cwd(), "src/uploads");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir); // Save files in the "uploads" folder
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
-    },
-});
 
-
-*/ }
 
 // API Routes
 app.use("/api/products", productroutes);
@@ -180,46 +168,6 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-
-{/*
-// Image upload endpoint
-app.post(
-  "/api/uploads/:folderName/images",
-  upload.array("images", 5),
-  async (req, res) => {
-    try {
-      const folderName = req.params.folderName;
-      const files = req.files;
-
-      if (!files || files.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: "No files uploaded",
-        });
-      }
-
-      const imageUrls = files.map((file) => ({
-        url: `/uploads/${folderName}/${file.filename}`,
-        filename: file.filename,
-        path: file.path,
-      }));
-
-      return res.status(201).json({
-        success: true,
-        message: "Images uploaded successfully",
-        folderName,
-        images: imageUrls,
-      });
-    } catch (err) {
-      console.error("Image upload error:", err);
-      return res.status(500).json({
-        success: false,
-        error: "Internal server error",
-      });
-    }
-  }
-);
-*/}
 
 // Image serving endpoint with security enhancements
 app.get("/products/:folderName/:imageName", async (req, res) => {
@@ -310,33 +258,26 @@ async function initializeServer() {
 // Serve static files (uploaded images)
 app.use("/uploads", express.static(path.join(process.cwd(),"src/uploads")));
 
-app.use("/form",addRoutes);
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 
-app.use('/api/orders',orderRoutes)
 
-app.use('/api/updates',pendingRoutes)
+// app.use('/api',customRoutes) ////////////////////////////////////////////////////////////////////////////////////
 
-app.use('/api/updates',comRoutes)
+// app.use('/api/order-stats',newStatsRoutes);
 
-app.use('/api',customRoutes)
+// app.use('/api/pending-stats',pendingStatsRoutes);
 
-app.use('/api/order-stats',newStatsRoutes);
+// app.use('/api/completed-stats',comStatsRoutes);
 
-app.use('/api/pending-stats',pendingStatsRoutes);
+// app.use('/api/customer',customerstatsRoutes);
 
-app.use('/api/completed-stats',comStatsRoutes);
+// app.use('/api/orders-completed',comStatsRoutes);
 
-app.use('/api/customer',customerstatsRoutes);
 
-app.use('/api/orders-completed',comStatsRoutes);
-
-app.use('/api/notifications',notificationRoutes)
-
-app.use("/", editRoutes);
 
 
 ///////////////////////////////////////////////////////
@@ -374,63 +315,4 @@ process.on("uncaughtException", (err) => {
 
 // Start the server
 await initializeServer();
-
-/*
-
-import orderRoutes from './orders.js';
-
-import pendingRoutes from './pending.js'
-
-import comRoutes from './completed.js'
-
-import customRoutes from './customer.js'
-import newStatsRoutes from './newstats.js'
-import pendingStatsRoutes from './pendingstats.js'
-import comStatsRoutes from './comstats.js'
-import customerstatsRoutes from './customerstats.js'
-
-import notificationRoutes from './notification.js'
-
-*/
-
-// app.use(bodyParser.json());
-
-//routes
-
-// app.get("/" ,(req , res) => {
-//     res.send("Express backend is running");
-
-// app.listen(PORT ,() =>{
-//     console.log(`Backend server running on http://localhost:${PORT}`);
-// });
-
-/*
-
-app.use('/api/orders',orderRoutes)
-
-app.use('/api/updates',pendingRoutes)
-
-app.use('/api/updates',comRoutes)
-
-app.use('/api',customRoutes)
-
-app.use('/api/order-stats',newStatsRoutes);
-
-app.use('/api/pending-stats',pendingStatsRoutes);
-
-app.use('/api/completed-stats',comStatsRoutes);
-
-app.use('/api/customer',customerstatsRoutes);
-
-app.use('/api/orders-completed',comStatsRoutes);
-
-app.use('/api/notifications',notificationRoutes)
-
-*/
-
-
-
-// Routes
-
-
 

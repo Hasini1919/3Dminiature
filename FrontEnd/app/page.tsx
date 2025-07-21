@@ -5,15 +5,30 @@ import OrderPlaced from "./checkout/page";
 import OrderConfirmed from "./order-placed/page";
 import PayHere from "./payment/page";
 import Card from "./card/page";
+import DashboardPage from "./Admin/dashboard/page";
+import OrderTable from "@/components/admin/test/newtable";
+import CouponSection from "@/components/checkout/coupon-section";
+
+import CouponPage from "./Admin/cop/page";
+import AddCouponPage from "./Admin/cop/create/page";
+
 
 export default function Home() {
   return (
     <div>
-      {/* <ShopPage/> */}
-      {/* <OrderPlaced /> */}
-      {/* <PayHere/> */}
-      {/* <OrderConfirmed/> */}
-       <Card/>
+      {/* <DashboardPage/> */}
+      {/* {/* <ShopPage/>
+        <OrderPlaced /> 
+     
+    
+       <OrderConfirmed/>
+        */}
+       {/* <Login/> */}
+       {/* <OrderPlaced />  */}
+       {/* <PayHere/>  */}
+       {/* <Card/> */}
+       
+     <OrderTable/>
     </div>
   );
 }

@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const advertisementSchema = new mongoose.Schema(
   {
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
     img: {
       type: String,
       required: true,
@@ -12,12 +17,36 @@ const advertisementSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid image file!`,
       },
     },
-    title: { type: String, required: true },
-    mainTitle: { type: String, required: true },
-    price: { type: Number, required: true },
-    isActive: { type: Boolean, default: true },
-    order: { type: Number, default: 0 },
-    createdAt: { type: Date, default: Date.now },
+    title: {
+      type: String,
+      required: true,
+    },
+    mainTitle: {
+      type: String,
+      required: true,
+    },
+    discountPercentage: {
+      type: Number,
+      required: true,
+      
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+      expires: 0,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { collection: "AdvertisementDetails" }
 );

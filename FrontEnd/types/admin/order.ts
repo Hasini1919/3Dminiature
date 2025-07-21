@@ -1,16 +1,21 @@
-// types/admin/order.ts
 export interface Order {
-    id: string;
-    name: string;
-    cid: string;
-    category: string;
-    frameColor: string;
-    theme: string;
-    size: string;
-    customization?: string;
-    price: number;
-    status: string;
-  }
-  
+  _id: string;
+  userId: string;
+  items: Record<string, any>; // or define exact structure if known
+  amount: number;
+  address: Record<string, any>; // or define exact structure if known
+  status: string;
+  paymentMethod: string;
+  payment: boolean;
+  selectedShippingOption: string;
+  date: number;
+  orderNumber: string;
+}
 
-  
+ export interface ProductItem {
+  name: string;
+  category: string;
+  frameColor: string;
+  theme: string;
+  [key: string]: any;
+}

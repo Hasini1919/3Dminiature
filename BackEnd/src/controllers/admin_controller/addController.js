@@ -5,8 +5,8 @@ import Product from "../../models/Admin_models/Product.js";
 
 // Create folder if not exist (used in multer)
 export const getUploadPath = (productName) => {
-    const safeFolderName = productName.replace(/[^a-zA-Z0-9_-]/g, "_");
-    const uploadPath = path.join("src/uploads", safeFolderName);
+    const safeFolderName = productName.replace(/[^a-zA-Z0-9_-]/g, " ");
+    const uploadPath = path.join("src/products", safeFolderName);
 
     if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(uploadPath, { recursive: true });
@@ -18,10 +18,10 @@ export const getUploadPath = (productName) => {
 // Add new product
 export const addProduct = async (req, res) => {
     try {
-        let { name, frameSize, description, price, frameColor, themeColor, category } = req.body;
+        let { name, frameSize, description, price, frameColor, themeColor, category,detailed_description } = req.body;
         console.log("Finished Add new product");
 
-        if (!name || !frameSize || !description || !price || !frameColor || !themeColor || !category) {
+        if (!name || !frameSize || !description || !price || !frameColor || !themeColor || !category || !detailed_description) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -30,12 +30,14 @@ export const addProduct = async (req, res) => {
         frameColor = typeof frameColor === "string" ? frameColor.split(",") : frameColor;
         themeColor = typeof themeColor === "string" ? themeColor.split(",") : themeColor;
 
-        const imagePaths = req.files?.map(file => file.path) || [];
+        const imagePaths = req.files?.map(file => 
+            file.path.replace(/\\/g,"/").replace("src/products/", "")) || [];
 
         const newProduct = new Product({
             name,
             frameSize,
             description,
+            detailed_description,
             price,
             frameColor,
             themeColor,

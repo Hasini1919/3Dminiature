@@ -1,10 +1,9 @@
 export interface DashboardStats {
-    revenue: number | null;
-    newOrderCount: number;
-    pendingOrderCount: number;
-    completedOrderCount: number;
-    customerCount: number;
-    refundCount?: number;
-    cancelOrderCount?: number;
-  }
-  
+  revenue: number;
+  newOrderCount: number;
+  pendingOrderCount: number;
+  completedOrderCount: number;
+  cancelOrderCount?: number;
+  refundCount?: number;
+  customerCount: number;
+}

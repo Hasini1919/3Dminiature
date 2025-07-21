@@ -1,13 +1,13 @@
-// routes/admin_routes/OrderAnalyticsRoutes.js
-import express from 'express';
-import {
-    getPendingOrderCount // ✅ Add this import
-} from '../../controllers/admin_controller/pendingstatsController.js';
+// // routes/admin_routes/OrderAnalyticsRoutes.js
+// import express from 'express';
+// import {
+//     getPendingOrderCount // ✅ Add this import
+// } from '../../controllers/admin_controller/pendingstatsController.js';
 
-const router = express.Router();
-
-
-router.get('/count-pending', getPendingOrderCount); // ✅ New route
+// const router = express.Router();
 
 
-export default router;
+// router.get('/count-pending', getPendingOrderCount); // ✅ New route
+
+
+// export default router;

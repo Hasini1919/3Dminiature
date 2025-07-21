@@ -24,9 +24,12 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         <div className="debug">
-          
           {/* <Slidebar/> */}
-            {children}
+          <AppContextProvider>
+            <Slidebar/>
+          {children}
+          </AppContextProvider>
+            
           
         </div>
       </body>

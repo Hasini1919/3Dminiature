@@ -3,7 +3,7 @@ export interface ProductFormData {
     price: number | "";
     category: string;
     description: string;
-    images: string[];
+    image: string[];
     frameSize: string[];
     frameColor: string[];
     themeColor: string[];

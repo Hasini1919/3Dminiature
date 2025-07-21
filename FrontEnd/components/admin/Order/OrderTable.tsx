@@ -1,7 +1,7 @@
 import { Order } from "@/types/admin/order";
 
 interface Props {
-  data?: Order[];  // Optional now
+  data?: Order[];
   onStatusChange: (orderId: string, newStatus: string) => void;
   headerColor?: string;
   rowHoverColor?: string;
@@ -9,52 +9,59 @@ interface Props {
 }
 
 export default function OrderTable({
-  data = [],  // default to empty array
+  data = [],
   onStatusChange,
   headerColor = "bg-gray-800",
   rowHoverColor = "hover:bg-gray-100",
   selectBgColor = "bg-gray-300"
 }: Props) {
-
   return (
     <div className="overflow-x-auto bg-white shadow-md rounded-lg">
       <table className="w-full text-sm text-center">
         <thead className={`${headerColor} text-white uppercase text-sm`}>
           <tr>
-            <th className="p-3">PID</th>
-            <th className="p-3">Name</th>
-            <th className="p-3">CID</th>
-            <th className="p-3">Category</th>
-            <th className="p-3">Frame Color</th>
-            <th className="p-3">Theme</th>
-            <th className="p-3">Size</th>
-            <th className="p-3">Customization</th>
-            <th className="p-3">Price</th>
-            <th className="p-3">Action</th>
+            <th className="p-3">Order ID</th>
+            <th className="p-3">User ID</th>
+            <th className="p-3">Order No</th>
+            <th className="p-3">Items</th>
+            <th className="p-3">Amount</th>
+            <th className="p-3">Shipping</th>
+            <th className="p-3">Address</th>
+            <th className="p-3">Payment Method</th>
+            <th className="p-3">Paid</th>
+            <th className="p-3">Status</th>
           </tr>
         </thead>
         <tbody>
           {data.length > 0 ? (
             data.map((item) => (
-              <tr key={item.id} className={`border-b ${rowHoverColor} transition-colors`}>
-                <td className="p-3">{item.id}</td>
-                <td className="p-3">{item.name}</td>
-                <td className="p-3">{item.cid}</td>
-                <td className="p-3">{item.category}</td>
-                <td className="p-3">{item.frameColor}</td>
-                <td className="p-3">{item.theme}</td>
-                <td className="p-3">{item.size}</td>
-                <td className="p-3">{item.customization || '-'}</td>
-                <td className="p-3">{item.price}</td>
+              <tr key={item._id} className={`border-b ${rowHoverColor} transition-colors`}>
+                <td className="p-3">{item._id}</td>
+                <td className="p-3">{item.userId}</td>
+                <td className="p-3">{item.orderNumber}</td>
+                <td className="p-3">
+                  {Object.entries(item.items || {}).map(([key, value]: [string, any]) => (
+                    <div key={key}>
+                      <strong>{key}</strong>: {JSON.stringify(value)}
+                    </div>
+                  ))}
+                </td>
+                <td className="p-3">Rs. {item.amount}</td>
+                <td className="p-3">{item.selectedShippingOption}</td>
+                <td className="p-3">
+                  {item.address?.street}, {item.address?.city}, {item.address?.postalCode}
+                </td>
+                <td className="p-3">{item.paymentMethod}</td>
+                <td className="p-3">{item.payment ? "Yes" : "No"}</td>
                 <td className="p-3">
                   <select
                     value={item.status}
-                    onChange={(e) => onStatusChange(item.id, e.target.value)}
+                    onChange={(e) => onStatusChange(item._id, e.target.value)}
                     className={`${selectBgColor} text-black text-sm px-2 py-1 rounded-md`}
                   >
-                    <option value="new">New</option>
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
+                    <option value="Order Placed">New</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
                   </select>
                 </td>
               </tr>

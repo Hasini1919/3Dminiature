@@ -6,43 +6,53 @@ import InputField from "@/components/admin/InputField";
 import { arrayToString, stringToArray } from "@/utils/Admin/editUtils";
 import { ProductFormData } from "@/types/admin/edit";
 
-
-
-
 export default function EditProductPage() {
   const { id } = useParams();
   const router = useRouter();
 
-  const [formData, setFormData] = useState<ProductFormData>({
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [newPreviews, setNewPreviews] = useState<string[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
+
+  const [formData, setFormData] = useState<Omit<ProductFormData, "image">>({
     name: "",
     price: "",
     category: "",
     description: "",
-    images: [],
     frameSize: [],
     frameColor: [],
     themeColor: [],
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await fetch(`http://localhost:5500/product/${id}`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`http://localhost:5500/product/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch product");
 
-      const fullImagePaths = (data.images || []).map((img: string) =>
-        `http://localhost:5500/src/uploads/${img.replace(/\\/g, "/")}`
-      );
+        const data = await res.json();
 
-      setFormData({
-        name: data.name || "",
-        price: data.price || "",
-        category: data.category || "",
-        description: data.description || "",
-        images: fullImagePaths,
-        frameSize: data.frameSize || [],
-        frameColor: data.frameColor || [],
-        themeColor: data.themeColor || [],
-      });
+        const fullImagePaths = (data.images || []).map((img: string) =>
+          `http://localhost:5500/images/${img.replace(/\\/, "")}`
+        );
+
+        setExistingImages(fullImagePaths);
+        setFormData({
+          name: data.name || "",
+          price: data.price || "",
+          category: data.category || "",
+          description: data.description || "",
+          frameSize: data.frameSize || [],
+          frameColor: data.frameColor || [],
+          themeColor: data.themeColor || [],
+        });
+      } catch (err) {
+        setError("Failed to load product data.");
+      }
     };
 
     if (id) fetchProduct();
@@ -53,7 +63,7 @@ export default function EditProductPage() {
   ) => {
     const { name, value } = e.target;
 
-    if (["images", "frameSize", "frameColor", "themeColor"].includes(name)) {
+    if (["frameSize", "frameColor", "themeColor"].includes(name)) {
       setFormData({ ...formData, [name]: stringToArray(value) });
     } else if (name === "price") {
       setFormData({ ...formData, price: value === "" ? "" : Number(value) });
@@ -64,19 +74,40 @@ export default function EditProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedData = { ...formData, price: Number(formData.price) };
+    setLoading(true);
+    setError(null);
 
-    const res = await fetch(`http://localhost:5500/product/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedData),
+    const form = new FormData();
+    form.append("name", formData.name);
+    form.append("price", String(formData.price));
+    form.append("category", formData.category);
+    form.append("description", formData.description);
+    form.append("frameSize", JSON.stringify(formData.frameSize));
+    form.append("frameColor", JSON.stringify(formData.frameColor));
+    form.append("themeColor", JSON.stringify(formData.themeColor));
+    form.append("deletedImages", JSON.stringify(deletedImages));
+
+    newFiles.forEach((file) => {
+      form.append("newImages", file);
     });
 
-    if (res.ok) {
+    try {
+      const res = await fetch(`http://localhost:5500/product/${id}`, {
+        method: "PUT",
+        body: form,
+      });
+
+      if (!res.ok) throw new Error("Failed to update product");
+
+      // Clear new files and previews after success
+      setNewFiles([]);
+      setNewPreviews([]);
       alert("Product updated successfully!");
       router.push("/Admin/Product/Table");
-    } else {
-      alert("Failed to update product");
+    } catch (err) {
+      setError("Failed to update product. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,18 +115,66 @@ export default function EditProductPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-2xl space-y-8 bg-white p-10 rounded-2xl shadow-xl">
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-emerald-700">Edit Product</h1>
-          <p className="mt-2 text-sm text-gray-500">Update the details of your product</p>
+          <h1 className="text-3xl font-extrabold text-emerald-700">
+            Edit Product
+          </h1>
+          <p className="mt-2 text-sm text-gray-500">
+            Update the details of your product
+          </p>
         </div>
+
+        {error && (
+          <p className="mb-4 text-red-600 font-semibold text-center">{error}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField id="name" label="Product Name" name="name" value={formData.name} onChange={handleChange} />
-            <InputField id="price" label="Price" name="price" type="number" value={formData.price} onChange={handleChange} />
-            <InputField id="category" label="Category" name="category" value={formData.category} onChange={handleChange} />
-            <InputField id="frameSize" label="Frame Sizes" name="frameSize" value={arrayToString(formData.frameSize)} onChange={handleChange} placeholder="e.g. Small, Medium" />
-            <InputField id="frameColor" label="Frame Colors" name="frameColor" value={arrayToString(formData.frameColor)} onChange={handleChange} placeholder="e.g. Red, Blue" />
-            <InputField id="themeColor" label="Theme Colors" name="themeColor" value={arrayToString(formData.themeColor)} onChange={handleChange} placeholder="e.g. Green, Yellow" />
+            <InputField
+              id="name"
+              label="Product Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <InputField
+              id="price"
+              label="Price"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleChange}
+            />
+            <InputField
+              id="category"
+              label="Category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+            />
+            <InputField
+              id="frameSize"
+              label="Frame Sizes"
+              name="frameSize"
+              value={arrayToString(formData.frameSize)}
+              onChange={handleChange}
+              placeholder="e.g. Small, Medium"
+            />
+            <InputField
+              id="frameColor"
+              label="Frame Colors"
+              name="frameColor"
+              value={arrayToString(formData.frameColor)}
+              onChange={handleChange}
+              placeholder="e.g. Red, Blue"
+            />
+            <InputField
+              id="themeColor"
+              label="Theme Colors"
+              name="themeColor"
+              value={arrayToString(formData.themeColor)}
+              onChange={handleChange}
+              placeholder="e.g. Green, Yellow"
+            />
           </div>
 
           <InputField
@@ -107,41 +186,75 @@ export default function EditProductPage() {
             isTextArea
           />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Product Images</label>
-            {formData.images.length > 0 ? (
-              <div className="flex flex-wrap gap-3 mt-3">
-                {formData.images.map((img, index) => (
-                  <img key={index} src={img} alt={`product-image-${index}`} className="w-24 h-24 object-cover rounded border" />
-                ))}
+          <div className="flex flex-wrap gap-3 mt-3">
+            {existingImages.map((img, index) => (
+              <div key={`existing-${index}`} className="relative group">
+                <img
+                  src={img}
+                  alt={`existing-${index}`}
+                  className="w-24 h-24 object-cover rounded border"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const relativePath = img.replace("http://localhost:5500/images/", "");
+                    setDeletedImages((prev) => [...prev, relativePath]);
+                    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+                  }}
+                  className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 py-0.5 rounded opacity-80 hover:opacity-100"
+                >
+                  ✕
+                </button>
               </div>
-            ) : (
-              <p className="text-sm text-gray-500 mt-2">No images available</p>
-            )}
+            ))}
+
+            {newPreviews.map((img, index) => (
+              <div key={`new-${index}`} className="relative group">
+                <img
+                  src={img}
+                  alt={`preview-${index}`}
+                  className="w-24 h-24 object-cover rounded border"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewPreviews((prev) => prev.filter((_, i) => i !== index));
+                    setNewFiles((prev) => prev.filter((_, i) => i !== index));
+                  }}
+                  className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 py-0.5 rounded opacity-80 hover:opacity-100"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
           </div>
 
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Upload New Images</label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={(e) => {
-                const files = e.target.files;
-                if (!files) return;
+          <input
+            type="file"
+            multiple
+            accept="images/*"
+            onChange={(e) => {
+              const files = e.target.files;
+              if (!files) return;
 
-                const urls = Array.from(files).map((file) => URL.createObjectURL(file));
-                setFormData((prev) => ({ ...prev, images: urls }));
-              }}
-              className="mt-2"
-            />
-          </div>
+              const fileArray = Array.from(files);
+              setNewFiles((prev) => [...prev, ...fileArray]);
+
+              const previews = fileArray.map((file) => URL.createObjectURL(file));
+              setNewPreviews((prev) => [...prev, ...previews]);
+            }}
+          />
 
           <button
             type="submit"
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 transition duration-200 font-semibold"
+            disabled={loading}
+            className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-emerald-700 hover:bg-emerald-800"
+            } transition duration-200 font-semibold`}
           >
-            Update Product
+            {loading ? "Updating..." : "Update Product"}
           </button>
         </form>
       </div>
