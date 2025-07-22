@@ -1,6 +1,7 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import { useAppContext } from "@/context/AppContext";
 
 interface ProductDetail {
   _id: string;
@@ -84,6 +85,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
+    const {addToCart,user,isBuyNow,setIsBuyNow}=useAppContext();
 
   // Get effective size price adjustments (uses backend if available, otherwise falls back to defaults)
   const getSizeAdjustments = () => {
@@ -229,6 +231,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     });
   };
 
+  addToCart(
+    productId,
+    customization.size,
+    customization.frameColor,
+    customization.themeColor,
+    customization.uploadedImages,
+    quantity,
+    false,
+    customText 
+  );
+  toast.success("Product added to cart!");
+
   const handleBuyNow = () => {
     if (!validateForm()) return;
 
@@ -239,6 +253,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       quantity,
       price: currentPrice,
     });
+
+    try {
+      setIsBuyNow(true);
+      addToCart(
+        productId,
+        customization.size,
+        customization.frameColor,
+        customization.themeColor,
+        customization.uploadedImages,
+        quantity,
+        true,
+        customText
+      );
+    } catch (error) {
+      toast.error("Failed to process Buy Now.");
+    }
   };
 
   return (
@@ -645,7 +675,5 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     </div>
   );
 };
-
-
 
 export default ProductDetails;

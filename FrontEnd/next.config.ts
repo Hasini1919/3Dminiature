@@ -1,6 +1,8 @@
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       {
@@ -9,10 +11,28 @@ const nextConfig: NextConfig = {
         port: "5500",
         pathname: "/products/**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5500",
+        pathname: "/photos/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5500",
+        pathname: "/images/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5500",
+        pathname: "/uploads/user-uploads/**",
+      },
     ],
   },
-  reactStrictMode: true,
-  // Optional: Set headers if needed for CSP (handled differently)
 };
 
 export default nextConfig;
+
+

@@ -28,7 +28,8 @@ const addProducts = async (req, res) => {
 const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
-  //  console.log(products);
+    
+    
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: "Error fetching products" });

@@ -17,22 +17,36 @@ const advertisementSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid image file!`,
       },
     },
-
     title: {
       type: String,
       required: true,
     },
-
-    mainTitle: { type: String, required: true },
+    mainTitle: {
+      type: String,
+      required: true,
+    },
     discountPercentage: {
       type: Number,
       required: true,
+      
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    order: {
+      type: Number,
       default: 0,
     },
-    isActive: { type: Boolean, default: true },
-    order: { type: Number, default: 0 },
-    expiresAt: { type: Date, index: true },
-    createdAt: { type: Date, default: Date.now },
+    expiresAt: {
+      type: Date,
+      required: true,
+      expires: 0,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { collection: "AdvertisementDetails" }
 );

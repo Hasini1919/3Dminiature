@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invoice Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; font-size: 18px; }
+    h2 { text-align: center; font-size: 26px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 18px; }
+    th, td { border: 1px solid black; padding: 6px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .user-info { margin-bottom: 20px; padding: 10px; background: #f9f9f9; }
+    .address-box { background: #e8f0ff; padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h2>Customer Order Report</h2>
+
+  {{#each prodlist}}
+    <div class="user-info">
+      <strong>User ID:</strong> {{this.userId}}<br>
+
+      <div class="address-box">
+        <strong>Addresses:</strong>
+        <ul>
+          {{#each this.addressList}}
+            <li>
+              {{this.FirstName}} {{this.LastName}}, {{this.HouseNo}}, {{this.Area}}, {{this.City}}, {{this.District}}<br>
+              Phone: {{this.PhoneNumber}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Order Number</th>
+          <th>Status</th>
+          <th>Payment Method</th>
+          <th>Amount (Rs.)</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+ <tbody>
+  {{#each this.orders}} <!-- Loop over orders -->
+    {{#each this.items}} <!-- Loop over items inside one order -->
+      <tr>
+        <!-- item-level fields -->
+        <td>{{this.name}}</td>
+        <!-- order-level fields, from parent context -->
+        <td>{{../orderNumber}}</td>
+        <td>{{../status}}</td>
+        <td>{{../paymentMethod}}</td>
+        <td>{{../amount}}</td>
+        <td>{{../date}}</td>
+      </tr>
+    {{/each}}
+  {{/each}}
+</tbody>
+
+      <tfoot>
+        <tr>
+          <td colspan="5"><strong>Subtotal</strong></td>
+          <td colspan="2"><strong>Rs.{{this.subtotal}}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <hr><br>
+  {{/each}}
+
+  <h3>Total Subtotal: Rs.{{subtotal}}</h3>
+  <h3>Invoice Number: {{invoiceNo}}</h3>
+  <h3>Date: {{date}}</h3>
+
+</body>
+</html>

@@ -11,14 +11,7 @@ const NewPasswordPage = () => {
   const [success, setSuccess] = useState('');
   const router = useRouter();
 
-  const handleVerifyCode = async () => {
-    try {
-      const response = await axios.post('/api/verify-code', { code });
-      setSuccess('Code verified. Please enter a new password.');
-    } catch (err) {
-      setError('Invalid or expired code.');
-    }
-  };
+  
 
   const handleResetPassword = async () => {
     try {
@@ -45,7 +38,7 @@ const NewPasswordPage = () => {
             onChange={(e) => setCode(e.target.value)}
             placeholder="Enter the reset code"
           />
-          <button onClick={handleVerifyCode}>Verify Code</button>
+         
         </div>
 
         <div>

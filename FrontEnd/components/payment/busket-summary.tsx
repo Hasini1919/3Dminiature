@@ -79,7 +79,7 @@ const BasketSummary: React.FC = () => {
             >
               <div className="flex items-start gap-3">
                 <img
-                  src={`http://localhost:5001${item.productImage}`}
+                  src={`http://localhost:5500${item.images[0]}`}
                   alt={item.productName}
                   width={100}
                   height={100}

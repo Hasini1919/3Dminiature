@@ -8,7 +8,7 @@ export default function
   const [showModal, setShowModal] = useState(false);
   return (
   <>
-    <div className='grid grid-cols-12 h-dvh p-32'>
+    <div className='grid grid-cols-12 h-dvh p-20'>
       <div className='col-span-6 grid grid-rows-12 gap-8'>
         <div className='row-span-4 flex items-center'>
           <h1 className='uppercase text-4xl font-mono font-bold '>Privacy Policy</h1>

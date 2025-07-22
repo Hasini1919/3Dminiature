@@ -23,19 +23,15 @@ const auth = async (req, res, next) => {
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
-/*
-export default auth;
-const authUser= (req,res,next)=>{
-    try{
 
-        const userId = "67cef6ca71e8ec06a1266277"; 
-        req.userId = userId;
-        next();
-    }
-    catch(error){
-        console.log(error);
-        res.json({success:false,message:error.message});
-    }
-}
-*/
+
+
 export default auth;
+export const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Access denied: Admins only.' });
+  }
+};
+

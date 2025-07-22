@@ -15,7 +15,7 @@ export const addProduct = async (productData : FormData) => {
     const response = await fetch(`${API_URL}/form`,{
         method: "POST" ,
         body: productData,
-        headers: {},
+        // headers: {},
     });
     // const data = await response.json();
     // console.log("API Response:", data); // Debugging log
@@ -26,6 +26,6 @@ export const addProduct = async (productData : FormData) => {
 
 //Get product
 export const getProducts = async () => {
-const response = await fetch(API_URL);
-return response.json();
-};
+    const response = await fetch(`${API_URL}/form`);
+    return response.json();
+  };

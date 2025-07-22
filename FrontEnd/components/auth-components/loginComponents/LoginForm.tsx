@@ -17,23 +17,32 @@ const LoginForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    try {
-      const data = await login(formData.email, formData.password);
-      setMessage("Login successful!");
+  try {
+    const data = await login(formData.email, formData.password);
 
-      setTimeout(() => {
-        router.push("/Home");
-      }, 1500);
-    } catch (err: any) {
-      setMessage(` ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Role-based redirect
+    const role = data.user.role;
+    console.log("Role is:", role);
+    setMessage("✅ Login successful!");
+
+    setTimeout(() => {
+      if (role.toLowerCase() === "admin") {
+        router.push("/Admin/Product/Add"); // admin page
+      } else {
+        router.push("/shop"); // normal user page
+      }
+    }, 1500);
+  } catch (err: any) {
+    setMessage(`❌ ${err.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
