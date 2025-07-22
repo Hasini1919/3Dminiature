@@ -19,14 +19,14 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-white group-hover:border-yellow-300 transition-all duration-300 shadow-md">
+            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-white group-hover:border-black transition-all duration-300 shadow-md">
               <img
                 src="/logo.jpg"
                 alt="Tiny treasures logo"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <span className="font-bold text-lg hidden sm:inline-block group-hover:text-yellow-200 transition-all duration-300 tracking-wide">
+            <span className="font-bold text-lg hidden sm:inline-block group-hover:text-orange-400 transition-all duration-300 tracking-wide">
               Tiny Treasure
             </span>
           </Link>
@@ -42,10 +42,10 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.path}
-                className="relative group hover:text-yellow-200 transition"
+                className="relative group hover:text-gray-800 transition"
               >
                 {item.name}
-                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-300 group-hover:w-full transition-all duration-300 ease-in-out"></span>
+                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-800 group-hover:w-full transition-all duration-300 ease-in-out"></span>
               </Link>
             ))}
           </div>
@@ -60,39 +60,39 @@ export default function Header() {
             {/* Login */}
             <Link
               href="/authentication/login"
-              className="group p-2 rounded-full hover:bg-white/10 transition relative"
+              className="group p-2 rounded-full  transition relative"
               title="Login"
             >
-              <FaUser size={18} className="group-hover:text-yellow-300" />
+              <FaUser size={18} className="group-hover:text-gray-800" />
             </Link>
 
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="group p-2 rounded-full hover:bg-white/10 transition relative"
+              className="group p-2 rounded-full transition relative"
               title="Wishlist"
             >
-              <AiFillHeart size={18} className="group-hover:text-yellow-300" />
+              <AiFillHeart size={18} className="group-hover:text-gray-800" />
             </Link>
 
             {/* Compare */}
             <Link
               href="/compare"
-              className="group p-2 rounded-full hover:bg-white/10 transition relative"
+              className="group p-2 rounded-full  transition relative"
               title="Compare"
             >
-              <BiGitCompare size={20} className="group-hover:text-yellow-300" />
+              <BiGitCompare size={20} className="group-hover:text-gray-800" />
             </Link>
 
             {/* Cart */}
             <Link
               href="/card"
-              className="group p-2 rounded-full hover:bg-white/10 transition relative"
+              className="group p-2 rounded-full  transition relative"
               title="Cart"
             >
-              <FaShoppingCart size={18} className="group-hover:text-yellow-300" />
+              <FaShoppingCart size={18} className="group-hover:text-gray-800" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-yellow-400 text-red-700 text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center shadow">
+                <span  className="absolute -top-1 -right-1 bg-white text-orange-400 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
                   {cartCount}
                 </span>
               )}

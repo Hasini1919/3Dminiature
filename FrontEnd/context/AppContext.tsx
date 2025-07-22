@@ -39,7 +39,7 @@ type Product = {
   _id: string;
   name: string;
   price: number;
-  image: string[];
+  images: string[];
   category:string,
   themeColor:string,
   
@@ -212,7 +212,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       
 
       const response = await axiosInstance.get("/api/cart/get");
-
+      console.log(response);
       if (response.data.cartData) {
         setCartData(response.data.cartData);
       }
@@ -220,9 +220,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error fetching cart data:", error);
       if (error.response && error.response.status === 401) {
       // Show alert or toast
-      toast.error("Please check the NetConnection.cart Data fetching failed");
-      router.push("/");
+      toast.error("You are not authorized. Please login.");
+      router.push("/authentication/login");
     }
+    toast.error("Something went wrong while fetching cart data.");
     }
 
   };
@@ -233,7 +234,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   if (storedData) {
     setBuyNowItem(JSON.parse(storedData));
   }
-}, []);
+}, [router]);
  
  
   useEffect(() => {
@@ -363,7 +364,7 @@ console.log(products);
     
   };
   console.log(buyNowItem);
- 
+  console.log(cartData);
   const updateCartItem = async (
     productId: string,
     frameSize: string,

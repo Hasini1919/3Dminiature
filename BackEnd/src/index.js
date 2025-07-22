@@ -35,6 +35,7 @@ import connectDB from "./config/db.js";
 
 import feedbackRoutes from './routes/feedback-routes.js';
 import checkoutRoutes from './routes/checkout.js'
+import verifyRoutes from './routes/verify-payment.js'
 // Load environment variables
 dotenv.config();
 
@@ -154,7 +155,7 @@ app.use("/api",imageRoutes);
 app.use(pdfRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/checkout', checkoutRoutes);
-
+app.use('/api/payment', verifyRoutes);
 
 // Default route
 app.get("/", (req, res) => {

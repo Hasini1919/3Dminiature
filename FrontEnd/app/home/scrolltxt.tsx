@@ -3,9 +3,9 @@ import Image from "next/image";
 
 export default function Scroller() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-3 bg-white">
-      <div  className="flex  gap-8 items-center justify-between">
-        <div className=" p-8 rounded-2xl shadow-xl">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-24 p-3 ">
+      <div  className="flex  gap-16 items-center justify-between ">
+        <div className=" p-8 rounded-2xl  bg-[#ffffff]">
           <h2 className="text-3xl  font-bold  mb-4 text-gray-600">
             CUSTOMIZE THE  PERFECT FRAME FOR EVERY MEMORY
           </h2>

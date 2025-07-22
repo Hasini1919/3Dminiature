@@ -11,7 +11,7 @@ interface Products {
   name: string;
   description: string;
   price: number;
-  image: string;
+  images: string;
   rating: number;
 }
 
@@ -45,6 +45,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         );
 
         const data = response.data;
+        
 
         //  Set only relatedProducts
         setProducts(data.relatedProducts || []);
@@ -64,7 +65,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
 
     if (productId) fetchProductWithRelated();
   }, [productId]);
-
+  
   // Update visible products
   useEffect(() => {
     const endIndex = Math.min(currentIndex + itemsPerPage, products.length);
@@ -184,12 +185,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                   <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100">
                     <ProductCard
                       image={
-                        product.image && product.image.length > 0
+                        product.images && product.images.length > 0
                           ? [
-                              product.image[0].startsWith("http")
-                                ? product.image[0]
+                              product.images[0].startsWith("http")
+                                ? product.images[0]
                                 : (() => {
-                                    const parts = product.image[0].split("/");
+                                    const parts = product.images[0].split("/");
                                     if (parts.length === 2) {
                                       return `${
                                         axiosInstance.defaults.baseURL

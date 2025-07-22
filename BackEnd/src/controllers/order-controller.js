@@ -19,7 +19,7 @@ const placeOrder=async(req,res)=>{
            
         } = req.body;
          const userId = req.user._id;
-         
+         console.log("buy now item");
         console.log(buyNow);
         let orderCounter = await Counter.findOneAndUpdate(
           { id: "orderNumber" },
@@ -101,9 +101,49 @@ const placeOrder=async(req,res)=>{
 
 }
 //placing Order using PayHere Method
-const placeOrderPayHere=async(req,res)=>{
+const placeOrderPayHere = async (req, res) => {
+  try {
+    const {
+      items,
+      amount,
+      address,
+      selectedShippingOption,
+      buyNow,
+    } = req.body;
 
-}
+    const userId = req.user._id;
+
+    const randomDigits = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `ORD-${randomDigits}-${Date.now()}`;
+
+    const orderData = {
+      userId,
+      items,
+      amount,
+      address,
+      status: "order placed pending",
+      paymentMethod: "Stripe",
+      payment: false,
+      selectedShippingOption,
+      date: Date.now(),
+      orderNumber,
+      buyNow: buyNow || false,
+    };
+
+    const newOrder = new OrderModel(orderData);
+    const savedOrder = await newOrder.save();
+
+    res.json({
+      success: true,
+      orderNumber,
+      orderId: savedOrder._id,
+      amount,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 //All Orders data for Admin Panel
 const allOrders=async(req,res)=>{

@@ -11,7 +11,7 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  image: string[];
+  images: string[];
   rating: number;
   category?: string;
   frameColor?: string;
@@ -98,7 +98,7 @@ const NewProducts = ({
       const response = await axiosInstance.get(
         `/api/products?${params.toString()}`
       );
-
+   
  const data = response.data;      
  console.log("Received data:", data);
 
@@ -239,12 +239,12 @@ const NewProducts = ({
                 {" "}
                 <ProductCard
                   image={
-                    product.image && product.image.length > 0
+                    product.images && product.images.length > 0
                       ? [
-                          product.image[0].startsWith("http")
-                            ? product.image[0]
+                          product.images[0].startsWith("http")
+                            ? product.images[0]
                             : (() => {
-                                const parts = product.image[0].split("/");
+                                const parts = product.images[0].split("/");
                                 if (parts.length === 2) {
                                   // parts[0] = folderName, parts[1] = imageName
                                   return `${

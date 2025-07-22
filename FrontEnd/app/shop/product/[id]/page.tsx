@@ -46,15 +46,15 @@ export default function ProductPage() {
         // Process images - handle both string and array formats
         let images: string[] = [];
 
-        if (productData.image) {
-          if (Array.isArray(productData.image)) {
+        if (productData.images) {
+          if (Array.isArray(productData.images)) {
             // If image is already an array
-            images = productData.image.filter(
+            images = productData.images.filter(
               (img : string) => img && img.trim() !== ""
             );
           } else if (typeof productData.image === "string") {
             // If image is a string, add it to array
-            images = [productData.image];
+            images = [productData.images];
           }
         }
 
