@@ -10,7 +10,7 @@ interface ProductDetail {
   discount?: number;
   advertisementDiscount?: number;
   discountedPrice?: number;
-  rating: number;
+  averageRating: number;
   frameColorOptions?: string[] | { name: string; code: string }[];
   themeColorOptions?: string[] | { name: string; code: string }[];
   sizeOptions?: string[];
@@ -118,7 +118,7 @@ useEffect(() => {
               <svg
                 key={i}
                 className={`w-6 h-6 ${
-                  i < Math.floor(product.rating)
+                  i < Math.floor(product.averageRating)
                     ? "text-yellow-400"
                     : "text-gray-300"
                 }`}
@@ -130,7 +130,7 @@ useEffect(() => {
             ))}
           </div>
           <span className="ml-3 text-lg text-gray-600 font-medium">
-            {product.rating?.toFixed(1) ?? "0.0"}/5.0{" "}
+            {product.averageRating?.toFixed(1) ?? "0.0"}/5.0{" "}
           </span>
         </div>
 
@@ -140,10 +140,10 @@ useEffect(() => {
           {product.discount || product.advertisementDiscount ? (
             <div className="flex items-center space-x-2">
               <span className="text-red-500 font-bold text-lg">
-                LKR {discountedPrice.toFixed(2)}
+                LKR {discountedPrice.toFixed(2).toLocaleString()}
               </span>
               <span className="line-through text-gray-500 text-sm">
-                LKR {product.price.toFixed(2)}
+                LKR {product.price.toFixed(2).toLocaleString()}
               </span>
               {product.discount && product.discount > 0 && (
                 <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">
@@ -153,7 +153,7 @@ useEffect(() => {
             </div>
           ) : (
             <div className="text-lg font-bold">
-              LKR {product.price.toFixed(2)}
+              LKR {product.price.toFixed(2).toLocaleString()}
             </div>
           )}
         </div>

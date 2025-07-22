@@ -1,6 +1,7 @@
 import ProductService from "../service/productService.js";
 import Advertisement from "../models/Advertisement.js";
 import Product from "../models/Admin_models/Product.js";
+
 export const getProducts = async (req, res) => {
   const {
     search,
@@ -84,29 +85,58 @@ export const getProducts = async (req, res) => {
     }
     
     // Execute query with pagination
-    const { products, pagination } = await ProductService.getPaginatedProducts(
-      filters,
-      page,
-      sortOption,
-      limit
-    );
+   const { products, pagination } = await ProductService.getPaginatedProducts(
+     filters,
+     page,
+     sortOption,
+     limit
+   );
 
-    res.status(200).json({
-      success: true,
-      products,
-      pagination,
-      message:
-        products.length === 0
-          ? "No products match your filters"
-          : "Products fetched successfully",
-    });
+   // Fetch all ads that match these product IDs
+   const productIds = products.map((p) => p._id);
+   const ads = await Advertisement.find({ product: { $in: productIds } });
+
+   // Map ad discounts by productId
+   const adDiscountMap = {};
+   ads.forEach((ad) => {
+     adDiscountMap[ad.product.toString()] = ad.discountPercentage;
+   });
+   
+
+   // Add discount & discountedPrice to each product
+   const enrichedProducts = products.map((prod) => {
+     const adDiscount = adDiscountMap[prod._id.toString()];
+     const discount =
+       adDiscount !== undefined ? adDiscount : prod.discount || 0;
+     const discountedPrice = Math.round(
+       prod.price - (prod.price * discount) / 100
+     );
+
+     return {
+       ...prod,
+       discount,
+       discountedPrice,
+     };
+   });
+   res.status(200).json({
+     success: true,
+     products: enrichedProducts,
+     pagination,
+     message:
+       enrichedProducts.length === 0
+         ? "No products match your filters"
+         : "Products fetched successfully",
+   });
   } catch (error) {
     console.error("Controller error:", error);
+
+     if (!res.headersSent) {
     res.status(500).json({
       success: false,
       message: "Error fetching products",
       error: error.message,
     });
+  }
   }
 };
 

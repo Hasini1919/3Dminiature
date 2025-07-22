@@ -1,5 +1,6 @@
 import Wishlist from "../models/Wishlist.js";
 import Product from "../models/Admin_models/Product.js";
+import Advertisement from "../models/Advertisement.js";
 
 export const addToWishlist = async (req, res) => {
   const { userId, productId } = req.body;
@@ -46,13 +47,37 @@ export const getWishlistProducts = async (req, res) => {
     }
 
     const productIds = wishlist.products.map((p) => p.productId);
+
+
     const products = await Product.find({ _id: { $in: productIds } });
 
-    res.json(products);
+    const ads = await Advertisement.find({ product: { $in: productIds } });
+
+    const adDiscountMap = {};
+    ads.forEach((ad) => {
+      adDiscountMap[ad.product.toString()] = ad.discountPercentage;
+    });
+
+    const enrichedProducts = products.map((prod) => {
+      const adDiscount = adDiscountMap[prod._id.toString()];
+      const discount =
+        adDiscount !== undefined ? adDiscount : prod.discount || 0;
+      const discountedPrice = Math.round(prod.price * (1 - discount / 100));
+
+      return {
+        ...prod.toObject(),
+        discount,
+        discountedPrice,
+      };
+    });
+
+    res.json(enrichedProducts);
   } catch (error) {
+    console.error("Error in getWishlistProducts:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 export const removeFromWishlist = async (req, res) => {
   const { userId, productId } = req.body;

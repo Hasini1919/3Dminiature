@@ -5,6 +5,16 @@ import Image from "next/image";
 import axiosInstance from "@/services/api";
 import AddToWish from "@/components/addtowish/AddToWish";
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  discount?: number;
+  discountedPrice?: number;
+  image?: string;
+  // Add other fields you use in the ProductCard
+}
+
 interface ProductCardProps {
   _id: string;
   title: string;
@@ -14,6 +24,10 @@ interface ProductCardProps {
   price: number;
   discountPercentage?: number;
   className?: string;
+  advertisement?: {
+    discountPercentage?: number;
+  };
+  product: Product;
 }
 
 
@@ -26,19 +40,31 @@ const ProductCard: React.FC<ProductCardProps> = ({
   price,
   discountPercentage = 0,
   className = "",
+  advertisement,
+  product,
 }) => {
-  // Discount logic
-  const hasDiscount = discountPercentage > 0;
+  
+  const basePrice = product?.price ?? price;
+  const productDiscount = product?.discount ?? discountPercentage ?? 0;
+
+  // Advertisement overrides product discount
+  const effectiveDiscount =
+    advertisement?.discountPercentage && advertisement.discountPercentage > 0
+      ? advertisement.discountPercentage
+      : productDiscount;
+
+  const hasDiscount = effectiveDiscount > 0;
+
   const discountedPrice = hasDiscount
-    ? Math.round(price - price * (discountPercentage / 100))
-    : price;
+    ? Math.round(basePrice - basePrice * (effectiveDiscount / 100))
+    : basePrice;
 
   const formattedPrice = discountedPrice.toLocaleString("en-US", {
     style: "currency",
     currency: "LKR",
   });
 
-  const originalPrice = price.toLocaleString("en-US", {
+  const originalPrice = basePrice.toLocaleString("en-US", {
     style: "currency",
     currency: "LKR",
   });
@@ -113,7 +139,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {hasDiscount && (
                 <div className="absolute top-3 left-3 z-20">
                   <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-full shadow-lg">
-                    -{discountPercentage}%
+                    -{effectiveDiscount}%
                   </span>
                 </div>
               )}
@@ -185,11 +211,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
           </div>
-
-          {/* Cart button */}
-          <button className="p-2 rounded-full bg-red-50 hover:bg-red-500 text-red-500 hover:text-white transition-all duration-200 hover:scale-110 shadow-sm hover:shadow-md">
-            <FiShoppingCart className="text-sm" />
-          </button>
         </div>
       </div>
     </div>

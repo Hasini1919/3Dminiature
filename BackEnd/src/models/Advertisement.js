@@ -27,7 +27,7 @@ const advertisementSchema = new mongoose.Schema(
     discountPercentage: {
       type: Number,
       required: true,
-      default: 10,
+      default: 0,
     },
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 },

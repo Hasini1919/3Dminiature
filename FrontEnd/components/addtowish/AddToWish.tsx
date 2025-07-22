@@ -51,7 +51,7 @@ const AddToWish = ({ productId, variant = "icon-only" }: AddToWishProps) => {
     return (
       <button
         onClick={(e) => toggleWishlist(e)}
-        title="Toggle Wishlist"
+        title="Add to Wishlist"
         className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 z-20 opacity-0 group-hover:opacity-100"
       >
         {isWishlisted ? (

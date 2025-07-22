@@ -37,8 +37,8 @@ const addToCart = async (req, res) => {
     console.log(productId);
     
     const product = await Product.findById(productId);
-    console.log("product detauils");
-    console.log(product);
+    // console.log("product detauils");
+    // console.log(product);
 
     if (!user || !product) {
       
@@ -147,7 +147,7 @@ const updateCart = async (req, res) => {
 
     if (parseInt(quantity) === 0) {
       const deletedItem = user.cartData[itemIndex];
-      console.log(deletedItem);
+      // console.log(deletedItem);
       
       if (deletedItem.uploadedImageFiles && deletedItem.uploadedImageFiles.length > 0) {
         deletedItem.uploadedImageFiles.forEach(file => {

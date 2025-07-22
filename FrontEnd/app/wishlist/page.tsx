@@ -6,13 +6,22 @@ import { getUserIdFromToken } from "@/utils/auth";
 import { useWishlist } from "@/context/WishlistContext";
 import { FaTrash, FaHeart, FaShoppingBag } from "react-icons/fa";
 import { MdFavorite } from "react-icons/md";
+import Link from "next/link";
+
+interface Advertisement {
+  discountPercentage?: number;
+}
 
 interface Product {
   _id: string;
   name: string;
   price: number;
-  image?: string;
+  images?: string;
   description: string;
+  discountPercentage?: number;
+  advertisement?: Advertisement;
+  discountedPrice?: number;
+  discount?: number;
 }
 
 export default function WishlistPage() {
@@ -54,24 +63,23 @@ export default function WishlistPage() {
     }
   };
 
- const getImageSrc = (imagePath: any): string => {
-   const path = Array.isArray(imagePath) ? imagePath[0] : imagePath;
+  const getImageSrc = (imagePath: any): string => {
+    const path = Array.isArray(imagePath) ? imagePath[0] : imagePath;
 
-   if (typeof path !== "string" || !path) {
-     console.warn("Invalid imagePath:", path);
-     return "/placeholder.jpg";
-   }
+    if (typeof path !== "string" || !path) {
+      console.warn("Invalid imagePath:", path);
+      return "/default-product.jpg";
+    }
 
-   const parts = path.split("/");
-   if (parts.length >= 2) {
-     return `${axiosInstance.defaults.baseURL}/products/${encodeURIComponent(
-       parts[0]
-     )}/${encodeURIComponent(parts[1])}`;
-   }
+    const parts = path.split("/");
+    if (parts.length >= 2) {
+      return `${axiosInstance.defaults.baseURL}/products/${encodeURIComponent(
+        parts[0]
+      )}/${encodeURIComponent(parts[1])}`;
+    }
 
-   return path;
- };
-
+    return path;
+  };
 
   const truncateDescription = (
     description: string,
@@ -80,6 +88,40 @@ export default function WishlistPage() {
     if (description.length <= maxLength) return description;
     return description.substring(0, maxLength) + "...";
   };
+
+  const getFormattedPrice = (
+    originalPrice: number,
+    discountedPrice?: number
+  ) => {
+    const hasDiscount =
+      discountedPrice !== undefined && discountedPrice < originalPrice;
+
+    const formatted = new Intl.NumberFormat("en-LK", {
+      style: "currency",
+      currency: "LKR",
+      minimumFractionDigits: 2,
+    }).format(discountedPrice ?? originalPrice);
+
+    const original = new Intl.NumberFormat("en-LK", {
+      style: "currency",
+      currency: "LKR",
+      minimumFractionDigits: 2,
+    }).format(originalPrice);
+
+    const savePercentage = hasDiscount
+      ? ((originalPrice - (discountedPrice ?? originalPrice)) / originalPrice) *
+        100
+      : 0;
+
+    return {
+      formatted,
+      original,
+      hasDiscount,
+      savePercentage,
+    };
+  };
+
+
 
   if (loading) {
     return (
@@ -111,21 +153,11 @@ export default function WishlistPage() {
         </div>
 
         {products.length === 0 ? (
-          /* Empty Wishlist UI */
           <div className="text-center py-16">
             <div className="max-w-md mx-auto">
               <div className="relative mb-8">
                 <div className="w-32 h-32 mx-auto bg-gradient-to-br from-red-200 to-red-300 rounded-full flex items-center justify-center mb-6">
                   <FaHeart className="text-6xl text-red-400" />
-                </div>
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
-                  <div className="w-4 h-4 bg-red-300 rounded-full animate-pulse"></div>
-                </div>
-                <div className="absolute top-8 right-1/4">
-                  <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse delay-300"></div>
-                </div>
-                <div className="absolute bottom-8 left-1/4">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse delay-500"></div>
                 </div>
               </div>
 
@@ -136,75 +168,100 @@ export default function WishlistPage() {
                 You don't have any products in the wishlist yet. You will find a
                 lot of interesting products on our "Shop" page.
               </p>
-
-              <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                <FaShoppingBag className="inline mr-2" />
-                RETURN TO SHOP
-              </button>
+              <Link href="/shop" passHref>
+                <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                  <FaShoppingBag className="inline mr-2" />
+                  RETURN TO SHOP
+                </button>
+              </Link>
             </div>
           </div>
         ) : (
-          /* Products Grid */
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product) => (
-              <div
-                key={product._id}
-                className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden group"
-              >
-                {/* Product Image Container */}
-                <div className="relative overflow-hidden rounded-xl">
-                  <img
-                    src={getImageSrc(product.image || "")}
-                    alt={product.name}
-                    className="w-full h-40 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder.jpg";
-                    }}
-                  />
+            {products.map((product) => {
+              const { formatted, original, hasDiscount, savePercentage } =
+                getFormattedPrice(product.price, product.discountedPrice);
 
-                  {/* Remove Button */}
-                  <button
-                    onClick={() => handleRemove(product._id)}
-                    disabled={removing === product._id}
-                    className="absolute top-3 right-3 bg-white hover:bg-red-50 text-red-500 hover:text-red-600 p-2 rounded-full shadow-md transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
-                    title="Remove from wishlist"
+              return (
+                <div
+                  key={product._id}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden group"
+                >
+                  <Link
+                    key={product._id}
+                    href={`/shop/product/${product._id}`}
+                    className="group"
                   >
-                    {removing === product._id ? (
-                      <div className="animate-spin rounded-md h-4 w-4 border-b-2 border-red-500"></div>
-                    ) : (
-                      <FaTrash className="w-4 h-4" />
-                    )}
-                  </button>
+                    {/* Product Image */}
+                    <div className="relative overflow-hidden rounded-xl">
+                      <img
+                        src={getImageSrc(product.images || "")}
+                        alt={product.name}
+                        className="w-full h-40 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "/default-product.jpg";
+                        }}
+                      />
 
-                  {/* Wishlist Badge */}
-                  <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                    <FaHeart className="w-3 h-3 mr-1" />
-                    Loved
+                      {/* Remove Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleRemove(product._id);
+                        }}
+                        disabled={removing === product._id}
+                        className="absolute top-3 right-3 bg-white hover:bg-red-50 text-red-500 hover:text-red-600 p-2 rounded-full shadow-md transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
+                        title="Remove from wishlist"
+                      >
+                        {removing === product._id ? (
+                          <div className="animate-spin rounded-md h-4 w-4 border-b-2 border-red-500"></div>
+                        ) : (
+                          <FaTrash className="w-4 h-4" />
+                        )}
+                      </button>
+
+                      {/* Wishlist Badge */}
+                      <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
+                        <FaHeart className="w-3 h-3 mr-1" />
+                        Loved
+                      </div>
+                    </div>
+                  </Link>
+                  {/* Product Info */}
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">
+                      {product.name}
+                    </h3>
+
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {truncateDescription(product.description)}
+                    </p>
+                    {/* Price with discount */}
+                    <div className="flex flex-col items-start justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xl font-bold text-red-600">
+                          {formatted}
+                        </span>
+
+                        {hasDiscount && (
+                          <span className="text-sm text-gray-400 line-through">
+                            {original}
+                          </span>
+                        )}
+                      </div>
+
+                      {hasDiscount && savePercentage > 0 && (
+                        <span className="text-xs text-green-600 font-medium mt-1">
+                          Save {savePercentage.toFixed(0)}%
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Product Info */}
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">
-                    {product.name}
-                  </h3>
-
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                    {truncateDescription(product.description)}
-                  </p>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-red-600">
-                      LKR {product.price?.toFixed(2) ?? "N/A"}
-                    </span>
-
-                    <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

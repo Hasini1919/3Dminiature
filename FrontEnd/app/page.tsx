@@ -10,14 +10,14 @@ import WishlistPage from "./wishlist/page";
 export default function Home() {
   return (
     <div>
-      <ShopPage/>
+      {/* <ShopPage/> */}
       {/* <Login /> */}
       {/* <Slidebar/> */}
       {/* <OrderPlaced /> */}
       {/* <PayHere/> */}
       {/* <OrderConfirmed/> */}
       {/* <Card/> */}
-      {/* <WishlistPage /> */}
+      <WishlistPage />
   
     </div>
   );

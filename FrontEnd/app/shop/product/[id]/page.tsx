@@ -13,7 +13,7 @@ interface ProductDetail {
   name: string;
   price: number;
   discount?: number;
-  rating: number;
+  averageRating: number;
   images: string[];
   frameColorOptions?: string[] | { name: string; code: string }[];
   themeColorOptions?: string[] | { name: string; code: string }[];
@@ -49,7 +49,7 @@ export default function ProductPage() {
         if (productData.images) {
           if (Array.isArray(productData.images)) {
             // If image is already an array
-            images = productData.image.filter(
+            images = productData.images.filter(
               (img : string) => img && img.trim() !== ""
             );
           } else if (typeof productData.images === "string") {
@@ -73,7 +73,7 @@ export default function ProductPage() {
 
         setProduct({
           ...productData,
-          image: images,
+          images: images,
           frameColorOptions: productData.frameColorOptions || [
             { name: "Black", code: "#000000" },
             { name: "Brown", code: "#8B4513" },

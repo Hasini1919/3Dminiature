@@ -7,6 +7,10 @@ import { FiGrid, FiList } from "react-icons/fi";
 import Link from "next/link";
 import axiosInstance from "@/services/api";
 
+interface Advertisement {
+  discountPercentage?: number;
+}
+
 interface Product {
   _id: string;
   name: string;
@@ -19,6 +23,7 @@ interface Product {
   themeColor?: string;
   size?: string;
   discountPercentage?: number;
+  advertisement?: Advertisement;
 }
 
 interface FilterParams {
@@ -340,7 +345,6 @@ const NewProducts = ({
           </div>
         </div>
       </div>
-
       {/* Products Grid with responsive design */}
       <div className={`pt-6 ${getGridClasses()}`}>
         {loading ? (
@@ -422,13 +426,14 @@ const NewProducts = ({
                 averageRating={product.averageRating}
                 price={product.price}
                 discountPercentage={product.discountPercentage || 0}
+                advertisement={product.advertisement}
+                product={product}
                 className="h-full hover:scale-[1.02] transition-transform duration-300"
               />
             </Link>
           ))
         )}
       </div>
-
       {/* Enhanced Pagination */}
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-8 border-t border-gray-200">
