@@ -191,55 +191,43 @@ app.post(
 );
 */}
 
-// Image serving endpoint with security enhancements
 app.get("/products/:folderName/:imageName", async (req, res) => {
   try {
     const { folderName, imageName } = req.params;
-    const imageDir = path.join(__dirname, "products", folderName);
 
-    // Security checks
-    if (
-      !imageName ||
-      !/^[a-zA-Z0-9\-_.]+$/.test(imageName) ||
-      !folderName ||
-      !/^[a-zA-Z0-9\-_]+$/.test(folderName)
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid image request",
-      });
-    }
-
+    const baseDir = path.join(__dirname, "products");
+    const imageDir = path.join(baseDir, folderName);
     const imagePath = path.join(imageDir, imageName);
 
-    // Check file exists and is accessible
+    // Validate inputs (basic)
+    const isValidFolder = /^[\w\-\s]+$/.test(folderName); // allow space
+    const isValidImage = /^[\w\-_.\s]+$/.test(imageName); // allow space
+
+    if (!isValidFolder || !isValidImage) {
+      return sendFallbackImage(res, baseDir);
+    }
+
+    // Prevent directory traversal
+    const normalizedPath = path.normalize(imagePath);
+    if (!normalizedPath.startsWith(baseDir)) {
+      return sendFallbackImage(res, baseDir);
+    }
+
+    // Check if image exists
     try {
       await fsPromises.access(imagePath, constants.R_OK);
     } catch {
-      return res.status(404).json({
-        success: false,
-        error: "Image not found",
-      });
+      return sendFallbackImage(res, baseDir);
     }
 
-    // Security: Prevent directory traversal
-    const normalizedPath = path.normalize(imagePath);
-    if (!normalizedPath.startsWith(path.join(__dirname, "products"))) {
-      return res.status(403).json({
-        success: false,
-        error: "Access denied",
-      });
-    }
-
-    // Set proper content type
+    // Set headers
     const mimeType = mime.lookup(imagePath) || "application/octet-stream";
     res.setHeader("Content-Type", mimeType);
     res.setHeader("Content-Disposition", "inline");
     res.setHeader("X-Content-Type-Options", "nosniff");
-
-    // Security: Add caching headers
     res.setHeader("Cache-Control", "public, max-age=86400");
 
+    // Send actual image
     return res.sendFile(imagePath);
   } catch (err) {
     console.error("Image serving error:", err);
@@ -249,6 +237,16 @@ app.get("/products/:folderName/:imageName", async (req, res) => {
     });
   }
 });
+
+// Helper: Send fallback image if error or not found
+function sendFallbackImage(res, baseDir) {
+  const fallbackPath = path.join(baseDir, "default-product.jpg");
+  const mimeType = mime.lookup(fallbackPath) || "image/jpeg";
+  res.setHeader("Content-Type", mimeType);
+  res.setHeader("Content-Disposition", "inline");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.sendFile(fallbackPath);
+}
 
 // Error handler middleware
 app.use((err, req, res, next) => {

@@ -72,11 +72,11 @@ const AddToWish = ({ productId, variant = "icon-only" }: AddToWishProps) => {
         className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 ${
           isWishlisted
             ? "bg-red-500 text-white shadow-lg"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            : "bg-gray-200 text-gray-700 hover:bg-gray-200"
         }`}
       >
         {isWishlisted ? <FaHeart /> : <FaRegHeart />}
-        <span>Wishlist</span>
+        <span className="text-lg font-bold">Add to wishlist</span>
       </button>
     </div>
   );

@@ -179,16 +179,10 @@ const ProductImageGallery = ({
               src={getImageUrl(currentImage)}
               alt={`Product image ${selectedImageIndex + 1}`}
               fill
-              className="object-cover transition-transform duration-300"
+              className="object-cover transition-transform duration-300 ease-in-out"
               style={{
-                transform: isHovering
-                  ? `scale(1.4) translate(
-                  ${Math.max(-5, Math.min(5, 5 - mousePosition.x / 10))}%,
-                  ${Math.max(-5, Math.min(5, 5 - mousePosition.y / 10))}%
-                  )`
-                  : "scale(1)",
+                transform: isHovering ? "scale(1.4)" : "scale(1)",
                 transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-                transition: "transform 0.3s ease",
               }}
               unoptimized
               priority={selectedImageIndex === 0}
@@ -222,7 +216,6 @@ const ProductImageGallery = ({
             </div>
           )}
         </div>
-        <AddToWish productId={product._id} variant="button" />
       </div>
 
       {/* Thumbnails */}
@@ -294,9 +287,9 @@ const ProductImageGallery = ({
                 prev === 0 ? validImages.length - 1 : prev - 1
               )
             }
-            className="p-2 bg-red-500 hover:bg-red-600 rounded-md text-white text-base"
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-md text-white text-xl font-bold"
           >
-            ←previous
+            &lt;
           </button>
           <button
             onClick={() =>
@@ -304,9 +297,9 @@ const ProductImageGallery = ({
                 prev === validImages.length - 1 ? 0 : prev + 1
               )
             }
-            className="p-2 bg-red-500 hover:bg-red-600 rounded-md  text-white text-base"
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-md text-white text-xl font-bold"
           >
-            Next→
+            &gt;
           </button>
         </div>
       )}
@@ -336,11 +329,13 @@ const ProductImageGallery = ({
           </div>
         </div>
       )}
+      {/* Add to Wishlist Button */}
+      <div>
+        <AddToWish productId={product._id} variant="button" />
+      </div>
 
-     {/* Reviews and Add Review Component */}
-      <AddReview productId={product._id} />
+      {/* Reviews and Add Review Component */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
         <ProductReviews productId={product._id} />
       </div>
     </div>

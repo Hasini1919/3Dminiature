@@ -15,7 +15,7 @@ interface PropsType {
 
 const getImageUrl = (img: string): string => {
   if (!img || img.trim() === "") {
-    return "/placeholder-image.jpg";
+    return "default-product/.jpg";
   }
 
   const cleanImage = img.replace(/^\/+/, "");
