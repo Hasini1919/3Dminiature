@@ -1,4 +1,4 @@
-// File: src/server.js (or index.js)import express from "express";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { promises as fsPromises, constants } from "fs";
@@ -28,8 +28,9 @@ import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
 import  "./config/passport.js";
 import connectDB from "./config/db.js";
-
-
+import uploadRoutes from './routes/uploadRoutes.js'; 
+// adjust path if needed
+import profileRouter from './routes/profileRoutes.js';
 // Load environment variables
 dotenv.config();
 
@@ -93,7 +94,7 @@ passport.deserializeUser(async (id, done) => {
 // Express app
 const app = express();
 
-await connectDB();
+
 
 
 // Enhanced CORS configuration
@@ -110,21 +111,13 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(passport.initialize());
-const startServer = async () => {
-  try {
-    await connectDB();
-    console.log('MongoDB connected successfully');
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));//http://localhost:5500/uploads/pic.jpg
 
-    app.use(cors({
-      origin: 'http://localhost:3000',
-      methods: 'GET,POST,PUT,PATCH,DELETE',
-      credentials: true
-    }));
 
     app.use(express.json());
     app.use(passport.initialize());
 
-{/*}
+/*}
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
@@ -157,7 +150,7 @@ const upload = multer({
     }
   },
 });
-*/}
+*/
 
 // Ensure "uploads" directory exists
 app.use('/api/auth', authRoutes);
@@ -174,14 +167,14 @@ if (!fs.existsSync(uploadDir)) {
       res.send('API is running...');
     });
 
-    // Ensure uploads folder exists
-    const uploadDir = path.join(process.cwd(), 'src/uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
+    app.use('/api/profile', profileRouter);
+app.use('/api/user', uploadRoutes); //customer profile
 // Serve uploaded images
 app.use("/uploads", express.static(uploadDir));
+
+   
+    app.use('/form', addRoutes);
+    app.use('/api/auth', instagramAuthRoutes);
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -191,7 +184,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
     
- {/*}   
+ /*}   
 const uploadDir = path.join(process.cwd(), "src/uploads");
 if (!fsSync.existsSync(uploadDir)) {
   fsSync.mkdirSync(uploadDir, { recursive: true });
@@ -207,7 +200,7 @@ const storage = multer.diskStorage({
 });
 
 
-*/ }
+*/ 
 
 // API Routes
 app.use("/api/products", productroutes);
@@ -230,7 +223,7 @@ app.get("/", (req, res) => {
 });
 
 
-{/*
+/*
 // Image upload endpoint
 app.post(
   "/api/uploads/:folderName/images",
@@ -268,7 +261,7 @@ app.post(
     }
   }
 );
-*/}
+*/
 
 // Image serving endpoint with security enhancements
 app.get("/products/:folderName/:imageName", async (req, res) => {
@@ -347,8 +340,12 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5500;
 
 // Server initialization
+// Server initialization
 async function initializeServer() {
   try {
+    // ✅ Add this line to connect MongoDB
+    await connectDB();
+
     const productsDir = path.join(__dirname, "products");
     await fsPromises.mkdir(productsDir, { recursive: true });
     console.log(`Product images directory ready: ${productsDir}`);
@@ -446,18 +443,6 @@ app.use('/api/notifications',notificationRoutes)
 
 
 
-    app.use('/uploads', express.static(uploadDir));
-    app.use('/form', addRoutes);
-    app.use('/api/auth', instagramAuthRoutes);
 
-    const PORT = 5500;
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
-      console.log('✅ Facebook and Google OAuth strategies configured.');
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-  }
-};
 
-startServer();
+

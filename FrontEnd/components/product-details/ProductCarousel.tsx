@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ProductCard from "../shop-components/ProductCard";
+//import ProductCard from "../shop-components/ProductCard";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
 import axiosInstance from "@/services/api";
@@ -182,7 +182,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                   className="group block"
                 >
                   <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100">
-                    <ProductCard
+                    {/* <ProductCard */}
                       image={
                         product.image && product.image.length > 0
                           ? [
@@ -207,7 +207,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                       rating={product.rating}
                       price={product.price}
                       className="shadow-none transition-transform duration-300 group-hover:scale-105"
-                    />
+                    
                   </div>
                 </Link>
               </div>

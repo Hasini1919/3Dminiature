@@ -1,6 +1,6 @@
 import multer from "multer";
 import path from "path";
-import { promises as fs, existsSync, mkdirSync } from "fs";
+import fs, { existsSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 
 // Get __dirname equivalent in ES Modules

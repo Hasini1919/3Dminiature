@@ -30,10 +30,10 @@ const LoginForm = () => {
     setMessage("✅ Login successful!");
 
     setTimeout(() => {
-      if (role.toLowerCase() === "admin") {
+      if (role === "admin") {
         router.push("/Admin/Product/Add"); // admin page
       } else {
-        router.push("/shop"); // normal user page
+        router.push("/customerAccount/profile"); // normal user page
       }
     }, 1500);
   } catch (err: any) {

@@ -16,6 +16,7 @@ const cartItemSchema = new mongoose.Schema(
       type: [String],
       required: true,
     },
+    
     price: {
       type: Number,
       required: true,
@@ -90,6 +91,12 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "customer"], 
+      default: "customer",
+      required: true,
     },
     password: {
       type: String,

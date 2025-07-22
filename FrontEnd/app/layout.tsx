@@ -1,31 +1,39 @@
+import type { Metadata } from "next";
 import "./globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 import Script from "next/script";
-import Slidebar from "../components/Admin_sidebar/Slidebar";
-import { AppContextProvider } from "@/context/AppContext";
-import { addProduct } from "@/utils/Admin/api";
+import { Toaster } from "react-hot-toast";
 
+import { ThemeProvider } from "@/components/customer-account/ThemeProvider";
+import ClientLayoutWrapper from "@/utils/ClientLayoutWrapper";
 
-
+export const metadata: Metadata = {
+  title: "Your App Name",
+  description: "Your App Description",
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  
   return (
-    <html lang="en">
-      <body className="antialiased ">
+    <html lang="en" suppressHydrationWarning>
+      <head>
         <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           strategy="beforeInteractive"
         />
-        <div className="debug">
-          
-          <AppContextProvider>{children}</AppContextProvider>
-        </div>
+      </head>
+      <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased">
+        <Toaster position="top-center" />
+        <ThemeProvider>
+          <ClientLayoutWrapper>
+            {children}
+          </ClientLayoutWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

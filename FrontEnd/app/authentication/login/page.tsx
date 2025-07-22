@@ -16,13 +16,14 @@ const Login = () => {
 
         {/* Right */}
         <div className="w-full md:w-3/5 flex flex-col justify-center items-center p-10">
-          <h2 className="text-3xl font-bold text-center mb-6">
+          <h2 className="text-3xl font-bold text-center mb-6 text-red-600">
             Welcome to Tiny Treasures
           </h2>
           <AuthCard>
             <SocialLogin />
             <LoginForm />
           </AuthCard>
+         
         </div>
       </div>
     </div>

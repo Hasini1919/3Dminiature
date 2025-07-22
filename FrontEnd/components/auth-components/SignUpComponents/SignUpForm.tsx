@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signup } from "@/utils/auth-utils/api";
+import { signup } from "@/utils/auth-utils/api"; // your signup API call
 import { Eye, EyeOff } from "lucide-react";
 
 export default function SignUpForm() {
@@ -13,7 +13,7 @@ export default function SignUpForm() {
   });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); //  Toggle visibility
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,21 +32,33 @@ export default function SignUpForm() {
     setLoading(true);
     try {
       const response = await signup(formData.name, formData.email, formData.password);
+
       if (response.message) {
         setMessage(response.message);
-        setTimeout(() => {
-          router.push("/About");
-        }, 2000);
+
+        // Redirect after 2 seconds only if success
+        if (!response.message.toLowerCase().includes("already")) {
+          setTimeout(() => {
+            router.push("/customerAccount/profile");
+          }, 2000);
+        }
       }
     } catch (error) {
-      setMessage("Something went wrong. Please try again.");
+      setMessage("User already exist. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const isError =
+    message.toLowerCase().includes("already") ||
+    message.toLowerCase().includes("wrong") ||
+    message.toLowerCase().includes("invalid") ||
+    message.toLowerCase().includes("must");
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      {/* Name Field */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Name</label>
         <input
@@ -59,6 +71,7 @@ export default function SignUpForm() {
         />
       </div>
 
+      {/* Email Field */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Email</label>
         <input
@@ -71,6 +84,7 @@ export default function SignUpForm() {
         />
       </div>
 
+      {/* Password Field */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Password</label>
         <div className="relative">
@@ -93,6 +107,7 @@ export default function SignUpForm() {
         </div>
       </div>
 
+      {/* Submit Button */}
       <button
         type="submit"
         className="w-full bg-red-600 text-white py-2 rounded-lg"
@@ -101,13 +116,19 @@ export default function SignUpForm() {
         {loading ? "Creating Account..." : "CREATE ACCOUNT"}
       </button>
 
+      {/* Forgot Password Link */}
       <div className="text-center mt-4">
         <a href="/authentication/forgot-password" className="text-red-600 hover:text-red-700">
           Forgot Password?
         </a>
       </div>
 
-      {message && <p className="text-center text-green-500 mt-2">{message}</p>}
+      {/* Status Message */}
+      {message && (
+        <p className={`text-center mt-2 ${isError ? "text-red-500" : "text-green-500"}`}>
+          {message}
+        </p>
+      )}
     </form>
   );
 }

@@ -16,22 +16,22 @@ function SlideBar() {
     <div className='row-span-4 grid gap-4  h-full'>
     
      <div className="flex items-center justify-center hover:bg-gray-300 " title='MyAccount'>
-      <Link href={"/my-account/account"}>
+      <Link href={"/customerAccount/profile"}>
       <CgProfile size={24}  />
       </Link>
      </div>
      <div className="flex items-center justify-center hover:bg-gray-300" title='MyOrders'>
-      <Link href={"/my-account/orders"}>
+      <Link href={"/customerAccount/orders"}>
       <TiShoppingCart size={24} />
       </Link>
      </div>
      <div className="flex items-center justify-center hover:bg-gray-300"title='MyRivews'>
-      <Link href={"/my-account/riviews"}>
+      <Link href={"/customerAccount/reviews"}>
       <VscPreview size={24}/>
       </Link>
      </div>
      <div className="flex items-center justify-center hover:bg-gray-300" title='Setting'>
-      <Link href={"/my-account/settings"}>
+      <Link href={"/customerAccount/settings"}>
       <IoSettingsSharp size={24}/>
       </Link>
      </div>
