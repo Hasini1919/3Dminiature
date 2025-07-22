@@ -4,7 +4,7 @@ export const metadata = {
 
 import Image from "next/image";
 import Subscribe from "@/components/footer/subscribe";
-import Pdf from "@/components/pdf/pdf";
+
 
 export default function About() {
     return (
@@ -161,7 +161,6 @@ export default function About() {
     </div>
 
     </div>
-
 </>
     );
 }
