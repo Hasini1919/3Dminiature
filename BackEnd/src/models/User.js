@@ -110,14 +110,27 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: function () {
-        return !this.googleId;  // Required only if no Google login
-      },
+        return !this.googleId && !this.facebookId && !this.instagramId; // Include instagramId too
+      }
     },
     googleId: {
       type: String,
       unique: true,
       sparse: true,
     },
+
+    facebookId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
+
+    instagramId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
+
     picture: {
       type: String,
     },
@@ -126,6 +139,13 @@ const userSchema = new mongoose.Schema(
     },
     resetPasswordExpires: {
       type: Date,
+    },
+
+    // ✅ Role added here
+    role: {
+      type: String,
+      enum: ['customer', 'admin'],
+      default: 'customer'
     },
     cartData: {
       type: [cartItemSchema],
@@ -154,3 +174,22 @@ const userSchema = new mongoose.Schema(
 // Export the model
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

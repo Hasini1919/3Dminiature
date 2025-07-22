@@ -5,7 +5,6 @@ import { Strategy as FacebookStrategy } from 'passport-facebook';
 import configureInstagramStrategy from '../config/instagramStrategy.js'; 
 import User from '../models/User.js';
 
-
 configureInstagramStrategy(passport);
 
 //  Google Strategy
