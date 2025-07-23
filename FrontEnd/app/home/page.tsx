@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Scroller from "./scrolltxt";
 import ScrollerImg from "./scrollImage";
-import Header from "@/components/header/header";
+//import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 
 export default function Homepage() {
   return (
     <>
      
-      <Header />
+      {/* // <Header /> */}
 
      
       <section

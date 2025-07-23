@@ -2,16 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
 import Script from "next/script";
-//import { Toaster } from "react-hot-toast";
-//import Header from "@/components/header/header";
-//import Footer from "@/components/footer/footer";
-import { Kalam } from "next/font/google";
-
-import { ThemeProvider } from "@/components/customer-account/ThemeProvider";
-import ClientLayoutWrapper from "@/utils/ClientLayoutWrapper";
+import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
+import ClientWrapper from "@/components/ClientWrapper";
 
 export const metadata: Metadata = {
   title: "Your App Name",
@@ -32,14 +26,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased">
+         
         <Toaster position="top-center" />
-        <ThemeProvider>
-          <ClientLayoutWrapper>
-            {children}
-          </ClientLayoutWrapper>
-        </ThemeProvider>
+       
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
-      
     </html>
   );
 }

@@ -21,7 +21,7 @@ export default function Home() {
       {/* <PayHere/> */}
       {/* <OrderConfirmed/> */}
       {/* <Card/> */}
-      <ProfilePage />
+      {/* <ProfilePage /> */}
        
 
     </div>

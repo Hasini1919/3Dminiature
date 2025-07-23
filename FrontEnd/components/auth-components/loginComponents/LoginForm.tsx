@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/utils/auth-utils/api";
 import InputField from "@/components/auth-components/loginComponents/InputField";
 import Button from "@/components/auth-components/loginComponents/Button";
 
+
+
+
 const LoginForm = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl"); // ✅ get callbackUrl from URL
+
+   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,9 +37,9 @@ const LoginForm = () => {
 
     setTimeout(() => {
       if (role === "admin") {
-        router.push("/Admin/Product/Add"); // admin page
+        router.push("/Admin/dashbord"); // admin page
       } else {
-        router.push("/customerAccount/profile"); // normal user page
+router.push(callbackUrl || "/customerAccount/profile");
       }
     }, 1500);
   } catch (err: any) {

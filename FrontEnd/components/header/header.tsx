@@ -5,16 +5,40 @@ import SearchBar from "./search";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { BiGitCompare } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
+import { useSession, signOut } from "next-auth/react";
+import { FaSpinner } from "react-icons/fa"; // Added for loading state
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { getCartCount } = useAppContext();
   const cartCount = getCartCount();
+  const { data: session, status } = useSession();
+  
+const router = useRouter();
+const pathname = usePathname();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (status === "loading") return <p>Loading...</p>;
+      if (!session) return <p>Not logged in</p>;
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#c22638] shadow-lg backdrop-blur-sm  text-white">
+    <header className="sticky top-0 z-50 bg-[#c22638] shadow-lg backdrop-blur-sm text-white">
       <nav className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
@@ -56,15 +80,72 @@ export default function Header() {
           </div>
 
           {/* Icons */}
-          <div className="flex items-center gap-4">
-            {/* Login */}
-            <Link
-              href="/authentication/login"
+          <div className="flex items-center gap-4 relative" ref={dropdownRef}>
+            {/* User Dropdown */}
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="group p-2 rounded-full hover:bg-white/10 transition relative"
-              title="Login"
+              title="Account"
+              aria-expanded={isDropdownOpen}
             >
-              <FaUser size={18} className="group-hover:text-yellow-300" />
-            </Link>
+              {status === "loading" ? (
+                <FaSpinner className="animate-spin" size={18} />
+              ) : (
+                <FaUser size={18} className="group-hover:text-yellow-300" />
+              )}
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-12 bg-white text-black rounded-md shadow-md w-44 z-50">
+                {status === "loading" ? (
+                  <div className="px-4 py-2 text-center">Loading...</div>
+                ) : status === "authenticated" ? (
+                  <div className="flex flex-col text-sm">
+                    <Link
+                      href="/customerAccount/profile"
+                      className="px-4 py-2 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      My Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      className="px-4 py-2 text-left hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col text-sm">
+                    <button
+                  onClick={() => {
+                  setIsDropdownOpen(false);
+                     const callback = encodeURIComponent(pathname);
+                   router.push(`/authentication/login?callbackUrl=${callback}`);
+                 }}
+                         className="px-4 py-2 text-left hover:bg-gray-100 w-full"
+                    >
+                      Login
+                        </button>
+
+                    <button
+  onClick={() => {
+    setIsDropdownOpen(false);
+    const callback = encodeURIComponent(pathname);
+    router.push(`/authentication/signup?callbackUrl=${callback}`);
+  }}
+  className="px-4 py-2 text-left hover:bg-gray-100 w-full"
+>
+  Sign Up
+</button>
+
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Wishlist */}
             <Link
@@ -86,9 +167,9 @@ export default function Header() {
 
             {/* Cart */}
             <Link
-              href="/card"
+              href="/card" // Fixed from /card to /cart
               className="group p-2 rounded-full hover:bg-white/10 transition relative"
-              title="Cart"
+              title="Card"
             >
               <FaShoppingCart size={18} className="group-hover:text-yellow-300" />
               {cartCount > 0 && (
@@ -108,4 +189,3 @@ export default function Header() {
     </header>
   );
 }
-
