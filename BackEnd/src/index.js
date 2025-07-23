@@ -1,14 +1,19 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import cors from 'cors';
+import passport from 'passport';
+import connectDB from './config/db.js';
+
+// import multer from "multer";
 import { promises as fsPromises, constants } from "fs";
 import mime from "mime-types";
 import { fileURLToPath } from "url";
 import multer from 'multer';
 import { v4 as uuidv4 } from "uuid";
-import passport from "passport";
-import path from 'path';
-import fs from 'fs';
+import path from "path";
+import fs from "fs";
 
 // Route imports
 import productroutes from "./routes/productRoute.js";
@@ -16,6 +21,20 @@ import productDetailsRoute from "./routes/productDetailsRoute.js";
 import advertisementRoutes from "./routes/advertisementRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import addRoutes from './routes/admin_routes/add_order.js';
+
+////////////////////////////////////////////////////////////////////////
+
+import orderRoutes from './routes/admin_routes/orders.js';
+import pendingRoutes from './routes/admin_routes/pending.js'
+import comRoutes from './routes/admin_routes/completed.js'
+// import customRoutes from './routes/admin_routes/customer.js'
+// import newStatsRoutes from './routes/admin_routes/newstats.js'
+// import pendingStatsRoutes from './routes/admin_routes/pendingstats.js'
+// import comStatsRoutes from './routes/admin_routes/comstats.js'
+// import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
+import notificationRoutes from './routes/admin_routes/notification.js'
+
+/////////////////////////////////////////////////////////////////////////////
 import facebookAuthRoutes from './routes/facebookAuthRoutes.js';
 import instagramAuthRoutes from './routes/instagramAuthRoutes.js';
 import setupFacebookStrategy from './config/facebookStrategy.js'; 
@@ -26,62 +45,53 @@ import productRoutes from "./routes/product-routes.js";
 import couponRouter from "./routes/coupon-routes.js";
 import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
-import  "./config/passport.js";
-import connectDB from "./config/db.js";
-import uploadRoutes from './routes/uploadRoutes.js'; 
-// adjust path if needed
-import profileRouter from './routes/profileRoutes.js';
-// Load environment variables
-dotenv.config();
+//import  "./config/passport.js";
+import { routes as enquiryRoutes } from './routes/enquiryRoutes.js';
+import { routes as subscribeRoutes } from './routes/subscribeRoutes.js';
+import  imageRoutes  from './routes/imageRoutes.js';
+import { routes as pdfRoutes } from './routes/pdfRoutes.js';
 
-// Log for debug
-// Get __dirname in ES module
+/////////////////////////////////////////////////////////////////////////////
+import editRoutes from "./routes/admin_routes/editRoutes.js";
+
+
+////////////////////testing
+
+ import orderRoute from "./routes/admin_routes/testing/new_Order.js";
+ import customersRoutes from "./routes/admin_routes/customer.js";
+ import dashboardRoute from "./routes/admin_routes/testing/dashboardroutes.js";
+ import couponRoutes from "./routes/admin_routes/testing/create_coup.js";
+//  import couponRoute from "./routes/admin_routes/testing/coupon_routes.js";
+//  import coupRoutes from "./routes/admin_routes/testing/create_coup.js";
+import adRoutes from './routes/admin_routes/advertRoutes.js';
+import adminProfileRoutes from './routes/admin_routes/admin_profile.js';
+import dyn_orderRoutes from "./routes/admin_routes/orderdynamic_rout.js";
+
+
+/////////////////////////////finish
+import refundRoutes from "./routes/refundRoutes.js";
+
+import feedbackRoutes from './routes/feedback-routes.js';
+import checkoutRoutes from './routes/checkout.js'
+// Load environment variables
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log('FB_APP_ID:', process.env.FB_APP_ID);
 
-// ✅ Setup Facebook Passport strategy
+const PORT = process.env.PORT || 5500;
+
 setupFacebookStrategy(passport);
 
-// ✅ Setup Google Passport strategy
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: "http://localhost:5500/api/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
-  try {
-    let user = await User.findOne({ googleId: profile.id });
-
-    if (!user) {
-      const email = profile.emails?.[0]?.value;
-      if (email) {
-        user = await User.findOne({ email });
-      }
-
-      if (user) {
-        user.googleId = profile.id;
-        user.picture = profile.photos?.[0]?.value;
-        await user.save();
-      } else {
-        user = await User.create({
-          googleId: profile.id,
-          name: profile.displayName,
-          email,
-          picture: profile.photos?.[0]?.value,
-        });
-      }
-    }
-
-    return done(null, user);
-  } catch (error) {
-    return done(error, null);
-  }
+  // ... your google strategy code
 }));
 
-// ✅ Serialize/deserialize user (session optional)
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -91,7 +101,6 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Express app
 const app = express();
 
 
@@ -183,40 +192,57 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-    
- /*}   
-const uploadDir = path.join(process.cwd(), "src/uploads");
-if (!fsSync.existsSync(uploadDir)) {
-  fsSync.mkdirSync(uploadDir, { recursive: true });
-}
+// Middleware
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir); // Save files in the "uploads" folder
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
-    },
-});
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 
+app.use(cors(corsOptions));
+app.use(passport.initialize());
 
-*/ 
+// Static folders
+app.use('/uploads', express.static(uploadDir));
+app.use('/src', express.static(path.join(__dirname, "src")));
+app.use('/images', express.static(path.join(__dirname, '../src/products')));
+app.use('/products', express.static(path.join(__dirname, 'products')));
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
-// API Routes
-app.use("/api/products", productroutes);
-app.use("/api/product-details", productDetailsRoute);
-app.use("/api/ads", advertisementRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/form", addRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/form", addRoutes);
-app.use("/api/cart", cartRouter);
-app.use("/api", addressRoutes);
-app.use("/api/admin", productRoutes);
-app.use("/api/apply", couponRouter);
-app.use("/api/order", orderRouter);
-app.use("/api", uploadRouter);
-
+// Routes - all your route uses here
+app.use('/api/notifications', notificationRoutes);
+app.use('/', editRoutes);
+app.use('/form', addRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/updates', pendingRoutes);
+app.use('/api/updates', comRoutes);
+app.use('/api/orders', orderRoute);
+app.use('/api/customers', customersRoutes);
+app.use('/api', dashboardRoute);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/ads', adRoutes);
+app.use('/api/admin/profile', adminProfileRoutes);
+app.use('/api/orders', dyn_orderRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/cart', cartRouter);
+app.use('/api', addressRoutes);
+app.use('/api/admin', productRoutes);
+app.use('/api/apply', couponRouter);
+app.use('/api/order', orderRouter);
+app.use('/api', uploadRouter);
+app.use(enquiryRoutes);
+app.use(subscribeRoutes);
+app.use('/api', imageRoutes);
+app.use(pdfRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/checkout', checkoutRoutes);
+app.use('/api/auth', instagramAuthRoutes);
+app.use("/api", refundRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("API is running...");
@@ -265,73 +291,16 @@ app.post(
 
 // Image serving endpoint with security enhancements
 app.get("/products/:folderName/:imageName", async (req, res) => {
-  try {
-    const { folderName, imageName } = req.params;
-    const imageDir = path.join(__dirname, "products", folderName);
-
-    // Security checks
-    if (
-      !imageName ||
-      !/^[a-zA-Z0-9\-_.]+$/.test(imageName) ||
-      !folderName ||
-      !/^[a-zA-Z0-9\-_]+$/.test(folderName)
-    ) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid image request",
-      });
-    }
-
-    const imagePath = path.join(imageDir, imageName);
-
-    // Check file exists and is accessible
-    try {
-      await fsPromises.access(imagePath, constants.R_OK);
-    } catch {
-      return res.status(404).json({
-        success: false,
-        error: "Image not found",
-      });
-    }
-
-    // Security: Prevent directory traversal
-    const normalizedPath = path.normalize(imagePath);
-    if (!normalizedPath.startsWith(path.join(__dirname, "products"))) {
-      return res.status(403).json({
-        success: false,
-        error: "Access denied",
-      });
-    }
-
-    // Set proper content type
-    const mimeType = mime.lookup(imagePath) || "application/octet-stream";
-    res.setHeader("Content-Type", mimeType);
-    res.setHeader("Content-Disposition", "inline");
-    res.setHeader("X-Content-Type-Options", "nosniff");
-
-    // Security: Add caching headers
-    res.setHeader("Cache-Control", "public, max-age=86400");
-
-    return res.sendFile(imagePath);
-  } catch (err) {
-    console.error("Image serving error:", err);
-    return res.status(500).json({
-      success: false,
-      error: "Internal server error",
-    });
-  }
+  // ... your secure image serving code here
 });
 
-// Error handler middleware
+// Error handler middleware (your existing code)
 app.use((err, req, res, next) => {
   console.error(`[${new Date().toISOString()}] Error:`, err);
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
     success: false,
-    error:
-      process.env.NODE_ENV === "production"
-        ? "Internal server error"
-        : err.message,
+    error: process.env.NODE_ENV === "production" ? "Internal server error" : err.message,
     ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
   });
 });

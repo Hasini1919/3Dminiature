@@ -1,3 +1,5 @@
+
+import Homepage from "./home/page";
 import Login from "./authentication/login/page";
 import ShopPage from "./shop/page";
 
@@ -11,6 +13,7 @@ import ProfilePage from "./customerAccount/profile/page";
 export default function Home() {
   return (
     <div>
+    <Homepage/>
       {/* <ShopPage/> */}
        {/* <Login />  */}
       {/* <Slidebar/> */}

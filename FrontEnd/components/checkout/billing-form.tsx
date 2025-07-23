@@ -229,7 +229,7 @@ const BillingForm = () => {
 
     if (!formData.get("HouseNo")) {
       newErrors.HouseNo = "House No / Street No is required";
-    } else if (!/^(?=.*\d).{3,}$/.test(formData.get("HouseNo") as string)) {
+    } else if (!/^(?=.*\d).{2,}$/.test(formData.get("HouseNo") as string)) {
       newErrors.HouseNo =
         "This field must contain at least 2 or more characters and include a number";
     }

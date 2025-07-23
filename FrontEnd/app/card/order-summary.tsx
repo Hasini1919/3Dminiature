@@ -49,7 +49,7 @@ const OrderedSummary = () => {
   const originalTotal = subtotal + shippingCost;
 
   return (
-    <div className="sticky top-4">
+    <div className="top-4">
       <div className="w-full rounded-lg overflow-hidden">
         <div className="p-6 flex flex-col space-y-6 border-4 border-gray-300 rounded-lg">
           <h2 className="text-2xl font-bold uppercase text-center font-serif mb-6">

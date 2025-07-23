@@ -49,6 +49,8 @@ const cartItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
+
+
 // Coupon schema
 const couponSchema = new mongoose.Schema(
   {
@@ -77,6 +79,20 @@ const couponSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const addressSchema = new mongoose.Schema(
+  {
+    FirstName: { type: String, required: true },
+    LastName: { type: String, required: true },
+    PhoneNumber: { type: String, required: true },
+    Provience: { type: String, required: true }, 
+    District: { type: String, required: true },
+    Area: { type: String, required: true },
+    City: { type: String, required: true },
+    HouseNo: { type: String, required: true },
+    AnyInformation: { type: String, default: "" },
+  },
+  { _id: false }
+);
 // Combined user schema
 const userSchema = new mongoose.Schema(
   {
@@ -101,14 +117,27 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: function () {
-        return !this.googleId;  // Required only if no Google login
-      },
+        return !this.googleId && !this.facebookId && !this.instagramId; // Include instagramId too
+      }
     },
     googleId: {
       type: String,
       unique: true,
       sparse: true,
     },
+
+    facebookId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
+
+    instagramId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
+
     picture: {
       type: String,
     },
@@ -117,6 +146,13 @@ const userSchema = new mongoose.Schema(
     },
     resetPasswordExpires: {
       type: Date,
+    },
+
+    // ✅ Role added here
+    role: {
+      type: String,
+      enum: ['customer', 'admin'],
+      default: 'customer'
     },
     cartData: {
       type: [cartItemSchema],
@@ -132,6 +168,10 @@ const userSchema = new mongoose.Schema(
         ref: "coupons",
       },
     ],
+     address: {
+      type: addressSchema,
+      default: null, 
+    },
   },
   {
     timestamps: true,
@@ -141,3 +181,22 @@ const userSchema = new mongoose.Schema(
 // Export the model
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
