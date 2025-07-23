@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Scroller() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-3 bg-white">
-      <div  className="flex  gap-8 items-center justify-between">
-        <div className=" p-8 rounded-2xl shadow-xl">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-24 p-3 ">
+      <div  className="flex  gap-16 items-center justify-between ">
+        <div className=" p-8 rounded-2xl  bg-[#ffffff]">
           <h2 className="text-3xl  font-bold  mb-4 text-gray-600">
             CUSTOMIZE THE  PERFECT FRAME FOR EVERY MEMORY
           </h2>
@@ -16,9 +17,11 @@ export default function Scroller() {
             moments, our handcrafted frames bring your memories to life with
             style and depth.
           </p>
+          <Link href="/about">
           <button className="px-6 py-3 bg-red-700 text-white font-semibold rounded-md shadow hover:bg-red-800 border border-orange-400 transition">
             LEARN MORE
           </button>
+          </Link>
         </div>
 
       

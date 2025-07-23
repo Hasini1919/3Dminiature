@@ -39,7 +39,7 @@ type Product = {
   _id: string;
   name: string;
   price: number;
-  image: string[];
+  images: string[];
   category:string,
   themeColor:string,
   
@@ -93,7 +93,8 @@ interface AppContextType {
   isBuyNow: boolean;
    user: any;
   
-  
+    fetchCartData: () => Promise<void>;
+
   setIsBuyNow:React.Dispatch<React.SetStateAction<boolean>>;
   setBillingDistricts: React.Dispatch<React.SetStateAction<string[]>>;
   setShippingDistricts: React.Dispatch<React.SetStateAction<string[]>>;
@@ -206,34 +207,31 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   fetchUser();
 }, []);
 
-  useEffect(() => {
-  const fetchCartData = async () => {
+const fetchCartData = async () => {
     try {
-      
-
       const response = await axiosInstance.get("/api/cart/get");
-
       if (response.data.cartData) {
         setCartData(response.data.cartData);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error fetching cart data:", error);
       if (error.response && error.response.status === 401) {
-      // Show alert or toast
-      toast.error("Please check the NetConnection.cart Data fetching failed");
-      router.push("/");
+        toast.error("You are not authorized. Please login.");
+        router.push("/authentication/login");
+      } else {
+        toast.error("Something went wrong while fetching cart data.");
+      }
     }
-    }
-
   };
 
-  fetchCartData();
+  useEffect(() => {
+    fetchCartData(); // call it properly here
 
-  const storedData = sessionStorage.getItem("buyNowItem");
-  if (storedData) {
-    setBuyNowItem(JSON.parse(storedData));
-  }
-}, []);
+    const storedData = sessionStorage.getItem("buyNowItem");
+    if (storedData) {
+      setBuyNowItem(JSON.parse(storedData));
+    }
+  }, [router]);
  
  
   useEffect(() => {
@@ -257,7 +255,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   }, []);
  
-console.log(products);
+//console.log(products);
 
   const addToCart = async (
     productId: string,
@@ -287,7 +285,7 @@ console.log(products);
       formData.append(`uploadedImageFile`, file); 
     });
    
-   console.log(isBuyNow);
+   //console.log(isBuyNow);
 
     if(!isBuyNow){
          
@@ -307,7 +305,7 @@ console.log(products);
          
         }
         
-        console.log("addtocard");
+        //console.log("addtocard");
       } catch (error) {
         console.error("Error adding to cart:", error);
         toast.error("Something went wrong while adding to cart.");
@@ -348,7 +346,7 @@ console.log(products);
      
       sessionStorage.setItem("buyNowItem", JSON.stringify(buyNowObject));
 
-     console.log("buynow");
+     //console.log("buynow");
       setBuyNowItem(buyNowObject);
 
      
@@ -362,8 +360,8 @@ console.log(products);
     }
     
   };
-  console.log(buyNowItem);
- 
+  //console.log(buyNowItem);
+  //console.log(cartData);
   const updateCartItem = async (
     productId: string,
     frameSize: string,
@@ -414,15 +412,16 @@ console.log(products);
       console.error("Error updating cart item:", error);
     }
   };
-  console.log(user);
+  //console.log(user);
 
   const getCartCount = () => {
     return cartData.reduce((total, item) => total + item.quantity, 0);
   };
 
+
   const getCartAmount = () => cartData.reduce((acc, item) => acc + item.quantity * item.price, 0);
 
- 
+
 
   const clearBuyNow = () => {
     setBuyNowItem(null);
@@ -437,6 +436,7 @@ console.log(products);
     <AppContext.Provider
       value={{
         address,
+        fetchCartData,
         shiftAddress,
         selectedShippingOption,
         products,

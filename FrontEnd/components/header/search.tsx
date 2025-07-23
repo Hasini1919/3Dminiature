@@ -22,31 +22,32 @@ export default function SearchBar({ isOpen, onClose, initialQuery = "" }: Search
     }
   }, [isOpen]);
 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedQuery = query.trim();
     if (trimmedQuery.length > 0) {
       router.push(`/shop?search=${encodeURIComponent(trimmedQuery)}`);
-      setQuery("");          
-      onClose();              // Optional: close the search bar if needed
+      setQuery("");
+      onClose();
     }
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex items-center space-x-0">
+    <form
+      onSubmit={handleSearch}
+      className="flex items-center bg-white shadow-md rounded-full overflow-hidden border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 transition duration-300 ease-in-out"
+    >
       <input
         type="text"
-        id="search_field"
-        className="w-64 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Search..."
+        placeholder="Search products..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         ref={inputRef}
+        className="w-64 px-5 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none bg-transparent"
       />
       <button
         type="submit"
-        id="search_btn"
-        className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-r-md hover:bg-gray-200 disabled:opacity-50"
+        className="px-4 py-2  text-orange-400  transition-all duration-200"
       >
         <FontAwesomeIcon icon={faSearch} />
       </button>

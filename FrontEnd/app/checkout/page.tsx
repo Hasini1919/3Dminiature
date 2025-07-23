@@ -9,8 +9,6 @@ import PaymentSection from "@/components/checkout/payment-section";
 import CouponSection from "@/components/checkout/coupon-section";
 import SecureCheckoutSection from "@/components/checkout/secure-checkout";
 import { ToastContainer, toast } from "react-toastify";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
 
 const OrderPlaced = () => {
   const {
@@ -100,8 +98,8 @@ const OrderPlaced = () => {
 
   return (
     <>
-      <Header />
-      <ToastContainer />
+    
+   
 
       <main className="w-full px-[90px] py-[54px]  min-h-[calc(100vh-200px)]">
         {/* Progress Indicator */}
@@ -232,7 +230,7 @@ const OrderPlaced = () => {
         </div>
       </main>
 
-      <Footer />
+      
     </>
   );
 };

@@ -1,9 +1,11 @@
 "use client";
 
-import ProductsPage from "@/components/shop-components/ProductsPage";
-import Advertising from "@/components/shop-components/Advertising";
 import React, { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+
+
+import ProductsPage from "@/components/shop-components/ProductsPage";
+import Advertising from "@/components/shop-components/Advertising";
 import SearchBar from "@/components/search/SearchBar";
 
 const ShopPage = () => {
@@ -14,23 +16,25 @@ const ShopPage = () => {
   const [searchInput, setSearchInput] = useState(searchQuery);
 
   return (
-    <div>
+    <>
+      
+
       <div className="mt-10 flex justify-between items-center">
-        {/* Advertising component */}
         <Advertising />
       </div>
 
-      {/* SearchBar component */}
       <SearchBar
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         initialQuery={searchInput}
       />
 
-      {/* Main content */}
       <ProductsPage searchQuery={searchQuery} />
-    </div>
+
+    
+    </>
   );
 };
 
 export default ShopPage;
+

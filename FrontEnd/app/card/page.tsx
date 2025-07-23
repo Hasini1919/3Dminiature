@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 import decrease_arrow from "@/public/assets/decrease_arrow.svg";
@@ -12,8 +12,6 @@ import Arrow from "@/public/assets/Arrow.svg";
 import EmptyCart from "@/public/assets/delete-item.png";
 import axiosInstance from "@/services/api";
 import { FaRegTimesCircle, FaTrash } from "react-icons/fa";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
 import { RxCrossCircled } from "react-icons/rx";
 import { GiShoppingBag } from "react-icons/gi";
 
@@ -27,6 +25,7 @@ const Card = () => {
     setDiscountedTotal,
     couponCode,
     setCouponCode,
+    fetchCartData,
   } = useAppContext();
 
   const [tempQuantities, setTempQuantities] = useState<{
@@ -53,6 +52,9 @@ const Card = () => {
     setTempQuantities((prev) => ({ ...prev, [key]: newQuantity }));
   };
 
+  useEffect(() => {
+  fetchCartData();
+}, []);
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!couponCode.trim()) return;
@@ -138,7 +140,7 @@ const Card = () => {
 
   return (
     <>
-      <Header />
+      
 
       <main className="px-4 md:px-8 lg:px-12 py-8 min-h-[calc(100vh-120px)] ">
         <div className="flex flex-col gap-6 p-4 md:p-6 bg-white rounded-xl shadow-sm">
@@ -431,7 +433,7 @@ const Card = () => {
         </div>
       </main>
 
-      <Footer />
+    
     </>
   );
 };
