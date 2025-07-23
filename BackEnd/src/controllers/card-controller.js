@@ -20,7 +20,7 @@ const addToCart = async (req, res) => {
     customText,
   } = req.body;
 
-  console.log(req.body);
+  
   const userId = req.user._id;
   
 
@@ -28,19 +28,16 @@ const addToCart = async (req, res) => {
   const uploadedImageFiles = req.files
     ? req.files.map((file) => `/uploads/user-uploads/${file.filename}`)
     : [];
-    console.log(uploadedImageFiles);
+   
    
 
 
   try {
     const user = await User.findById(userId);
-    console.log(productId);
+    
     
     const product = await Products.findById(productId);
-    console.log("product detauils for me");
-    console.log(product.images);
-    console.log(product.rating);
-    console.log(product.description);
+    
 
     if (!user || !product) {
       
@@ -102,7 +99,7 @@ const getCartData = async (req, res) => {
     
     
    
-    console.log(userId);
+   
     const userData = await User.findById(userId);
     if (!userData) {
       return res.status(404).json({ message: "User not found" });

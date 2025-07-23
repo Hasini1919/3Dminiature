@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 import decrease_arrow from "@/public/assets/decrease_arrow.svg";
@@ -25,6 +25,7 @@ const Card = () => {
     setDiscountedTotal,
     couponCode,
     setCouponCode,
+    fetchCartData,
   } = useAppContext();
 
   const [tempQuantities, setTempQuantities] = useState<{
@@ -51,6 +52,9 @@ const Card = () => {
     setTempQuantities((prev) => ({ ...prev, [key]: newQuantity }));
   };
 
+  useEffect(() => {
+  fetchCartData();
+}, []);
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!couponCode.trim()) return;

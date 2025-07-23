@@ -10,8 +10,8 @@ const getAllImages = async (req, res) => {
 
     // Flatten the images from all 5 products into a single array
     const images = products.flatMap(product => product.images);
-    console.log("provide images");
-   console.log(images);
+    
+   
     res.status(200).json({ images });
   } catch (error) {
     console.error('Error fetching images:', error);

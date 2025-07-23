@@ -3,7 +3,7 @@
 import Link from "next/link";
 import SearchBar from "./search";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { AiFillHeart } from "react-icons/ai";
@@ -12,6 +12,7 @@ import { AiFillHeart } from "react-icons/ai";
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { getCartCount } = useAppContext();
+
   const cartCount = getCartCount();
   const { count } = useWishlist();
   

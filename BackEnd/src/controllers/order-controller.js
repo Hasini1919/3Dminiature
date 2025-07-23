@@ -19,8 +19,7 @@ const placeOrder=async(req,res)=>{
            
         } = req.body;
          const userId = req.user._id;
-         console.log("buy now item");
-        console.log(buyNow);
+         
         let orderCounter = await Counter.findOneAndUpdate(
           { id: "orderNumber" },
           { $inc: { seq: 1 } },
@@ -42,8 +41,7 @@ const placeOrder=async(req,res)=>{
             date: Date.now(),
             orderNumber
         };
-       console.log("user order details");
-       console.log(orderData);
+      
        const newOrder=new OrderModel(orderData);
        await newOrder.save();
        if (!buyNow) {
@@ -54,8 +52,7 @@ const placeOrder=async(req,res)=>{
      const user = await User.findById(userId);
      
      if(user){
-          console.log("user address");
-          console.log(address);
+          
           user.address=address;
      }
      await user.save();
@@ -68,7 +65,7 @@ const placeOrder=async(req,res)=>{
       if(couponDoc && !user.usedCoupons.includes(couponDoc._id)){
        
         user.usedCoupons.push(couponDoc._id);
-        console.log(couponDoc._id)
+       
       
         user.appliedCoupon=null;
       }
