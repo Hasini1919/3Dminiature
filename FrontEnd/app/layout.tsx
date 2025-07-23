@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Script from "next/script";
 import { AppContextProvider } from "@/context/AppContext";
 import "react-toastify/dist/ReactToastify.css";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 export default function RootLayout({
   children,
@@ -18,8 +19,8 @@ export default function RootLayout({
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           strategy="beforeInteractive"
         />
-
-        {/*Tawk.to Live Chat Script */}
+        <div className="debug">
+           {/*Tawk.to Live Chat Script */}
         <Script
           id="tawk-script"
           strategy="afterInteractive"
@@ -38,8 +39,13 @@ export default function RootLayout({
             `,
           }}
         />
-
-        <AppContextProvider>{children}</AppContextProvider>
+       
+          
+        <AppContextProvider> {children} 
+             
+          </AppContextProvider> 
+          
+        </div>
       </body>
     </html>
   );

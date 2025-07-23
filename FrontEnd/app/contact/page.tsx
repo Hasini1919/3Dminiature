@@ -85,17 +85,34 @@ export default function Contact() {
             <p className="font-bold">Phone: 076 183 8937</p>
           </div>
 
-          <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <h5 className="text-lg font-semibold flex items-center gap-2">
-              <Image src="/email.svg" alt="Email" width={30} height={30} />
-              Write to Us
-            </h5>
-            <p className="text-gray-600">
-              Fill out our form and we will contact you within 24 hours
-            </p>
-            <p className="font-bold">Email: tt3dlens@gmail.com</p>
-          </div>
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+          <h5 className="text-lg font-semibold flex items-center gap-2">
+            <Image src="/email.svg" alt="Email" width={30} height={30} />
+            Write to Us
+          </h5>
+          <p className="text-gray-600">
+            Fill out our form and we will contact you within 24 hours
+          </p>
+          <p className="font-bold">Email: tt3dlens@gmail.com</p>
         </div>
+
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+          <div className="mb-4">
+    <h5 className="text-lg font-semibold flex items-center gap-2">
+      <Image src="/map.svg" alt="Location" width={30} height={30} />
+      Address
+    </h5>
+    <p className="text-gray-600">Jaffna, Sri Lanka, 40000</p>
+    </div>
+   <div>
+    <h5 className="text-lg font-semibold flex items-center gap-2">
+      <Image src="/location.svg" alt="Service Area" width={30} height={30} />
+      Service Area
+    </h5>
+    <p className="text-gray-600">Colombo, Sri Lanka · Mullaitivu, Sri Lanka</p>
+    </div>
+  </div>
+      </div>
 
         {/* Contact Form */}
         <main className="w-full lg:w-2/3 bg-white p-6 rounded-lg shadow-md">

@@ -117,17 +117,18 @@ export default function ReturnRefundPage() {
             </ul>
           </section>
 
-          <div className="text-center mt-8">
-            <Link href="/">
-              <button className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                Back to Home
-              </button>
-            </Link>
-          </div>
+        <div className="text-center mt-8">
+          <Link href="/">
+            <button className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition">
+              Back to Home
+            </button>
+          </Link>
         </div>
-      </main>
+      </div>
+    </main>
 
-      <Footer />
-    </>
+    
+    
+
   );
 }

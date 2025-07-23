@@ -3,16 +3,18 @@
 import Link from "next/link";
 import SearchBar from "./search";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import { BiGitCompare } from "react-icons/bi";
-import { AiFillHeart } from "react-icons/ai";
 import { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { AiFillHeart } from "react-icons/ai";
+
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { getCartCount } = useAppContext();
   const cartCount = getCartCount();
-
+  const { count } = useWishlist();
+  
   return (
     <header className="sticky top-0 z-50 bg-[#c22638] shadow-lg backdrop-blur-sm  text-white">
       <nav className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +54,10 @@ export default function Header() {
 
           {/* Search (Desktop) */}
           <div className="hidden md:block w-1/4">
-            <SearchBar isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+            <SearchBar
+              isOpen={isSearchOpen}
+              onClose={() => setIsSearchOpen(false)}
+            />
           </div>
 
           {/* Icons */}
@@ -72,16 +77,12 @@ export default function Header() {
               className="group p-2 rounded-full transition relative"
               title="Wishlist"
             >
-              <AiFillHeart size={18} className="group-hover:text-gray-800" />
-            </Link>
-
-            {/* Compare */}
-            <Link
-              href="/compare"
-              className="group p-2 rounded-full  transition relative"
-              title="Compare"
-            >
-              <BiGitCompare size={20} className="group-hover:text-gray-800" />
+              <AiFillHeart className="w-6 h-6" />
+              {count > 0 && (
+                <span className="absolute -top-1 -right-1 bg-black text-xs px-2 py-1 rounded-full">
+                  {count}
+                </span>
+              )}{" "}
             </Link>
 
             {/* Cart */}
@@ -90,7 +91,10 @@ export default function Header() {
               className="group p-2 rounded-full  transition relative"
               title="Cart"
             >
-              <FaShoppingCart size={18} className="group-hover:text-gray-800" />
+              <FaShoppingCart
+                size={18}
+                className="group-hover:text-gray-800"
+              />
               {cartCount > 0 && (
                 <span  className="absolute -top-1 -right-1 bg-white text-orange-400 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
                   {cartCount}
@@ -102,7 +106,10 @@ export default function Header() {
 
         {/* Search (Mobile) */}
         <div className="md:hidden mt-2">
-          <SearchBar isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+          <SearchBar
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+          />
         </div>
       </nav>
     </header>

@@ -1,9 +1,29 @@
 import Advertisement from "../models/Advertisement.js";
+import Product from "../models/Admin_models/Product.js";
 
-// Create new advertisement
+// Create new advertisement (with product validation)
 export const createAdvertisement = async (req, res) => {
   try {
-    const advertisement = new Advertisement(req.body);
+    const { product, title, mainTitle, img, discountPercentage, expiresAt, order } =
+      req.body;
+
+    // Ensure product exists
+    const existingProduct = await Product.findById(product);
+    if (!existingProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Create the ad
+    const advertisement = new Advertisement({
+      product,
+      mainTitle,
+      title,
+      img,
+      discountPercentage,
+      expiresAt,
+      order,
+    });
+
     await advertisement.save();
     res.status(201).json(advertisement);
   } catch (error) {
@@ -11,20 +31,19 @@ export const createAdvertisement = async (req, res) => {
   }
 };
 
-// Get all active advertisements
+// Get all active ads with connected product details
 export const getActiveAdvertisements = async (req, res) => {
   try {
-    const ads = await Advertisement.find({ isActive: true }).sort({
-      order: 1,
-      createdAt: -1,
-    });
+    const ads = await Advertisement.find({ isActive: true })
+      .sort({ order: 1, createdAt: -1 })
+      .populate("product", "name price images"); // Include product info
     res.json(ads);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Update advertisement
+// Update an advertisement
 export const updateAdvertisement = async (req, res) => {
   try {
     const ad = await Advertisement.findByIdAndUpdate(req.params.id, req.body, {
@@ -37,7 +56,7 @@ export const updateAdvertisement = async (req, res) => {
   }
 };
 
-// Delete advertisement (soft delete)
+// Soft delete (deactivate) ad
 export const deleteAdvertisement = async (req, res) => {
   try {
     const ad = await Advertisement.findByIdAndUpdate(

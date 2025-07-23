@@ -7,19 +7,22 @@ import ProductDetails from "@/components/product-details/ProductDetails";
 import ProductCarousel from "@/components/product-details/ProductCarousel";
 import axiosInstance from "@/services/api";
 import axios from "axios";
+import CustomerReviewsSection from "@/components/review/AddReview";
 
 interface ProductDetail {
   _id: string;
   name: string;
   price: number;
   discount?: number;
-  rating: number;
-  image: string[];
+  averageRating: number;
+  images: string[];
   frameColorOptions?: string[] | { name: string; code: string }[];
   themeColorOptions?: string[] | { name: string; code: string }[];
   sizeOptions?: string[];
+  sizePrices?: { size: string; price: number }[];
   estimatedDeliveryTime?: string;
   detailed_description: string;
+  baseSize?: string;
 }
 
 export default function ProductPage() {
@@ -35,11 +38,9 @@ export default function ProductPage() {
         setLoading(true);
         setError(null);
 
-        const response = await axiosInstance.get(
-          `/api/product-details/${id}`,
-          { timeout: 10000 }
-        );
-
+        const response = await axiosInstance.get(`/api/product-details/${id}`, {
+          timeout: 10000,
+        });
         const productData = response.data;
         console.log("Product data received:", productData);
 
@@ -50,9 +51,9 @@ export default function ProductPage() {
           if (Array.isArray(productData.images)) {
             // If image is already an array
             images = productData.images.filter(
-              (img : string) => img && img.trim() !== ""
+              (img: string) => img && img.trim() !== ""
             );
-          } else if (typeof productData.image === "string") {
+          } else if (typeof productData.images === "string") {
             // If image is a string, add it to array
             images = [productData.images];
           }
@@ -64,27 +65,36 @@ export default function ProductPage() {
           Array.isArray(productData.additionalImages)
         ) {
           const additionalImages = productData.additionalImages.filter(
-            (img : string) => img && img.trim() !== "" && !images.includes(img)
+            (img: string) => img && img.trim() !== "" && !images.includes(img)
           );
           images = [...images, ...additionalImages];
         }
 
         console.log("Final processed images:", images);
 
+        // Ensure required customization options come from database
+       if (
+         !Array.isArray(productData.frameColor) ||
+         productData.frameColor.length === 0 ||
+         !Array.isArray(productData.themeColor) ||
+         productData.themeColor.length === 0 ||
+         !Array.isArray(productData.frameSize) ||
+         productData.frameSize.length === 0
+       ) {
+         console.warn(
+           "Some customization options are missing or empty for product:",
+           productData._id
+         );
+       }
+
         setProduct({
           ...productData,
-          image: images,
-          frameColorOptions: productData.frameColorOptions || [
-            { name: "Black", code: "#000000" },
-            { name: "Brown", code: "#8B4513" },
-            { name: "Red", code: "#FF0000" },
-          ],
-          themeColorOptions: productData.themeColorOptions || [
-            { name: "Blue", code: "#0000FF" },
-            { name: "Pink", code: "#FFC0CB" },
-            { name: "Green", code: "#008000" },
-          ],
-          sizeOptions: productData.sizeOptions || ["A4", "A3", "8x15"],
+          images: images,
+          frameColorOptions: productData.frameColor,
+          themeColorOptions: productData.themeColor,
+          sizeOptions: productData.frameSizes,
+          sizePrices: productData.sizePrices || [],
+          baseSize: productData.baseSize,
         });
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -99,6 +109,11 @@ export default function ProductPage() {
           } else {
             setError("Failed to load product. Please try again.");
           }
+        } else if (
+          err instanceof Error &&
+          err.message.includes("customization")
+        ) {
+          setError("Product configuration error. Please contact support.");
         } else {
           setError("Network error. Please check your connection.");
         }
@@ -185,11 +200,11 @@ export default function ProductPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Product Images
               <span className="text-sm font-normal text-gray-500 ml-2">
-                ({product.image.length} image
-                {product.image.length !== 1 ? "s" : ""})
+                ({product.images.length} images
+                {product.images.length !== 1 ? "s" : ""})
               </span>
             </h2>
-            <ProductImageGallery image={product.image} />
+            <ProductImageGallery images={product.images} product={product} />
           </div>
 
           {/* Product Details */}
@@ -201,6 +216,11 @@ export default function ProductPage() {
         {/* Related Products */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <ProductCarousel productId={id} />
+        </div>
+
+        {/* Customer Reviews Section */}
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-12 mb-8 bg-gray-50">
+          <CustomerReviewsSection productId={product._id} />
         </div>
       </div>
     </div>

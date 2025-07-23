@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Subscribe from "@/components/footer/subscribe";
 import Pdf from "@/components/pdf/pdf";
+
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 
@@ -144,7 +145,10 @@ export default function About() {
         </div>
       </section>
 
-      <Footer />
-    </>
-  );
+    </div>
+    <div>
+      <Pdf/>
+    </div>
+</>
+    );
 }
