@@ -11,9 +11,9 @@ export default function FeedbackLayout({ children }: { children: React.ReactNode
 
       {/* Content with Header + Children + Footer */}
       <div className="relative z-10">
-        <Header />
+        
         <main>{children}</main>
-        <Footer />
+        
       </div>
     </div>
   );

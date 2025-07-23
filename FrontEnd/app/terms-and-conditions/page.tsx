@@ -3,15 +3,14 @@ import React, { useState } from "react";
 import Term from "@/public/assets/Contract.jpeg";
 import Image from "next/image";
 import Condition from "@/components/term/term";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
+
 
 export default function TermsPage() {
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <Header />
+     
 
       <div className="grid grid-cols-12 min-h-screen p-20 bg-white">
         {/* Left Side */}
@@ -70,7 +69,7 @@ export default function TermsPage() {
       {/* Modal */}
       <Condition isOpen={showModal} onClose={() => setShowModal(false)} />
 
-      <Footer />
+     
     </>
   );
 }

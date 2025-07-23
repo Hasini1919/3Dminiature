@@ -10,7 +10,7 @@ export default function Homepage() {
   return (
     <>
      
-      <Header />
+     
 
      
       <section
@@ -131,7 +131,7 @@ export default function Homepage() {
       </section>
 
      
-      <Footer />
+    
     </>
   );
 }

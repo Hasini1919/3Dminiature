@@ -4,8 +4,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import secure from "@/public/assets/Secures.jpg";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
 import PrivacyModal from "@/components/Privacy/privacy";
 
 export default function PrivacyPage() {
@@ -13,7 +11,7 @@ export default function PrivacyPage() {
 
   return (
     <>
-      <Header />
+     
 
       <div className="grid grid-cols-12 min-h-screen p-20 bg-white">
         {/* Left Content */}
@@ -53,7 +51,7 @@ export default function PrivacyPage() {
 
       <PrivacyModal isOpen={showModal} onClose={() => setShowModal(false)} />
       
-      <Footer />
+      
     </>
   );
 }

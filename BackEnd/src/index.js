@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import express from "express";
 import cors from "cors";
 import passport from "passport";
@@ -12,7 +11,7 @@ import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
-import "./config/passport.js";
+
 
 // Route imports
 import productroutes from "./routes/productRoute.js";
@@ -23,7 +22,7 @@ import addRoutes from "./routes/admin_routes/add_order.js";
 import orderRoutes from "./routes/admin_routes/orders.js";
 import pendingRoutes from "./routes/admin_routes/pending.js";
 import comRoutes from "./routes/admin_routes/completed.js";
-
+import getUserAddressRoute from "./routes/useraddress-route.js";
 // import customRoutes from './routes/admin_routes/customer.js'
 // import newStatsRoutes from './routes/admin_routes/newstats.js'
 // import pendingStatsRoutes from './routes/admin_routes/pendingstats.js'
@@ -42,11 +41,13 @@ import productRoutes from "./routes/product-routes.js";
 import couponRouter from "./routes/coupon-routes.js";
 import orderRouter from "./routes/order-routes.js";
 import uploadRouter from "./routes/userimage-routes.js";
-
+import  "./config/passport.js";
 import { routes as enquiryRoutes } from "./routes/enquiryRoutes.js";
 import { routes as subscribeRoutes } from "./routes/subscribeRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import { routes as pdfRoutes } from "./routes/pdfRoutes.js";
+
+
 
 import editRoutes from "./routes/admin_routes/editRoutes.js";
 import orderRoute from "./routes/admin_routes/testing/new_Order.js";
@@ -68,6 +69,7 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 
 import verifyRoutes from './routes/verify-payment.js'
+import { getUserAddress } from "./controllers/order-controller.js";
 // Load environment variables
 
 const __filename = fileURLToPath(import.meta.url);
@@ -178,8 +180,7 @@ app.use("/api/product-details", productDetailsRoute);
 app.use('/api/payment', verifyRoutes);
 app.use("/api/auth", instagramAuthRoutes);
 app.use("/api", refundRoutes);
-
-
+app.use("/api/user",getUserAddressRoute);
 // Default routeapp.use("/api/products", productroutes);
 
 app.get("/", (req, res) => {

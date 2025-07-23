@@ -4,14 +4,9 @@ import Image from "next/image";
 import Subscribe from "@/components/footer/subscribe";
 import Pdf from "@/components/pdf/pdf";
 
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
-
 export default function About() {
   return (
     <>
-      <Header />
-
       {/* --- Our Story --- */}
       <section className="relative max-w-5xl mx-auto bg-gray-500 rounded-3xl mt-20 px-6 py-12 shadow-lg">
         <h4 className="absolute top-0 right-0 transform -translate-y-1/3 -mt-4 bg-red-600 text-white p-3 rounded shadow-lg text-xl">
@@ -107,17 +102,29 @@ export default function About() {
       {/* --- Services Icons --- */}
       <section className="max-w-6xl mx-auto mt-32 grid grid-cols-1 md:grid-cols-3 gap-12 px-6 text-center">
         <div className="flex flex-col items-center">
-          <img src="/fast-delivery-truck-van-svgrepo-com.svg" alt="" className="h-16 w-16 rounded-full border-[9px] border-gray-300 mb-3" />
+          <img
+            src="/fast-delivery-truck-van-svgrepo-com.svg"
+            alt="Fast Delivery"
+            className="h-16 w-16 rounded-full border-[9px] border-gray-300 mb-3"
+          />
           <p className="text-black font-bold text-xs">FREE AND FAST DELIVERY</p>
           <p className="text-xs">Free delivery for all orders over Rs.3000</p>
         </div>
         <div className="flex flex-col items-center">
-          <img src="/support-svgrepo-com.svg" alt="" className="h-16 w-16 rounded-full border-[9px] border-gray-300 mb-3" />
+          <img
+            src="/support-svgrepo-com.svg"
+            alt="Customer Support"
+            className="h-16 w-16 rounded-full border-[9px] border-gray-300 mb-3"
+          />
           <p className="text-black font-bold text-xs">24/7 CUSTOMER SERVICE</p>
           <p className="text-xs">Friendly 24/7 customer support</p>
         </div>
         <div className="flex flex-col items-center">
-          <img src="/shield-check-svgrepo-com.svg" alt="" className="h-16 w-16 rounded-full border-[9px] border-gray-300 mb-3" />
+          <img
+            src="/shield-check-svgrepo-com.svg"
+            alt="Money Back"
+            className="h-16 w-16 rounded-full border-[9px] border-gray-300 mb-3"
+          />
           <p className="text-black font-bold text-xs">MONEY BACK GUARANTEE</p>
           <p className="text-xs">We return money within 30 days</p>
         </div>
@@ -145,10 +152,11 @@ export default function About() {
         </div>
       </section>
 
-    </div>
-    <div>
-      <Pdf/>
-    </div>
-</>
-    );
+      {/* --- PDF Component --- */}
+      <section className="max-w-6xl mx-auto mt-20 px-6">
+        <Pdf />
+      </section>
+    </>
+  );
 }
+

@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
+
 
 interface FormInputs {
   name: string;
@@ -71,8 +70,7 @@ export default function Contact() {
 
   return (
     <>
-      <Header />
-
+     
       <div className="container mx-auto flex flex-col lg:flex-row items-start justify-center gap-8 p-6">
         {/* Contact Info Boxes */}
         <div className="w-full lg:w-1/3 space-y-6">
@@ -188,7 +186,7 @@ export default function Contact() {
         </main>
       </div>
 
-      <Footer />
+     
     </>
   );
 }

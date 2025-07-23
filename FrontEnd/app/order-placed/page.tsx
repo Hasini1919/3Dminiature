@@ -17,8 +17,7 @@ import {
   FiDollarSign,
   FiTruck as FiShipping,
 } from "react-icons/fi";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
+
 
 interface OrderItem {
   productId: string;
@@ -98,7 +97,7 @@ const OrderConfirmed = () => {
 
   return (
     <>
-      <Header />
+     
 
       <div className="min-h-screen pb-20">
         {/* Hero Section */}
@@ -336,7 +335,6 @@ const OrderConfirmed = () => {
         </div>
       </div>
 
-      <Footer />
     </>
   );
 };

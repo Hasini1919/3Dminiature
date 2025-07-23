@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
 
 const sections = [
   { id: "returns-refunds", label: "Returns & Refunds" },
@@ -17,7 +15,7 @@ export default function ReturnRefundPage() {
 
   return (
     <>
-      <Header />
+      
 
       <main className="max-w-7xl mx-auto px-4 py-10 sm:py-16 flex flex-col md:flex-row gap-10">
         {/* Sidebar navigation */}
@@ -47,7 +45,7 @@ export default function ReturnRefundPage() {
           </ul>
         </nav>
 
-        {/* Content */}
+        {/* Content Area */}
         <div className="flex-1 space-y-10">
           {activeSection === "returns-refunds" && (
             <section id="returns-refunds" className="bg-white rounded-md shadow p-6">
@@ -105,30 +103,40 @@ export default function ReturnRefundPage() {
             </section>
           )}
 
-          {/* Always-visible contact section */}
+          {/* Contact Info Section - Always visible */}
           <section className="bg-white rounded-md shadow p-6">
             <h2 className="text-2xl font-semibold mb-4 text-red-600">Contact Us</h2>
             <p className="text-gray-700 leading-relaxed">
               If you have any questions about our return and refund policy, please contact us at:
             </p>
             <ul className="mt-2 space-y-1 text-gray-700">
-              <li>Email: <a href="mailto:tt3dlens@gmail.com" className="text-red-500 underline">tt3dlens@gmail.com</a></li>
-              <li>Phone: <a href="tel:0761838937" className="text-red-500 underline">076 183 8937</a></li>
+              <li>
+                Email:{" "}
+                <a href="mailto:tt3dlens@gmail.com" className="text-red-500 underline">
+                  tt3dlens@gmail.com
+                </a>
+              </li>
+              <li>
+                Phone:{" "}
+                <a href="tel:0761838937" className="text-red-500 underline">
+                  076 183 8937
+                </a>
+              </li>
             </ul>
           </section>
 
-        <div className="text-center mt-8">
-          <Link href="/">
-            <button className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition">
-              Back to Home
-            </button>
-          </Link>
+          {/* Back to Home Button */}
+          <div className="text-center mt-8">
+            <Link href="/">
+              <button className="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                Back to Home
+              </button>
+            </Link>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    
-    
-
+     
+    </>
   );
 }

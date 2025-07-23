@@ -96,7 +96,7 @@ export default function Header() {
                 className="group-hover:text-gray-800"
               />
               {cartCount > 0 && (
-                <span  className="absolute -top-1 -right-1 bg-white text-orange-400 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
+                <span  className="absolute -top-2 -right-1 bg-black text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow">
                   {cartCount}
                 </span>
               )}

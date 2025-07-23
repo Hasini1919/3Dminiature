@@ -234,7 +234,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   if (storedData) {
     setBuyNowItem(JSON.parse(storedData));
   }
-}, [router]);
+},[cartData]);
  
  
   useEffect(() => {

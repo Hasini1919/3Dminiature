@@ -5,8 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axiosInstance from "@/services/api";
 import { useAppContext } from "@/context/AppContext";
-import Header from "@/components/header/header";
-import Footer from "@/components/footer/footer";
+
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
@@ -60,7 +59,7 @@ export default function SuccessPage() {
 
   return (
     <>
-      <Header />
+     
 
       <div className="min-h-screen flex flex-col justify-center items-center p-4">
         <h1 className="text-3xl font-bold mb-4">Processing your payment...</h1>
@@ -72,7 +71,7 @@ export default function SuccessPage() {
         )}
       </div>
 
-      <Footer />
+     
     </>
   );
 }

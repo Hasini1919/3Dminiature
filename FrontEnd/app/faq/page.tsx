@@ -2,9 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import Header from '@/components/header/header';
-import Footer from '@/components/footer/footer';
 import faqImage from '@/public/assets/FAQ.png';
 
 interface FaqItem {
@@ -53,7 +50,7 @@ export default function FAQPage() {
 
   return (
     <>
-      <Header />
+      
 
       <div className="min-h-screen p-8 sm:p-12 lg:p-20 ">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-7xl mx-auto">
@@ -129,7 +126,7 @@ export default function FAQPage() {
         </div>
       </div>
 
-      <Footer />
+      
     </>
   );
 }

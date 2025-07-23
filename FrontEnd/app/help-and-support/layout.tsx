@@ -1,12 +1,11 @@
 // app/help-and-support/layout.tsx
 import React from 'react';
-import Header from '@/components/header/header';
-import Footer from '@/components/footer/footer';
+
 
 export default function HelpLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+     
 
       {/* Background Banner */}
       <div className="h-[40vh] bg-[url('/assets/Help.png')] bg-cover bg-center bg-no-repeat relative bg-fixed">
@@ -20,7 +19,7 @@ export default function HelpLayout({ children }: { children: React.ReactNode }) 
         {children}
       </div>
 
-      <Footer />
+     
     </div>
   );
 }
