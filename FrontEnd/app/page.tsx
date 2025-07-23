@@ -13,7 +13,7 @@ import ProfilePage from "./customerAccount/profile/page";
 export default function Home() {
   return (
     <div>
-    <Homepage/>
+    {/* <Homepage/> */}
       {/* <ShopPage/> */}
        {/* <Login />  */}
       {/* <Slidebar/> */}
@@ -21,7 +21,7 @@ export default function Home() {
       {/* <PayHere/> */}
       {/* <OrderConfirmed/> */}
       {/* <Card/> */}
-      {/* <ProfilePage /> */}
+      <ProfilePage />
        
 
     </div>

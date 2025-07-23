@@ -7,20 +7,22 @@ import {
   FaShoppingCart,
   FaClipboardList,
   FaCog,
-  FaMoon,
+
   FaSun,
   FaBars,
   FaTimes,
   FaEdit,
 } from "react-icons/fa";
-import { useTheme } from "next-themes";
+
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import ProfileSettings from "@/components/customer-account/ProfileSettings";
+import LogoutButton   from "@/components/auth-components/LogoutButton";
+import { FaSignOutAlt } from "react-icons/fa";
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -71,7 +73,7 @@ const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
       {/* Sidebar */}
       <div
-        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-80 lg:w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 shadow-xl lg:shadow-lg transition-all duration-300 ease-in-out ${
+        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-80 lg:w-72 bg-white  border-r border-gray-200 dark:border-gray-700 shadow-xl lg:shadow-lg transition-all duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -129,25 +131,21 @@ src={uploadedImageUrl || session?.user?.image || "/default-profile.png"}        
               ))}
             </ul>
           </nav>
+<div className="mt-auto pt-4">
+  
+    <div className="flex items-center justify-end gap-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 cursor-pointer transition-all">
+      <span>Logout</span>
+      <FaSignOutAlt className="text-lg" />
+    </div>
+  <LogoutButton />
+</div>
 
-          {/* Theme Toggle */}
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button
-              className="w-full flex items-center justify-center gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 text-gray-700 dark:text-gray-200 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02] border border-gray-300 dark:border-gray-600"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-            >
-              <span className="text-lg">
-                {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-red-600" />}
-              </span>
-              <span className="font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-            </button>
-          </div>
+         
 
           {/* Footer */}
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              © {new Date().getFullYear()} Your App Name
+              © {new Date().getFullYear()} Tiny Treasures
             </p>
           </div>
         </div>

@@ -18,3 +18,10 @@ export const getUserIdFromToken = (): string | null => {
     return null;
   }
 };
+
+//logout function below
+export const logout = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+  }
+};

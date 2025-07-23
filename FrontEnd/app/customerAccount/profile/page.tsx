@@ -159,7 +159,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex min-h-screen bg-gray-50">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center">
           <FaSpinner className="animate-spin text-4xl text-red-500" />
@@ -169,7 +169,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-50 ">
       <Sidebar />
       <main className="flex-1 p-4 lg:p-8">
         {error && (

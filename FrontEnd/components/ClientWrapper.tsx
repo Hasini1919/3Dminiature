@@ -1,6 +1,5 @@
 "use client";
 
-import { ThemeProvider } from "@/components/customer-account/ThemeProvider";
 import { AppContextProvider } from "@/context/AppContext";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/header/header";
@@ -11,7 +10,7 @@ export default function ClientWrapper({ children }: { children: ReactNode }) {
   
   return (
     
-      <ThemeProvider>
+      
         <SessionProvider>
         <AppContextProvider>
           <Header  />
@@ -20,7 +19,7 @@ export default function ClientWrapper({ children }: { children: ReactNode }) {
           <Footer />
         </AppContextProvider>
         </SessionProvider>
-      </ThemeProvider>
+      
     
   );
 }

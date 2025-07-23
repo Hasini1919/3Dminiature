@@ -60,7 +60,7 @@ const ReviewsPage = () => {
     });
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 p-5 gap-5">
+    <div className="flex min-h-screen bg-gray-50  p-5 gap-5">
       <Sidebar />
       <main className="flex-1 p-5 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <h1 className="text-2xl font-bold mb-5 text-gray-900 dark:text-white">My Reviews</h1>

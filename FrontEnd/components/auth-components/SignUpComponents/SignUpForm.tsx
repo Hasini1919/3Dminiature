@@ -24,10 +24,25 @@ export default function SignUpForm() {
     e.preventDefault();
     setMessage("");
 
-    if (formData.password.length < 6) {
-      setMessage("Password must be at least 6 characters long.");
-      return;
-    }
+     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    setMessage("❌ Please enter a valid email address.");
+    return;
+  }
+  if (formData.password.length < 8) {
+    setMessage("❌ Password must be at least 8 characters long.");
+    return;
+  }
+
+  if (!/[A-Z]/.test(formData.password)) {
+    setMessage("❌ Password must include at least one uppercase letter.");
+    return;
+  }
+
+  if (!/[0-9]/.test(formData.password)) {
+    setMessage("❌ Password must include at least one number.");
+    return;
+  }
 
     setLoading(true);
     try {
