@@ -45,4 +45,14 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+
+// Express-style
+router.put("/:id/payment", async (req, res) => {
+  const { id } = req.params;
+  const { payment } = req.body;
+  await Order.findByIdAndUpdate(id, { payment });
+  res.status(200).json({ success: true });
+});
+
+
 export default router;

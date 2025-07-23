@@ -20,9 +20,9 @@ import productroutes from "./routes/productRoute.js";
 import productDetailsRoute from "./routes/productDetailsRoute.js";
 import advertisementRoutes from "./routes/advertisementRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import addRoutes from './routes/admin_routes/add_order.js';
 
-////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 import orderRoutes from './routes/admin_routes/orders.js';
 import pendingRoutes from './routes/admin_routes/pending.js'
@@ -34,7 +34,7 @@ import comRoutes from './routes/admin_routes/completed.js'
 // import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
 import notificationRoutes from './routes/admin_routes/notification.js'
 
-/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 import facebookAuthRoutes from './routes/facebookAuthRoutes.js';
 import instagramAuthRoutes from './routes/instagramAuthRoutes.js';
 import setupFacebookStrategy from './config/facebookStrategy.js'; 
@@ -56,7 +56,7 @@ import editRoutes from "./routes/admin_routes/editRoutes.js";
 
 
 ////////////////////testing
-
+import addRoutes from './routes/admin_routes/add_order.js';
  import orderRoute from "./routes/admin_routes/testing/new_Order.js";
  import customersRoutes from "./routes/admin_routes/customer.js";
  import dashboardRoute from "./routes/admin_routes/testing/dashboardroutes.js";
@@ -66,6 +66,10 @@ import editRoutes from "./routes/admin_routes/editRoutes.js";
 import adRoutes from './routes/admin_routes/advertRoutes.js';
 import adminProfileRoutes from './routes/admin_routes/admin_profile.js';
 import dyn_orderRoutes from "./routes/admin_routes/orderdynamic_rout.js";
+import couptableRout from "./routes/admin_routes/testing/coupon_routes.js";
+import noteRoutess from "./routes/admin_routes/notification.js";
+import customer_orderRoute from "./routes/admin_routes/order-customer.js"
+
 
 
 /////////////////////////////finish
@@ -136,20 +140,41 @@ app.use('/images', express.static(path.join(__dirname, '../src/products')));
 app.use('/products', express.static(path.join(__dirname, 'products')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
-// Routes - all your route uses here
-app.use('/api/notifications', notificationRoutes);
-app.use('/', editRoutes);
-app.use('/form', addRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/updates', pendingRoutes);
-app.use('/api/updates', comRoutes);
-app.use('/api/orders', orderRoute);
-app.use('/api/customers', customersRoutes);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////mine routes
 app.use('/api', dashboardRoute);
+app.use('/form', addRoutes);
 app.use('/api/coupons', couponRoutes);
+app.use('/', editRoutes);
 app.use('/api/ads', adRoutes);
-app.use('/api/admin/profile', adminProfileRoutes);
-app.use('/api/orders', dyn_orderRoutes);
+app.use('/api/orders', orderRoute); //new-order full order table
+app.use('/api/orders', orderRoutes);  // status - order placed
+app.use('/api/orders', pendingRoutes); // status - Processing
+app.use('/api/orders', comRoutes); // status - Completed 
+app.use('/api/orders', dyn_orderRoutes); // check one order details
+app.use('/api/customers',customersRoutes); // customer full details
+app.use('/api/notifications', notificationRoutes); // notification
+app.use('/api/admin/profile', adminProfileRoutes); // profile
+app.use("/api/coupons", couptableRout); // table for coupon
+app.use("/api/notifications", noteRoutess); //notification new 
+app.use(customer_orderRoute); // dynamic order customer al; details
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////end............
+
+// Routes - all your route uses here
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRouter);
 app.use('/api', addressRoutes);
@@ -168,6 +193,7 @@ app.use('/api/auth', instagramAuthRoutes);
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
 
 // Image serving with security (your existing handler here)
 app.get("/products/:folderName/:imageName", async (req, res) => {

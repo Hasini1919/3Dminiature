@@ -1,5 +1,5 @@
 
-{/*
+
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -397,5 +397,3 @@ process.on("uncaughtException", (err) => {
 
 
 
-
-*/}

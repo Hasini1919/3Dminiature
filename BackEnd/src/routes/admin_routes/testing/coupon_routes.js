@@ -1,53 +1,33 @@
-// import express from "express";
-// import Coupon from "../../../models/Coupon.js";
+import express from "express";
+import Coupon from "../../../models/Coupon.js";
 
-// const router = express.Router();
+const router = express.Router();
 
-// // Create new coupon
-// router.post("/create", async (req, res) => {
-//   try {
-//     const coupon = new Coupon(req.body);
-//     await coupon.save();
-//     res.status(201).json({ message: "Coupon created", coupon });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+// GET all coupons
+router.get("/", async (req, res) => {
+  const coupons = await Coupon.find();
+  res.json(coupons);
+});
 
-// // Get all coupons
-// router.get("/", async (req, res) => {
-//   try {
-//     const coupons = await Coupon.find();
-//     res.json(coupons);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+// GET single coupon by ID
+router.get("/:id", async (req, res) => {
+  const coupon = await Coupon.findById(req.params.id);
+  if (!coupon) return res.status(404).json({ message: "Coupon not found" });
+  res.json(coupon);
+});
 
-// // Validate coupon
-// router.post("/validate", async (req, res) => {
-//   const { code, totalAmount } = req.body;
-//   try {
-//     const coupon = await Coupon.findOne({ code });
+// PUT update coupon
+router.put("/:id", async (req, res) => {
+  const updated = await Coupon.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.json(updated);
+});
 
-//     if (!coupon) return res.status(404).json({ error: "Invalid coupon code" });
+// DELETE coupon
+router.delete("/:id", async (req, res) => {
+  await Coupon.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
 
-//     const now = new Date();
-//     if (now < coupon.validFrom || now > coupon.validTo)
-//       return res.status(400).json({ error: "Coupon not valid at this time" });
-
-//     if (!coupon.active) return res.status(400).json({ error: "Coupon is inactive" });
-
-//     if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses)
-//       return res.status(400).json({ error: "Coupon usage limit reached" });
-
-//     if (totalAmount < coupon.minPurchaseAmount)
-//       return res.status(400).json({ error: `Minimum purchase is ₹${coupon.minPurchaseAmount}` });
-
-//     res.json({ success: true, coupon });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
-// export default router;
+export default router;
