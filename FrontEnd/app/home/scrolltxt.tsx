@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Scroller() {
   return (
@@ -16,9 +17,11 @@ export default function Scroller() {
             moments, our handcrafted frames bring your memories to life with
             style and depth.
           </p>
+          <Link href="/about">
           <button className="px-6 py-3 bg-red-700 text-white font-semibold rounded-md shadow hover:bg-red-800 border border-orange-400 transition">
             LEARN MORE
           </button>
+          </Link>
         </div>
 
       

@@ -31,7 +31,7 @@ router.post('/create-checkout-session', async (req, res) => {
       quantity: item.quantity,
     };
   }),
-  success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}', // 👈 pass session ID to frontend,
+  success_url: 'http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}', //  pass session ID to frontend,
   cancel_url: 'http://localhost:3000/cancel',
   
 });

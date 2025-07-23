@@ -34,6 +34,7 @@ import comRoutes from './routes/admin_routes/completed.js'
 // import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
 import notificationRoutes from './routes/admin_routes/notification.js'
 
+
 /////////////////////////////////////////////////////////////////////////////
 import facebookAuthRoutes from './routes/facebookAuthRoutes.js';
 import instagramAuthRoutes from './routes/instagramAuthRoutes.js';
@@ -145,6 +146,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/updates', pendingRoutes);
 app.use('/api/updates', comRoutes);
 app.use('/api/orders', orderRoute);
+app.use("/api/admin", productRoutes);
 app.use('/api/customers', customersRoutes);
 app.use('/api', dashboardRoute);
 app.use('/api/coupons', couponRoutes);
@@ -161,10 +163,14 @@ app.use('/api', uploadRouter);
 app.use(enquiryRoutes);
 app.use(subscribeRoutes);
 app.use('/api', imageRoutes);
+app.use("/api/ads", advertisementRoutes);
 app.use(pdfRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/checkout', checkoutRoutes);
-app.use('/api/payment', verifyRoutes);app.use('/api/auth', instagramAuthRoutes);
+app.use("/api/product-details", productDetailsRoute);
+app.use('/api/payment', verifyRoutes);
+app.use('/api/auth', instagramAuthRoutes);
+app.use("/api/products", productroutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
