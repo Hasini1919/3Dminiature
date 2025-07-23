@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-//import ProductCard from "../shop-components/ProductCard";
+import ProductCard from "../shop-components/ProductCard";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
 import axiosInstance from "@/services/api";
@@ -211,7 +211,8 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                       price={product.price}
                       discountPercentage={product.discountPercentage || 0}
                       className="shadow-none transition-transform duration-300 group-hover:scale-105"
-                    
+                      product={product}
+                    />
                   </div>
                 </Link>
               </div>

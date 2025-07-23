@@ -6,6 +6,7 @@ import Script from "next/script";
 import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import { WishlistProvider } from "@/context/WishlistContext";
+import ClientWrapper from "@/components/ClientWrapper";
 
 export const metadata: Metadata = {
   title: "Your App Name",
@@ -25,15 +26,15 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased">
+//<body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased">
          
         <Toaster position="top-center" />
        
-        <ClientWrapper>{children}</ClientWrapper>
+        
         <div className="debug">
-          <AppContextProvider>
-            <WishlistProvider>{children}</WishlistProvider>
-          </AppContextProvider>
+         <ClientWrapper> 
+          <WishlistProvider>{children}</WishlistProvider>
+         </ClientWrapper>
         </div>
       </body>
     </html>

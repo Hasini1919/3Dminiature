@@ -23,6 +23,7 @@ import addRoutes from "./routes/admin_routes/add_order.js";
 import orderRoutes from "./routes/admin_routes/orders.js";
 import pendingRoutes from "./routes/admin_routes/pending.js";
 import comRoutes from "./routes/admin_routes/completed.js";
+import reviewHistoryRoutes from "./routes/reviewHistoryRoutes.js";
 
 // import customRoutes from './routes/admin_routes/customer.js'
 // import newStatsRoutes from './routes/admin_routes/newstats.js'
@@ -173,7 +174,7 @@ app.use("/api/feedback", feedbackRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/auth", instagramAuthRoutes);
 app.use("/api", refundRoutes);
-
+app.use("/api/reviews", reviewHistoryRoutes);
 
 // Default route
 app.get("/", (req, res) => {
