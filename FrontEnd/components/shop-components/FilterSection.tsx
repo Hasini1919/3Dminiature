@@ -6,10 +6,7 @@ import { Range } from "react-range";
 export interface FilterParams {
   category?: string;
   frameColor?: string[];
-  themeColor?: string[];
-  frameSize?: string[];
   priceRange?: string;
-  size?: string;
 }
 
 interface FilterSectionProps {
@@ -23,8 +20,18 @@ const FilterSection = ({
   onClearFilters,
   initialValues = {},
 }: FilterSectionProps) => {
+  // Mobile menu state
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   // Initialize state from initialValues if provided
   const [priceRange, setPriceRange] = useState<[number, number]>(
+    initialValues.priceRange
+      ? (initialValues.priceRange.split(",").map(Number) as [number, number])
+      : [1000, 7000]
+  );
+
+  // Applied price range (only changes when Filter button is clicked)
+  const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>(
     initialValues.priceRange
       ? (initialValues.priceRange.split(",").map(Number) as [number, number])
       : [1000, 7000]
@@ -34,69 +41,54 @@ const FilterSection = ({
     initialValues.frameColor || []
   );
 
-  const [selectedThemeColors, setSelectedThemeColors] = useState<string[]>(
-    initialValues.themeColor || []
-  );
-
-  const [selectedSizes, setSelectedSizes] = useState<string[]>(
-    initialValues.frameSize || []
-  );
-
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     initialValues.category || null
   );
 
   const frameColors = [
-    { name: "Black", code: "#000000" },
-    { name: "Brown", code: "#8B4513" },
-    { name: "Red", code: "#FF0000" },
+    { name: "Black", code: "#1a1a1a" },
+    { name: "White", code: "#ffffff" },
+    { name: "Wood", code: "#d2b48c" },
   ];
 
-  const themeColors = [
-    { name: "Blue", code: "#0000FF" },
-    { name: "Pink", code: "#FFC0CB" },
-    { name: "Green", code: "#008000" },
-  ];
-
-  const sizes = ["A4", "A3", "8*15"];
   const categories = ["Wedding", "Birthday", "Graduation", "Baby", "Family"];
 
   // Memoize the filter updates to prevent unnecessary effect triggers
   const updateFilters = useCallback(() => {
     const filters: FilterParams = {};
 
-    // Only include filters that have values
-    if (selectedCategory) filters.category = selectedCategory;
-    if (selectedFrameColors.length > 0)
-      filters.frameColor = selectedFrameColors;
-    if (selectedThemeColors.length > 0)
-      filters.themeColor = selectedThemeColors;
-    if (selectedSizes.length > 0) filters.frameSize = selectedSizes;
-    filters.priceRange = `${priceRange[0]},${priceRange[1]}`;
+    // Always include category, even if null (this allows proper undo behavior)
+    filters.category = selectedCategory || undefined;
+
+    // Always include frame colors array, even if empty (this allows proper undo behavior)
+    filters.frameColor = selectedFrameColors;
+
+    // Use applied price range, not the temporary one
+    filters.priceRange = `${appliedPriceRange[0]},${appliedPriceRange[1]}`;
 
     onFilterChange(filters);
   }, [
     selectedCategory,
     selectedFrameColors,
-    selectedThemeColors,
-    selectedSizes,
-    priceRange,
+    appliedPriceRange,
     onFilterChange,
   ]);
 
+  // Trigger filter updates when category or frame colors change, not price range
   useEffect(() => {
     updateFilters();
   }, [updateFilters]);
 
-  const toggleFilter = <T,>(
-    currentValues: T[],
-    value: T,
-    setter: (values: T[]) => void
-  ) => {
-    const newValues = currentValues.includes(value)
-      ? [] // Clear all selections for this filter group
-      : [value]; // Select only this value (single selection)
-    setter(newValues);
+  const toggleFrameColor = (color: string) => {
+    setSelectedFrameColors((prev) => {
+      if (prev.includes(color)) {
+        // If deselecting and this was the last color, return empty array
+        return prev.filter((c) => c !== color);
+      } else {
+        // Add the new color
+        return [...prev, color];
+      }
+    });
   };
 
   const handleCategorySelect = (category: string) => {
@@ -107,221 +99,295 @@ const FilterSection = ({
     setPriceRange(values as [number, number]);
   };
 
+  // Handle price filter button click
+  const applyPriceFilter = () => {
+    setAppliedPriceRange(priceRange);
+  };
+
   const clearAllFilters = () => {
     setSelectedCategory(null);
     setSelectedFrameColors([]);
-    setSelectedThemeColors([]);
-    setSelectedSizes([]);
     setPriceRange([1000, 7000]);
+    setAppliedPriceRange([1000, 7000]);
     if (onClearFilters) onClearFilters();
   };
 
-  return (
-    <div className="w-80 ml-5 p-5 space-y-4 mb-5 sticky top-5">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-bold underline">Filters</h1>
+  // Check if price range has changed from applied range
+  const isPriceRangeChanged =
+    priceRange[0] !== appliedPriceRange[0] ||
+    priceRange[1] !== appliedPriceRange[1];
+
+  const FilterContent = () => (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+        <h1 className="text-xl font-bold text-red-600 uppercase tracking-wide">
+          Filters
+        </h1>
         <button
           onClick={clearAllFilters}
-          className="text-red-500 hover:text-red-600 text-sm font-medium"
+          className="text-sm text-gray-500 hover:text-red-600 transition-colors font-medium uppercase tracking-wider"
         >
           Clear all
         </button>
       </div>
 
       {/* Categories Section */}
-      <div>
-        <h2 className="font-semibold text-black text-l mb-2">Category</h2>
-        <ul className="space-y-1">
+      <div className="pb-6 border-b border-gray-200">
+        <h3 className="text-base font-bold text-red-600 uppercase tracking-wide mb-4">
+          Category
+        </h3>
+        <div className="space-y-3">
           {categories.map((category) => (
-            <li
+            <label
               key={category}
-              className={`flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors ${
-                selectedCategory === category
-                  ? "text-red-600 font-semibold"
-                  : "hover:text-gray-200 text-gray-600"
-              }`}
-              onClick={() => handleCategorySelect(category)}
+              className="flex items-center cursor-pointer group"
             >
-              <span>{category}</span>
-            </li>
+              <input
+                type="radio"
+                name="category"
+                checked={selectedCategory === category}
+                onChange={() => handleCategorySelect(category)}
+                className="sr-only"
+              />
+              <div
+                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mr-4 transition-all ${
+                  selectedCategory === category
+                    ? "border-black bg-black"
+                    : "border-gray-300 group-hover:border-gray-400"
+                }`}
+              >
+                {selectedCategory === category && (
+                  <div className="w-2 h-2 rounded-full bg-white"></div>
+                )}
+              </div>
+              <span
+                className={`text-sm transition-colors ${
+                  selectedCategory === category
+                    ? "text-black font-medium"
+                    : "text-gray-600 group-hover:text-gray-900"
+                }`}
+              >
+                {category}
+              </span>
+            </label>
           ))}
-        </ul>
+        </div>
       </div>
 
       {/* Price Range Section */}
-      <div className="space-y-3">
-        <h2 className="font-semibold text-black">Price Range (LKR)</h2>
-        <div className="flex gap-2 items-center">
-          <input
-            type="number"
-            min="1000"
-            max="7000"
-            value={priceRange[0]}
-            onChange={(e) =>
-              handlePriceRangeChange([Number(e.target.value), priceRange[1]])
-            }
-            className="w-20 p-1 border border-gray-300 rounded text-center"
+      <div className="pb-6 border-b border-gray-200">
+        <h3 className="text-base font-bold text-red-600 uppercase tracking-wide mb-6">
+          Filter By Price
+        </h3>
+
+        <div className="mb-6">
+          <Range
+            step={100}
+            min={1000}
+            max={7000}
+            values={priceRange}
+            onChange={handlePriceRangeChange}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                className="h-1 w-full bg-gray-300 relative"
+                style={{
+                  ...props.style,
+                }}
+              >
+                <div
+                  className="h-full bg-red-600 absolute"
+                  style={{
+                    left: `${((priceRange[0] - 1000) / (7000 - 1000)) * 100}%`,
+                    right: `${
+                      100 - ((priceRange[1] - 1000) / (7000 - 1000)) * 100
+                    }%`,
+                  }}
+                />
+                {children}
+              </div>
+            )}
+            renderThumb={({ props: { key, ...restProps }, index }) => (
+              <div
+                key={key}
+                {...restProps}
+                className="h-4 w-4 bg-red-600 rounded-none transform rotate-45 shadow-md focus:outline-none"
+                style={{
+                  ...restProps.style,
+                }}
+              />
+            )}
           />
-          <span>-</span>
-          <input
-            type="number"
-            min="1000"
-            max="7000"
-            value={priceRange[1]}
-            onChange={(e) =>
-              handlePriceRangeChange([priceRange[0], Number(e.target.value)])
-            }
-            className="w-20 p-1 border border-gray-300 rounded text-center"
-          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">
+            Price:{" "}
+            <span className="font-medium text-gray-800">
+              LKR {priceRange[0]}
+            </span>
+          </span>
+          <span className="text-sm text-gray-600">—</span>
+          <span className="text-sm text-gray-600">
+            <span className="font-medium text-gray-800">
+              LKR {priceRange[1]}
+            </span>
+          </span>
+          <button
+            onClick={applyPriceFilter}
+            disabled={!isPriceRangeChanged}
+            className={`px-4 py-1 text-sm font-medium uppercase tracking-wider transition-colors ${
+              isPriceRangeChanged
+                ? "bg-red-600 hover:bg-red-700 text-white"
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            Filter
+          </button>
         </div>
       </div>
 
-      <div className="mt-4">
-        <Range
-          step={1000}
-          min={1000}
-          max={7000}
-          values={priceRange}
-          onChange={handlePriceRangeChange}
-          renderTrack={({ props, children }) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                height: "5px",
-                width: "80%",
-                backgroundColor: "#e5e7eb",
-                borderRadius: "9999px",
-              }}
-            >
-              {children}
-            </div>
-          )}
-          renderThumb={({ props: { key, ...restProps }, isDragged }) => (
-            <div
-              key={key}
-              {...restProps}
-              style={{
-                ...restProps.style,
-                height: "15px",
-                width: "15px",
-                backgroundColor: "#dc2626",
-                borderRadius: "9999px",
-                boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
-                outline: "none",
-              }}
-            />
-          )}
-        />
-        <p className="text-left text-gray-500 mt-2">
-          LKR {priceRange[0]} - LKR {priceRange[1]}
-        </p>
-      </div>
-
-      {/* Frame Colors - Multi-select */}
-      <div>
-        <h2 className="font-semibold text-black mb-2">Frame Colors</h2>
-        <div className="flex flex-col gap-3">
+      {/* Frame Colors Section */}
+      <div className="pb-6">
+        <h3 className="text-base font-bold text-red-600 uppercase tracking-wide mb-4">
+          Frame Colors
+        </h3>
+        <div className="space-y-3">
           {frameColors.map((frameColor) => (
-            <div
+            <label
               key={frameColor.name}
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() =>
-                toggleFilter(
-                  selectedFrameColors,
-                  frameColor.name,
-                  setSelectedFrameColors
-                )
-              }
+              className="flex items-center cursor-pointer group"
             >
-              <div
-                className={`w-6 h-6 rounded-full transition-all ${
-                  selectedFrameColors.includes(frameColor.name)
-                    ? "ring-2 ring-offset-2 ring-red-600 transform scale-105"
-                    : ""
-                }`}
-                style={{ backgroundColor: frameColor.code }}
+              <input
+                type="checkbox"
+                checked={selectedFrameColors.includes(frameColor.name)}
+                onChange={() => toggleFrameColor(frameColor.name)}
+                className="sr-only"
               />
-              <span
-                className={`${
+              <div
+                className={`w-4 h-4 border-2 rounded flex items-center justify-center mr-4 transition-all ${
                   selectedFrameColors.includes(frameColor.name)
-                    ? "font-semibold text-red-600"
-                    : "text-gray-600 hover:text-gray-200"
+                    ? "border-black bg-black"
+                    : "border-gray-300 group-hover:border-gray-400"
                 }`}
               >
-                {frameColor.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Theme Colors - Multi-select */}
-      <div className="mt-4">
-        <h2 className="font-semibold text-black mb-2">Theme Colors</h2>
-        <div className="flex flex-col gap-3">
-          {themeColors.map((themeColor) => (
-            <div
-              key={themeColor.name}
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() =>
-                toggleFilter(
-                  selectedThemeColors,
-                  themeColor.name,
-                  setSelectedThemeColors
-                )
-              }
-            >
-              <div
-                className={`w-6 h-6 rounded-full transition-all ${
-                  selectedThemeColors.includes(themeColor.name)
-                    ? "ring-2 ring-offset-2 ring-red-600 transform scale-105"
-                    : ""
-                }`}
-                style={{ backgroundColor: themeColor.code }}
-              />
-              <span
-                className={`${
-                  selectedThemeColors.includes(themeColor.name)
-                    ? "font-semibold text-red-600"
-                    : "text-gray-600 hover:text-gray-200"
-                }`}
-              >
-                {themeColor.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sizes - Multi-select */}
-      <div className="mt-4">
-        <h2 className="font-semibold text-black mb-2">Size</h2>
-        <div className="flex flex-wrap gap-2">
-          {sizes.map((size) => (
-            <button
-              key={size}
-              type="button"
-              onClick={() =>
-                toggleFilter(selectedSizes, size, setSelectedSizes)
-              }
-              className={`px-3 py-1 rounded-full transition-colors ${
-                selectedSizes.includes(size)
-                  ? "bg-red-600 text-white shadow-md font-semibold"
-                  : "bg-gray-200 text-gray-700 hover:text-gray-300"
-              }`}
-            >
-              {size}
-            </button>
+                {selectedFrameColors.includes(frameColor.name) && (
+                  <svg
+                    className="w-3 h-3 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="flex items-center">
+                <div
+                  className={`w-5 h-5 rounded-full mr-3 border ${
+                    frameColor.name === "White"
+                      ? "border-gray-300"
+                      : "border-gray-200"
+                  }`}
+                  style={{ backgroundColor: frameColor.code }}
+                />
+                <span
+                  className={`text-sm transition-colors ${
+                    selectedFrameColors.includes(frameColor.name)
+                      ? "text-black font-medium"
+                      : "text-gray-600 group-hover:text-gray-900"
+                  }`}
+                >
+                  {frameColor.name}
+                </span>
+              </div>
+            </label>
           ))}
         </div>
       </div>
     </div>
   );
+
+  return (
+    <>
+      {/* Mobile Filter Toggle Button */}
+      <div className="lg:hidden">
+        <button
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+        >
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-xl">
+            <div className="absolute top-0 right-0 -mr-12 pt-2">
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              >
+                <svg
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+              <div className="px-4">
+                <FilterContent />
+              </div>
+            </div>
+          </div>
+          <div
+            className="flex-shrink-0 w-14"
+            onClick={() => setIsMobileOpen(false)}
+          />
+        </div>
+      )}
+
+      {/* Desktop Filter Sidebar */}
+      <div className="hidden lg:block w-74 flex-shrink-0 pr-6 ml-9">
+        <div className="sticky top-4 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <FilterContent />
+        </div>
+      </div>
+
+      {/* Mobile overlay backdrop */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-25 z-40"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+    </>
+  );
 };
 
 export default FilterSection;
-
-
-// This code defines a FilterSection component that allows users to filter products based on various criteria such as category, price range, frame color, theme color, and size. It uses React hooks for state management and includes a range slider for price selection. The component also provides a clear all filters button to reset the selections.
-//             onFilterChange={handleFilterChange}

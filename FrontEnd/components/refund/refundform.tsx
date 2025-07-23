@@ -302,7 +302,7 @@ const RefundForm = () => {
         <div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg shadow hover:bg-blue-700 transition"
+            className="w-full bg-red-600 text-white font-semibold py-2 rounded-lg shadow hover:bg-red-700 transition"
           >
             Submit Request
           </button>

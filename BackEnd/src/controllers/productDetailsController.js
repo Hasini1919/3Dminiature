@@ -1,13 +1,14 @@
 import  multer from "multer";
 import mongoose from 'mongoose';
 import Product from "../models/Admin_models/Product.js";
-import path  from "path";
+import Advertisement from "../models/Advertisement.js";
+import Review from "../models/Review.js"; 
 
    // Get product details by ID
 export const getProductDetailsById = async (req, res) => {
   try {
     const productId = req.params.id;
-    let product = await Product.findOne({ _id: productId });
+    let product = await Product.findOne({ _id: productId }).lean();
 
     if (!product && mongoose.Types.ObjectId.isValid(productId)) {
       product = await Product.findOne({
@@ -47,14 +48,42 @@ export const getProductDetailsById = async (req, res) => {
         }).limit(6)
       : [];
 
+    // Fetch ad for this product
+    const ad = await Advertisement.findOne({ product: productId });
+    let discount = product.discount || 0;
+    if (ad && ad.discountPercentage) {
+      discount = ad.discountPercentage;
+    }
+
+    const discountedPrice = Math.round(
+      product.price - (product.price * discount) / 100
+    );
+
+    // Append to response
+    product.discount = discount;
+    product.discountedPrice = discountedPrice;
+
+    // Get average rating and review count from Review model
+    const ratingStats = await Review.aggregate([
+      { $match: { product: new mongoose.Types.ObjectId(productId) } },
+      {
+        $group: {
+          _id: "$product",
+          avgRating: { $avg: "$rating" },
+          reviewCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const rating = ratingStats[0]?.avgRating || 0;
+    const reviewCount = ratingStats[0]?.reviewCount || 0;
+
     // Maintain backward compatibility
     const response = {
-      // Original response structure
-      ...product.toObject(),
-      // New fields (won't break existing frontend)
+      ...product,
       relatedProducts,
-      // Ensure rating always exists
-      rating: product.rating || 0,
+      rating: parseFloat(rating.toFixed(1)),
+      totalReviews: reviewCount,
     };
 
     return res.json(response);

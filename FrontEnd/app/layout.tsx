@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
-import ClientWrapper from "@/components/ClientWrapper";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 export const metadata: Metadata = {
   title: "Your App Name",
@@ -30,6 +30,11 @@ export default function RootLayout({
         <Toaster position="top-center" />
        
         <ClientWrapper>{children}</ClientWrapper>
+        <div className="debug">
+          <AppContextProvider>
+            <WishlistProvider>{children}</WishlistProvider>
+          </AppContextProvider>
+        </div>
       </body>
     </html>
   );

@@ -1,8 +1,10 @@
 import express from "express";
-import { getProducts } from "../controllers/filterController.js";
-import { Router } from "express";
+import {
+  getProducts,
+  getProductWithAd,
+} from "../controllers/filterController.js";
 
-const router = Router();
+const router = express.Router();
 
 // Request logging middleware
 router.use((req, res, next) => {
@@ -13,5 +15,5 @@ router.use((req, res, next) => {
 
 // Use the unified filter controller
 router.get("/", getProducts);
-
+router.get("/:id", getProductWithAd);
 export default router;

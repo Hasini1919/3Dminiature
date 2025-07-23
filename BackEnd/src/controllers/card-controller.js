@@ -149,7 +149,7 @@ const updateCart = async (req, res) => {
 
     if (parseInt(quantity) === 0) {
       const deletedItem = user.cartData[itemIndex];
-      console.log(deletedItem);
+      // console.log(deletedItem);
       
       if (deletedItem.uploadedImageFiles && deletedItem.uploadedImageFiles.length > 0) {
         deletedItem.uploadedImageFiles.forEach(file => {

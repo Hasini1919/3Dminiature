@@ -40,7 +40,6 @@
           <th>Order Number</th>
           <th>Status</th>
           <th>Payment Method</th>
-          <th>Shipping</th>
           <th>Amount (Rs.)</th>
           <th>Date</th>
         </tr>
@@ -51,13 +50,10 @@
       <tr>
         <!-- item-level fields -->
         <td>{{this.name}}</td>
-        
-
         <!-- order-level fields, from parent context -->
         <td>{{../orderNumber}}</td>
         <td>{{../status}}</td>
         <td>{{../paymentMethod}}</td>
-        <td>{{../selectedShippingOption}}</td>
         <td>{{../amount}}</td>
         <td>{{../date}}</td>
       </tr>
