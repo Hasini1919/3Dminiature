@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '@/services/api';
-
+import { ToastContainer, toast } from "react-toastify";
 export default function Page() {
   const questions = [
     "How satisfied are you with the overall quality of our 3D frames?",
@@ -47,9 +47,11 @@ export default function Page() {
     }
 
     try {
-      await axiosInstance.post('/api/feedback', { responses });
+      const res=await axiosInstance.post('/api/feedback', { responses });
       setSuccess(true);
+      toast.success(res.data.message || "Thank you! Feedback submitted.");
       setResponses({});
+
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       console.error('Error:', err);
@@ -69,6 +71,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-2">
+      <ToastContainer position="top-center" autoClose={2000} />
       <div className="bg-white/90 backdrop-blur-sm  sm:p-10 max-w-4xl w-full rounded-2xl shadow-2xl border border-white/20">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">

@@ -141,7 +141,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
-    // ✅ Role added here
+    // Role added here
     role: {
       type: String,
       enum: ['customer', 'admin'],

@@ -47,6 +47,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         );
 
         const data = response.data;
+        
 
         //  Set only relatedProducts
         setProducts(data.relatedProducts || []);
@@ -66,7 +67,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
 
     if (productId) fetchProductWithRelated();
   }, [productId]);
-
+  
   // Update visible products
   useEffect(() => {
     const endIndex = Math.min(currentIndex + itemsPerPage, products.length);

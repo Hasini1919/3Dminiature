@@ -9,8 +9,8 @@ import {
 } from "react-icons/fa";
 import axiosInstance from "@/services/api";
 import AddToWish from "../addtowish/AddToWish";
-import AddReview from "../review/AddReview";
 import ProductReviews from "../review/ProductReviews";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ProductImageGallery = ({
   images,
@@ -278,28 +278,57 @@ const ProductImageGallery = ({
         </div>
       )}
 
-      {/* Main Image Navigation Arrows */}
       {showThumbnails && (
-        <div className="flex justify-center space-x-4">
+        <div className="flex justify-center items-center space-x-8 mt-6">
+          {/* Previous Button - Elegant */}
           <button
             onClick={() =>
               setSelectedImageIndex((prev) =>
                 prev === 0 ? validImages.length - 1 : prev - 1
               )
             }
-            className="p-2 bg-red-500 hover:bg-red-600 rounded-md text-white text-xl font-bold"
+            className="group relative flex items-center justify-center w-14 h-14 bg-white hover:bg-red-50 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 hover:border-red-200 transition-all duration-300 transform hover:scale-105"
+            aria-label="Previous image"
           >
-            &lt;
+            <ChevronLeft className="w-7 h-7 text-gray-600 group-hover:text-red-500 transition-colors duration-300" />
+
+            {/* Subtle background animation */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500 to-pink-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
           </button>
+
+          {/* Elegant Counter with Progress Bar */}
+          <div className="flex flex-col items-center space-y-3">
+            <span className="text-sm font-semibold text-gray-700 bg-gray-100 px-4 py-2 rounded-full">
+              {selectedImageIndex + 1} of {validImages.length}
+            </span>
+
+            {/* Progress Bar */}
+            <div className="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-red-500 to-pink-500 rounded-full transition-all duration-500 ease-out"
+                style={{
+                  width: `${
+                    ((selectedImageIndex + 1) / validImages.length) * 100
+                  }%`,
+                }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Next Button - Elegant */}
           <button
             onClick={() =>
               setSelectedImageIndex((prev) =>
                 prev === validImages.length - 1 ? 0 : prev + 1
               )
             }
-            className="p-2 bg-red-500 hover:bg-red-600 rounded-md text-white text-xl font-bold"
+            className="group relative flex items-center justify-center w-14 h-14 bg-white hover:bg-red-50 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 hover:border-red-200 transition-all duration-300 transform hover:scale-105"
+            aria-label="Next image"
           >
-            &gt;
+            <ChevronRight className="w-7 h-7 text-gray-600 group-hover:text-red-500 transition-colors duration-300" />
+
+            {/* Subtle background animation */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500 to-pink-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
           </button>
         </div>
       )}
@@ -329,6 +358,7 @@ const ProductImageGallery = ({
           </div>
         </div>
       )}
+      
       {/* Add to Wishlist Button */}
       <div>
         <AddToWish productId={product._id} variant="button" />

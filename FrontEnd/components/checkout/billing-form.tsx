@@ -64,39 +64,38 @@ const BillingForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchLatestAddress = async () => {
-    try {
-      const response = await axiosInstance.get("/api/order/userAddress");
-      if (response.data.success && response.data.address) {
-        const fetchedAddress = { ...response.data.address };
-        setAddress(fetchedAddress);
+  const fetchuserAddress = async () => {
+     try {
+    const response = await axiosInstance.get("/api/user/get-address");
+    if (response.data.success && response.data.address) {
+      const fetchedAddress = { ...response.data.address };
+      setAddress(fetchedAddress);
 
-        if (fetchedAddress.Provience) {
-          const districtResponse = await axiosInstance.get(
-            "/api/getDistricts",
-            { params: { province: fetchedAddress.Provience } }
-          );
+      // load Districts and Cities based on saved address
+      if (fetchedAddress.Provience) {
+        const districtResponse = await axiosInstance.get("/api/getDistricts", {
+          params: { province: fetchedAddress.Provience },
+        });
+        if (districtResponse.data.success) {
+          setBillingDistricts([...districtResponse.data.districts]);
+        }
 
-          if (districtResponse.data.success) {
-            setBillingDistricts([...districtResponse.data.districts]);
-          }
-
-          if (fetchedAddress.District) {
-            const cityResponse = await axiosInstance.get("/api/getCities", {
-              params: { district: fetchedAddress.District },
-            });
-            if (cityResponse.data.success) {
-              setBillingCities([...cityResponse.data.cities]);
-            }
+        if (fetchedAddress.District) {
+          const cityResponse = await axiosInstance.get("/api/getCities", {
+            params: { district: fetchedAddress.District },
+          });
+          if (cityResponse.data.success) {
+            setBillingCities([...cityResponse.data.cities]);
           }
         }
       }
-    } catch (error) {
-      console.error("Error fetching latest address:", error);
-      toast.error("Failed to fetch address");
-    } finally {
-      setIsLoading(false);
     }
+  } catch (err) {
+    console.error("Fetch user address error:", err);
+    toast.error("Failed to fetch saved address.");
+  } finally {
+    setIsLoading(false);
+  }
   };
 
   const handleBillingProvinceChange = async (
@@ -195,7 +194,7 @@ const BillingForm = () => {
   }, [address, setIsAddressComplete]);
 
   useEffect(() => {
-    fetchLatestAddress();
+    fetchuserAddress();
   }, []);
 
   const validateForm = (formData: FormData): FormErrors => {
@@ -267,9 +266,10 @@ const BillingForm = () => {
 
   return (
     <form className="w-full space-y-6 " onSubmit={handleSubmit}>
-      <ToastContainer />
+      
 
       <div className="flex gap-3 w-full justify-between">
+        <ToastContainer />
         <div className="w-[48%]">
           <label htmlFor="FirstName" className="mb-1.5 block ">FirstName</label>
           <input

@@ -1,4 +1,4 @@
-// passport-config.js
+//passport-config.js
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as FacebookStrategy } from "passport-facebook";
@@ -6,6 +6,8 @@ import configureInstagramStrategy from "../config/instagramStrategy.js";
 import User from "../models/User.js";
 
 configureInstagramStrategy(passport);
+//console.log("Loaded Instagram App ID:", process.env.INSTAGRAM_APP_ID);
+//console.log("Loaded Instagram App Secret:", process.env.INSTAGRAM_APP_SECRET);
 
 //  Google Strategy
 passport.use(

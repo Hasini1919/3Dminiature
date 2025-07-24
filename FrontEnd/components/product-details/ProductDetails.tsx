@@ -221,6 +221,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   const handleAddToCart = () => {
     if (!validateForm()) return;
+    if(!user){
+      return;
+    }
 
     // Proceed with adding to cart
     console.log("Adding to cart:", {
@@ -229,9 +232,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       quantity,
       price: currentPrice,
     });
-  };
-
-  addToCart(
+    addToCart(
     productId,
     customization.size,
     customization.frameColor,
@@ -242,9 +243,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     customText 
   );
   toast.success("Product added to cart!");
+  };
+
+  
 
   const handleBuyNow = () => {
     if (!validateForm()) return;
+    if(!user){
+      return;
+    }
 
     // Proceed with buy now
     console.log("Buying now:", {
@@ -273,6 +280,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <ToastContainer position="top-center" autoClose={2000} />
       {/* Product Header */}
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight">
