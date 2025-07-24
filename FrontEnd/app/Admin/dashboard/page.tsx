@@ -148,7 +148,7 @@ export default function DashboardPage() {
 
 
             {/* Refunds */}
-            <div className="xs:col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1">
+            {/* <div className="xs:col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1">
               <DashboardCard
                 title="Refunds"
                 value={(stats.refundCount ?? 0).toLocaleString()}
@@ -156,8 +156,8 @@ export default function DashboardPage() {
                 dotColor="bg-pink-500"
                 link="/Admin/refunds" // 👈 adjust path as per your route
               />
-            </div>
-          </div>
+            </div> */}
+          </div> 
 
           {/* Quick Stats Summary - Enhanced Responsive Design */}
           <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm border border-slate-200">
@@ -197,12 +197,12 @@ export default function DashboardPage() {
               </div>
 
               {/* Refunds */}
-              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg text-center">
+              {/* <div className="p-3 sm:p-4 bg-slate-50 rounded-lg text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-pink-600">
                   {(stats.refundCount ?? 0) > 0 ? Math.round(((stats.refundCount ?? 0) / totalOrders) * 100) : 0}%
                 </div>
                 <div className="text-xs sm:text-sm text-slate-600 mt-1">Refunds</div>
-              </div>
+              </div> */}
 
             </div>
           </div>
