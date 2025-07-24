@@ -60,7 +60,7 @@ export default function OrderTable({
                     className={`${selectBgColor} text-black text-sm px-2 py-1 rounded-md`}
                   >
                     <option value="Order Placed">New</option>
-                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
                     <option value="Completed">Completed</option>
                   </select>
                 </td>

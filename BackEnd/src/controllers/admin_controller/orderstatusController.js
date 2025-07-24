@@ -29,8 +29,8 @@ export const getNewOrders = async (req, res) => {
                 });
             });
         });
-
         res.status(200).json(flatOrders);
+
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch new orders", error });
     }
@@ -43,7 +43,7 @@ export const updateOrderStatus = async (req, res) => {
         const { status } = req.body;
 
 
-        const validStatuses = ["Order Placed", "Pending", "Completed"];
+        const validStatuses = ["Order Placed", "Processing", "Completed"];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }
@@ -56,6 +56,24 @@ export const updateOrderStatus = async (req, res) => {
 
         if (!updateOrder) {
             return res.status(404).json({ message: "Order not found" });
+        }
+
+        let message = "";
+        if (status === "Order Placed") {
+            message = `New order placed. Order Number: ${updateOrder.orderNumber}`;
+        } else if (status === "Cancelled") {
+            message = `Order ${updateOrder.orderNumber} has been cancelled.`;
+        } else {
+            message = `Order ${updateOrder.orderNumber} status changed to ${status}.`;
+        }
+
+        // Only create notification if message exists
+        if (message) {
+            await Notification.create({
+                type: "order",
+                message,
+                orderId: updateOrder._id
+            });
         }
 
         res.json(updateOrder);

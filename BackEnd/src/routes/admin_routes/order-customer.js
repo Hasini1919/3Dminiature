@@ -2,6 +2,7 @@
 import express from "express";
 import Order from "../../models/Order.js";
 import User from "../../models/User.js";
+import Notification from "../../models/Admin_models/Notification.js";
 
 const router = express.Router();
 
@@ -46,6 +47,21 @@ router.put("/api/orders/status/:orderNumber", async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    if (updatedOrder) {
+      let message = "";
+      if (status === "Order Placed") {
+        message = `New order placed. Order Number: ${updatedOrder.orderNumber}`;
+      } else if (status === "Cancelled") {
+        message = `Order ${updatedOrder.orderNumber} has been cancelled.`;
+      }
+    
+      if (message) {
+        await Notification.create({
+          type: "order",
+          message,
+        });
+      }
+    }    
     res.json({ message: "Order status updated", order: updatedOrder });
   } catch (error) {
     console.error("Error updating order status:", error);

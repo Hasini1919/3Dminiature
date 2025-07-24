@@ -10,6 +10,7 @@ export const fetchDashboardStats = async (): Promise<DashboardStats> => {
     pendingOrderCount: data.processingCount ?? 0,
     completedOrderCount: data.completedCount ?? 0,
     cancelOrderCount: data.canceledCount ?? 0,
+    refundCount: data.refundCount ?? 0,
     customerCount: data.totalCustomers ?? 0,
   };
 };

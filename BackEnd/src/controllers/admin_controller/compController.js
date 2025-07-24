@@ -42,7 +42,7 @@ export const markOrderAsFinal = async (req, res) => {
         const OrderId = req.params.id;
         const { status } = req.body;
 
-        const validStatuses = ["Order Placed", "Pending", "Completed"];
+        const validStatuses = ["Order Placed", "Processing", "Completed"];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }

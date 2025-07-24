@@ -27,6 +27,7 @@ export default function AddCouponPage() {
     if (type === "number") val = parseFloat(value);
     if (name === "maxUses" && val === "") val = null;
     if (type === "checkbox") val = (e.target as HTMLInputElement).checked;
+    
 
     setForm({ ...form, [name]: val });
   };
@@ -191,7 +192,7 @@ export default function AddCouponPage() {
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                       <span className="text-gray-400 text-sm">
-                        {form.discountType === 'percentage' ? '%' : '₹'}
+                        {form.discountType === 'percentage' ? '%' : 'Rs.'}
                       </span>
                     </div>
                   </div>
@@ -218,7 +219,7 @@ export default function AddCouponPage() {
                       step="0.01"
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <span className="text-gray-400 text-sm">₹</span>
+                      <span className="text-gray-400 text-sm">Rs</span>
                     </div>
                   </div>
                   {/* <p className="text-xs text-gray-500 mt-1">Minimum cart value required to use this coupon</p> */}

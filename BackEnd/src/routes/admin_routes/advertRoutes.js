@@ -60,6 +60,22 @@ router.post('/', upload.single('image'), async (req, res) => {
       { new: true, upsert: true }
     );
 
+    const product = await Product.findById(productId);
+    const productName = product?.name || "Unknown Product";
+
+    // Create notification
+    let message = existingAd
+      ? `Advertisement updated for ${productName} (${discountPercentage}% off)`
+      : `New advertisement created for ${productName} (${discountPercentage}% off)`;
+
+    await Notification.create({
+      type: "advertisement",
+      message,
+      product: productId,
+      advertisement: advertisement._id
+    });
+
+
     res.status(200).json({ message: 'Advertisement saved successfully', advertisement });
   } catch (err) {
     console.error(err);
@@ -101,6 +117,17 @@ router.delete('/:productId', async (req, res) => {
     if (fs.existsSync(absolutePath)) {
       fs.unlinkSync(absolutePath);
     }
+
+    const product = await Product.findById(req.params.productId);
+    const productName = product?.name || "Unknown Product";
+
+    // Create notification
+    await Notification.create({
+      type: "advertisement",
+      message: `Advertisement for ${productName} has been removed`,
+      product: req.params.productId
+    });
+
 
     res.status(200).json({ message: 'Advertisement removed successfully' });
   } catch (err) {

@@ -190,7 +190,7 @@ export default function ProfileSettings() {
                 </div>
 
                 <div className="space-y-6">
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-3">Phone Number</label>
                     <div className="relative">
                       <input
@@ -206,7 +206,7 @@ export default function ProfileSettings() {
                         </svg>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-3">New Password</label>

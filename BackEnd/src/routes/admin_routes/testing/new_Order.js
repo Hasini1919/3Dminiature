@@ -27,6 +27,7 @@ router.put("/:id/status", async (req, res) => {
   const { status } = req.body; // expects { status: "newStatus" }
   try {
     await Order.findByIdAndUpdate(id, { status });
+      
     res.json({ message: "Order status updated" });
   } catch (err) {
     console.error(err);

@@ -16,7 +16,7 @@ type Coupon = {
   discountValue: number;
   validFrom: string;
   validTo: string;
-  minPurchaseAmount:any;
+  minPurchaseAmount: any;
 
 };
 
@@ -52,7 +52,7 @@ export default function CouponPage() {
       const today = new Date().toISOString().split("T")[0];
       const { validFrom, validTo } = editData;
 
-      if (validFrom < today || validTo < today) {
+      if (validTo < today) {
         setError("Dates must be today or in the future.");
         return;
       }
@@ -94,7 +94,7 @@ export default function CouponPage() {
               </svg>
             </div>
             <h1 className="text-4xl font-bold text-slate-800 mb-2">Coupon Management</h1>
-            <p className="text-slate-600 text-lg">Manage and edit your promotional coupons</p>
+            {/* <p className="text-slate-600 text-lg">Manage and edit your promotional coupons</p> */}
           </div>
         </div>
 
@@ -210,9 +210,13 @@ export default function CouponPage() {
                     coupon.code.toLowerCase().includes(searchTerm.toLowerCase())
                   )
                   .map((coupon, index) => {
-                    const isExpired = new Date(coupon.validTo) < new Date();
-                    const isActive = new Date(coupon.validFrom) <= new Date() && new Date(coupon.validTo) >= new Date();
+                    const today = new Date().setHours(0, 0, 0, 0);
+                    const validFrom = new Date(coupon.validFrom).setHours(0, 0, 0, 0);
+                    const validTo = new Date(coupon.validTo).setHours(0, 0, 0, 0);
 
+                    const isActive = validFrom <= today && validTo >= today;
+                    const isExpired = validTo < today;
+                    // const isUpcoming = !isActive && !isExpired;
                     return (
                       <tr key={coupon._id} className="hover:bg-slate-50 transition-colors duration-150">
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -237,7 +241,7 @@ export default function CouponPage() {
                           <div className="text-sm font-bold text-slate-900">
                             {coupon.discountType === "percentage"
                               ? `${coupon.discountValue}%`
-                              : `₹${coupon.discountValue}`}
+                              : `Rs.${coupon.discountValue}`}
                           </div>
                           <div className="text-sm text-slate-500">
                             {coupon.discountType === "percentage" ? "Off total" : "Discount"}

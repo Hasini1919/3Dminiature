@@ -1,8 +1,7 @@
-// Base Notification structure from the backend
-export interface Notification {
+export type Notification = {
   _id: string;
-  type: string; // e.g., "Order", "Message"
+  type: "order" | "refund" | "coupon" | "advertisement";
   message: string;
-  seen: boolean;
+  isSeen: boolean;
   createdAt: string;
-}
+};

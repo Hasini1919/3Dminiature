@@ -1,4 +1,3 @@
-//////// i use here 3 or 4 
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -45,13 +44,22 @@ export default function ModernAdminNavbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const [showOnlyUnseen, setShowOnlyUnseen] = useState(false);
 
   // Fetch notifications
   useEffect(() => {
-    fetch('http://localhost:5500/api/notifications')
-      .then((res) => res.json())
-      .then((data) => setNotifications(data))
-      .catch(() => setNotifications([]));
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch("http://localhost:5500/api/notifications");
+        const data = await res.json();
+        setNotifications(data);
+      } catch {
+        setNotifications([]);
+      }
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 10000); // every 10s
+    return () => clearInterval(interval);
   }, []);
 
   // Fetch profile image
@@ -93,10 +101,37 @@ export default function ModernAdminNavbar() {
 
   const menuItems = [
     { name: 'Dashboard', icon: FiHome, href: '/Admin/dashboard', active: isActive('/Admin/dashboard') },
-    // { name: 'Analytics', icon: FiTrendingUp, href: '/Admin/analytics', active: isActive('/admin/analytics') },
     { name: 'Orders', icon: FiShoppingCart, href: '/Admin/test-Order', active: isActive('/Admin/test-order') },
     { name: 'Customers', icon: FiUsers, href: '/Admin/customer', active: isActive('/Admin/customer') },
   ];
+
+  const handleSingleNotificationClick = async (id: string) => {
+    try {
+      await fetch(`http://localhost:5500/api/notifications/seen/${id}`, {
+        method: "PATCH",
+      });
+      // Refresh notifications
+      const updated = await fetch("http://localhost:5500/api/notifications");
+      const data = await updated.json();
+      setNotifications(data);
+    } catch (err) {
+      console.error("Error marking as seen", err);
+    }
+  };
+  
+  const handleMarkAllAsSeen = async () => {
+    try {
+      await fetch("http://localhost:5500/api/notifications/mark-all-seen", {
+        method: "PATCH",
+      });
+      // Refresh notifications
+      const updated = await fetch("http://localhost:5500/api/notifications");
+      const data = await updated.json();
+      setNotifications(data);
+    } catch (err) {
+      console.error("Error marking all as seen", err);
+    }
+  };
 
   return (
     <div>
@@ -125,22 +160,10 @@ export default function ModernAdminNavbar() {
                 className="object-contain"
               />
             </div>
-
-            {/* Admin Badge */}
-            {/* <div className="hidden md:flex items-center bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1 rounded-full text-sm font-medium">
-              <FiUser className="mr-1" size={14} />
-              Admin Panel
-            </div> */}
           </div>
 
           {/* Right Section */}
           <div className="flex items-center space-x-3">
-            {/* Messages */}
-            {/* <button className="hidden sm:flex p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 relative">
-              <FiMail size={20} /><Link href={hasinisri200219@gmail.com}>
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></span>
-            </button> */}
-
             {/* Notifications */}
             <div className="relative" ref={notificationRef}>
               <button
@@ -155,32 +178,67 @@ export default function ModernAdminNavbar() {
                 )}
               </button>
 
-              {/* Notifications Dropdown */}
+              {/* Enhanced Notifications Dropdown */}
               {notificationOpen && (
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-60">
-                  <div className="p-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
-                    <p className="text-sm text-gray-500">{unseenCount} unread notifications</p>
+                  <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                      <p className="text-sm text-gray-500">{unseenCount} unread notifications</p>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowOnlyUnseen(!showOnlyUnseen);
+                        }}
+                        className={`text-xs px-2 py-1 rounded ${
+                          showOnlyUnseen ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {showOnlyUnseen ? 'Show All' : 'Unseen Only'}
+                      </button>
+                      {unseenCount > 0 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMarkAllAsSeen();
+                          }}
+                          className="ml-2 text-sm text-red-600 hover:text-red-700 font-medium"
+                        >
+                          Mark all
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length > 0 ? (
-                      notifications.slice(0, 5).map((notification) => (
-                        <div
-                          key={notification._id}
-                          className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${!notification.seen ? 'bg-red-50' : ''
+                      notifications
+                        .filter(n => !showOnlyUnseen || !n.seen)
+                        .slice(0, 5)
+                        .map((notification) => (
+                          <div
+                            key={notification._id}
+                            onClick={() => handleSingleNotificationClick(notification._id)}
+                            className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${
+                              !notification.seen ? 'bg-red-50' : ''
                             }`}
-                        >
-                          <div className="flex items-start space-x-3">
-                            <div className={`w-2 h-2 rounded-full mt-2 ${!notification.seen ? 'bg-red-600' : 'bg-gray-300'}`}></div>
-                            <div className="flex-1">
-                              <p className="text-sm text-gray-800">{notification.message}</p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {new Date(notification.createdAt).toLocaleDateString()}
-                              </p>
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div
+                                className={`w-2 h-2 rounded-full mt-2 ${
+                                  !notification.seen ? 'bg-red-600' : 'bg-gray-300'
+                                }`}
+                              ></div>
+                              <div className="flex-1">
+                                <p className="text-sm text-gray-800">{notification.message}</p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {new Date(notification.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))
+                        ))
                     ) : (
                       <div className="p-8 text-center text-gray-500">
                         <FiBell className="mx-auto mb-2" size={24} />
@@ -226,8 +284,7 @@ export default function ModernAdminNavbar() {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div>
-                        {/* <p className="font-medium text-gray-800">Admin User</p> */}
-                        {/* <p className="text-sm text-gray-500">admin@company.com</p> */}
+                        {/* Profile details if needed */}
                       </div>
                     </div>
                   </div>
@@ -240,14 +297,6 @@ export default function ModernAdminNavbar() {
                       <FiUser className="mr-3" size={16} />
                       Profile Settings
                     </Link>
-                    {/* <Link
-                      href="/Admin/settings"
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                    >
-                      <FiSettings className="mr-3" size={16} />
-                      System Settings
-                    </Link> */}
                     <hr className="my-2" />
                     <button
                       onClick={handleLogout}
@@ -274,8 +323,9 @@ export default function ModernAdminNavbar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-16 left-0 h-[calc(100vh-64px)] w-64 bg-gradient-to-b from-white via-gray-50 to-white border-r border-gray-200 shadow-xl transform transition-transform duration-300 ease-in-out z-45 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+        className={`fixed top-16 left-0 h-[calc(100vh-64px)] w-64 bg-gradient-to-b from-white via-gray-50 to-white border-r border-gray-200 shadow-xl transform transition-transform duration-300 ease-in-out z-45 lg:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
@@ -284,7 +334,6 @@ export default function ModernAdminNavbar() {
             </div>
             <div>
               <h2 className="font-bold text-lg text-gray-800">Admin Panel</h2>
-              {/* <p className="text-red-600 text-sm">Management Dashboard</p> */}
             </div>
           </div>
 
@@ -296,10 +345,11 @@ export default function ModernAdminNavbar() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${item.active
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+                    item.active
                       ? 'bg-red-600 text-white shadow-lg'
                       : 'hover:bg-red-50 text-gray-700 hover:text-red-600'
-                    }`}
+                  }`}
                 >
                   <Icon size={20} className={`${item.active ? 'text-white' : 'group-hover:text-red-600'}`} />
                   <span className="font-medium">{item.name}</span>
@@ -327,20 +377,22 @@ export default function ModernAdminNavbar() {
                   <Link
                     href="/Admin/Product/Add"
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-2 rounded-lg transition-all duration-200 text-sm ${isActive('/admin/product/add')
+                    className={`block px-4 py-2 rounded-lg transition-all duration-200 text-sm ${
+                      isActive('/admin/product/add')
                         ? 'bg-red-600 text-white'
                         : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
-                      }`}
+                    }`}
                   >
                     Add Product
                   </Link>
                   <Link
                     href="/Admin/Product/Table"
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-2 rounded-lg transition-all duration-200 text-sm ${isActive('/admin/product/table')
+                    className={`block px-4 py-2 rounded-lg transition-all duration-200 text-sm ${
+                      isActive('/admin/product/table')
                         ? 'bg-red-600 text-white'
                         : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
-                      }`}
+                    }`}
                   >
                     Product Table
                   </Link>

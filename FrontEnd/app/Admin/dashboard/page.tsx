@@ -5,8 +5,9 @@ import { fetchDashboardStats } from "@/utils/Admin/test/fetchDash";
 import DashboardCard from "@/components/admin/DashboardCard";
 import { FiDollarSign, FiBox, FiBarChart, FiPackage, FiBookmark } from "react-icons/fi";
 import { AiFillCheckCircle } from "react-icons/ai";
-import { MdCancel } from "react-icons/md"; // icon for canceled orders
+import { MdCancel } from "react-icons/md";
 import { DashboardStats } from "@/types/admin/dashboard";
+import { MdRequestQuote } from "react-icons/md";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
@@ -15,6 +16,7 @@ export default function DashboardPage() {
     pendingOrderCount: 0,
     completedOrderCount: 0,
     cancelOrderCount: 0,
+    refundCount: 0,
     customerCount: 0,
   });
 
@@ -45,7 +47,7 @@ export default function DashboardPage() {
                         ml-0 sm:ml-16 md:ml-20 lg:ml-48 xl:ml-64 
                         mt-16 sm:mt-20 lg:mt-16 
                         bg-gradient-to-br from-slate-50 via-white to-slate-100">
-          
+
           {/* Header Section */}
           <div className="mb-8 lg:mb-10">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
@@ -69,7 +71,7 @@ export default function DashboardPage() {
           {/* Stats Grid - Optimized for all screen sizes */}
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 
                           gap-4 sm:gap-6 lg:gap-8 mb-8 lg:mb-10">
-            
+
             {/* Revenue Card - Always featured */}
             <div className="xs:col-span-2 sm:col-span-2 md:col-span-1 lg:col-span-1">
               <DashboardCard
@@ -143,13 +145,25 @@ export default function DashboardPage() {
                 link={`/Admin/test-Order?status=${encodeURIComponent("Canceled")}`}
               />
             </div>
+
+
+            {/* Refunds */}
+            <div className="xs:col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1">
+              <DashboardCard
+                title="Refunds"
+                value={(stats.refundCount ?? 0).toLocaleString()}
+                icon={<MdRequestQuote className="text-xl" />}
+                dotColor="bg-pink-500"
+                link="/Admin/refunds" // 👈 adjust path as per your route
+              />
+            </div>
           </div>
 
           {/* Quick Stats Summary - Enhanced Responsive Design */}
           <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm border border-slate-200">
             <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-4">Quick Summary</h3>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-              
+
               {/* Success Rate */}
               <div className="p-3 sm:p-4 bg-slate-50 rounded-lg text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-emerald-600">
@@ -181,6 +195,15 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-xs sm:text-sm text-slate-600 mt-1">Canceled</div>
               </div>
+
+              {/* Refunds */}
+              <div className="p-3 sm:p-4 bg-slate-50 rounded-lg text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-pink-600">
+                  {(stats.refundCount ?? 0) > 0 ? Math.round(((stats.refundCount ?? 0) / totalOrders) * 100) : 0}%
+                </div>
+                <div className="text-xs sm:text-sm text-slate-600 mt-1">Refunds</div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -188,3 +211,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
+
+

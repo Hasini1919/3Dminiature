@@ -9,6 +9,7 @@ type CustomerPageProps = {
   };
 };
 
+
 export default async function CustomerPage({ params }: CustomerPageProps) {
   const userId = params.id;
 
