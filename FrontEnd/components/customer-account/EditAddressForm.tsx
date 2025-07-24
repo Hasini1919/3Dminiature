@@ -11,59 +11,61 @@ interface EditAddressFormProps {
   saving?: boolean;
 }
 
-export function EditAddressForm({ 
-  addressData, 
-  onCancel, 
+export function EditAddressForm({
+  addressData,
+  onCancel,
   onSave,
-  saving = false
+  saving = false,
 }: EditAddressFormProps) {
-  const [formData, setFormData] = useState<AddressData>({ 
+  const [formData, setFormData] = useState<AddressData>({
     ...addressData,
-    country: addressData.country || 'United States' // Default value
+    country: addressData.country || "United States",
   });
   const [errors, setErrors] = useState<Partial<AddressData>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof AddressData]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const handleClear = (field: keyof AddressData) => {
-    setFormData(prev => ({ ...prev, [field]: '' }));
-    setErrors(prev => ({ ...prev, [field]: undefined }));
+    setFormData((prev) => ({ ...prev, [field]: "" }));
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<AddressData> = {};
     let isValid = true;
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-      isValid = false;
-    }
+    const requiredFields: Array<keyof AddressData> = [
+      "firstName",
+      "lastName",
+      "province",
+      "district",
+      "city",
+      "area",
+      "houseNo",
+      "country",
+    ];
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-      isValid = false;
-    }
+    requiredFields.forEach((field) => {
+      if (!formData[field]?.toString().trim()) {
+         (newErrors as any)[field] = `${
+           field.charAt(0).toUpperCase() + field.slice(1)
+         } is required`;
+        isValid = false;
+      }
+    });
 
-    if (!formData.houseNo.trim()) {
-      newErrors.houseNo = "House number is required";
-      isValid = false;
-    }
-
-    if (!formData.postalCode.trim()) {
-      newErrors.postalCode = "Postal code is required";
-      isValid = false;
-    } else if (!/^\d+$/.test(formData.postalCode)) {
+    if (formData.postalCode && !/^\d+$/.test(formData.postalCode)) {
       newErrors.postalCode = "Invalid postal code";
       isValid = false;
     }
-
-    // Add more validations as needed
 
     setErrors(newErrors);
     return isValid;

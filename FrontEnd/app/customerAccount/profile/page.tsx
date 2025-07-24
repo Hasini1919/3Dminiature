@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import { EditProfileForm } from "@/components/customer-account/EditProfileForm";
 import { EditAddressForm } from "@/components/customer-account/EditAddressForm";
 import AddressCard from "@/components/customer-account/AddressCard";
 import { FaSpinner, FaExclamationTriangle } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 import {
   getProfile,
   updateProfile,
@@ -25,15 +25,25 @@ interface UserData {
   mobile?: string;
   birthday?: string;
   gender?: string;
+  addresses?: AddressData[];
 }
 
 export default function ProfilePage() {
-  const [userData, setUserData] = useState<UserData>({ name: "", email: "" });
+  const [userData, setUserData] = useState<UserData>({
+    name: "",
+    email: "",
+    mobile: "",
+    birthday: "",
+    gender: "",
+    addresses: [],
+  });
   const [addresses, setAddresses] = useState<AddressData[]>([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [editAddressMode, setEditAddressMode] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState<AddressData | null>(null);
+  const [currentAddress, setCurrentAddress] = useState<AddressData | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -58,22 +68,20 @@ export default function ProfilePage() {
         setLoading(true);
         setError(null);
 
-        const [profileRes, addressRes] = await Promise.all([
-          getProfile(),
-          getAddresses(),
-        ]);
+        const profileRes = await getProfile();
+        const profile = (profileRes as any).profile;
 
         setUserData({
-           name: profileRes?.name || "",
-          email: profileRes?.email || "",
-  mobile: profileRes?.mobile,
-  birthday: profileRes?.birthday,
-  gender: profileRes?.gender,
+          name: profile?.name || "",
+          email: profile?.email || "",
+          mobile: profile?.mobile || "",
+          birthday: profile?.birthday || "",
+          gender: profile?.gender || "",
+          addresses: profile?.addresses || [],
         });
 
-        const normalized = (Array.isArray(addressRes) ? addressRes : []).map(
-          transformAddressData
-        );
+        const userAddresses = profile?.addresses || [];
+        const normalized = userAddresses.map(transformAddressData);
 
         setAddresses(normalized);
       } catch (err: any) {
@@ -91,15 +99,16 @@ export default function ProfilePage() {
       setSaving(true);
       const res = await updateProfile(updatedData);
       if (res) {
-  setUserData({
-    name: res.name || "",
-    email: res.email || "",
-    mobile: res.mobile,
-    birthday: res.birthday,
-    gender: res.gender,
-  });
-}
-
+        setUserData({
+          name: res.name || "",
+          email: res.email || "",
+          mobile: res.mobile,
+          birthday: res.birthday,
+          gender: res.gender,
+          addresses: res.addresses || [],
+        });
+        setEditMode(false);
+      }
     } catch (err: any) {
       setError(err.message || "Error saving profile");
     } finally {
@@ -108,58 +117,108 @@ export default function ProfilePage() {
   };
 
   const handleSaveAddress = async (address: AddressData) => {
-  try {
-    setSaving(true);
-    let updated: { success: boolean; address: AddressData };
-
-    if (address._id) {
-      updated = await updateAddress(address._id, address);
-      setAddresses(addresses.map((a) =>
-        a._id === address._id ? transformAddressData(updated.address) : a
-      ));
-    } else {
-      updated = await addAddress(address);
-      setAddresses([...addresses, transformAddressData(updated.address)]);
-    }
-
-    setEditAddressMode(false);
-    setCurrentAddress(null);
-  } catch (err: any) {
-    setError(err.message || "Error saving address");
-  } finally {
-    setSaving(false);
-  }
-};
-
-  const handleDeleteAddress = async (id: string) => {
     try {
       setSaving(true);
-      await deleteAddress(id);
-      setAddresses(addresses.filter((a) => a._id !== id));
+
+      // Create updated addresses array
+      const updatedAddresses = address._id
+        ? addresses.map((a) => (a._id === address._id ? address : a))
+        : [...addresses, address];
+
+      // Update user data with new addresses
+      const updatedUser = await updateProfile({
+        ...userData,
+        addresses: updatedAddresses,
+      });
+
+      if (updatedUser) {
+        setUserData({
+          ...userData,
+          addresses: updatedUser.addresses || [],
+        });
+        setAddresses(updatedAddresses);
+        setEditAddressMode(false);
+        setCurrentAddress(null);
+        toast.success("Address saved successfully");
+      }
+    } catch (err: any) {
+      setError(err.message || "Error saving address");
+      toast.error("Failed to save address");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteAddress = async (id: string) => {
+    if (!id) {
+      toast.error("Invalid address ID");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const updatedAddresses = addresses.filter((a) =>
+        a._id === id ? false : true
+      );
+
+      const updatedUser = await updateProfile({
+        ...userData,
+        addresses: [],
+      });
+
+      if (updatedUser) {
+        setUserData({
+          ...userData,
+          addresses: [],
+        });
+        setAddresses(updatedAddresses);
+        toast.success("Address deleted successfully");
+      }
     } catch (err: any) {
       setError(err.message || "Error deleting address");
+      toast.error("Failed to delete address");
     } finally {
       setSaving(false);
     }
   };
 
   const handleSetDefaultAddress = async (id: string) => {
+    if (!id) {
+      toast.error("Invalid address ID");
+      return;
+    }
+
     try {
       setSaving(true);
-      await setDefaultAddress(id);
-      setAddresses(
-        addresses.map((a) => ({ ...a, isDefault: a._id === id }))
-      );
+      const updatedAddresses = addresses.map((a) => ({
+        ...a,
+        isDefault: a._id === id,
+      }));
+
+      const updatedUser = await updateProfile({
+        ...userData,
+        addresses: updatedAddresses,
+      });
+
+      if (updatedUser) {
+        setUserData({
+          ...userData,
+          addresses: updatedUser.addresses || [],
+        });
+        setAddresses(updatedAddresses);
+        toast.success("Default address updated successfully");
+      }
     } catch (err: any) {
-      setError(err.message || "Error setting default");
+      setError(err.message || "Error setting default address");
+      toast.error("Failed to set default address");
     } finally {
       setSaving(false);
     }
   };
-
+  
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center">
           <FaSpinner className="animate-spin text-4xl text-red-500" />
@@ -169,7 +228,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 ">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <main className="flex-1 p-4 lg:p-8">
         {error && (
@@ -190,7 +249,10 @@ export default function ProfilePage() {
                 saving={saving}
               />
             ) : (
-              <ProfileCard userData={userData} onEdit={() => setEditMode(true)} />
+              <ProfileCard
+                userData={userData}
+                onEdit={() => setEditMode(true)}
+              />
             )}
           </div>
 
@@ -227,27 +289,29 @@ export default function ProfilePage() {
                     setCurrentAddress(null);
                     setEditAddressMode(true);
                   }}
-                  className="btn btn-primary"
+                  className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition-colors"
                 >
                   Add New Address
                 </button>
 
-                {addresses.map((address) => (
-                  <AddressCard
-                    key={address._id || Math.random().toString(36)}
-                    addressData={address}
-                    onEdit={() => {
-                      setCurrentAddress(address);
-                      setEditAddressMode(true);
-                    }}
-                    onDelete={() => {
-                      if (address._id) handleDeleteAddress(address._id);
-                    }}
-                    onSetDefault={() => {
-                      if (address._id) handleSetDefaultAddress(address._id);
-                    }}
-                  />
-                ))}
+                {addresses.length > 0 ? (
+                  addresses.map((address) => (
+                    <AddressCard
+                      key={address._id || Math.random().toString(36)}
+                      addressData={address}
+                      onEdit={() => {
+                        setCurrentAddress(address);
+                        setEditAddressMode(true);
+                      }}
+                      onDelete={handleDeleteAddress}
+                      onSetDefault={handleSetDefaultAddress}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No addresses saved yet
+                  </div>
+                )}
               </div>
             )}
           </div>

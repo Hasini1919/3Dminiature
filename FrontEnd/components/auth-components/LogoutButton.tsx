@@ -16,7 +16,8 @@ const LogoutButton = () => {
     logout();
     // setUser(null); // optional: clear context
     toast.success("✅ Logged out successfully!");
-    router.push("/authentication/login");
+    router.push("/home");
+    
   };
 
   return (

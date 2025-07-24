@@ -189,10 +189,10 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                       images={
                         product.imagess && product.imagess.length > 0
                           ? [
-                              product.images[0].startsWith("http")
-                                ? product.images[0]
+                              product.imagess[0].startsWith("http")
+                                ? product.imagess[0]
                                 : (() => {
-                                    const parts = product.images[0].split("/");
+                                    const parts = product.imagess[0].split("/");
                                     if (parts.length === 2) {
                                       return `${
                                         axiosInstance.defaults.baseURL

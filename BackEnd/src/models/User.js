@@ -83,13 +83,15 @@ const addressSchema = new mongoose.Schema(
   {
     FirstName: { type: String, required: true },
     LastName: { type: String, required: true },
-    PhoneNumber: { type: String, required: true },
-    Provience: { type: String, required: true }, 
+    PhoneNumber: { type: String },
+    Provience: { type: String, required: true },
     District: { type: String, required: true },
     Area: { type: String, required: true },
     City: { type: String, required: true },
     HouseNo: { type: String, required: true },
     AnyInformation: { type: String, default: "" },
+    PostalCode: { type: String, required: false },
+    Country: { type: String, required: true },
   },
   { _id: false }
 );
@@ -148,7 +150,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
-    // Role added here
+    // ✅ Role added here
     role: {
       type: String,
       enum: ['customer', 'admin'],
@@ -181,22 +183,3 @@ const userSchema = new mongoose.Schema(
 // Export the model
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,31 +3,29 @@
 import Link from "next/link";
 import SearchBar from "./search";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import { useEffect, useState, useRef, useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
-import { useSession, signOut } from "next-auth/react";
-import { FaSpinner } from "react-icons/fa"; // Added for loading state
-import { useRouter, usePathname } from "next/navigation";
 import { useWishlist } from "@/context/WishlistContext";
 import { AiFillHeart } from "react-icons/ai";
-
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { getCartCount } = useAppContext();
-
   const cartCount = getCartCount();
-  const { data: session, status } = useSession();
-  
-const router = useRouter();
-const pathname = usePathname();
+  const { count } = useWishlist();
+  const { status } = useSession();
+  const router = useRouter();
+
+  // Inside your component
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (status === "loading") return <p>Loading...</p>;
-      if (!session) return <p>Not logged in</p>;
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
@@ -38,8 +36,17 @@ const pathname = usePathname();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  const { count } = useWishlist();
-  
+
+  // Modified to redirect to profile if authenticated, else to login with callback to profile
+  const handleProfileClick = () => {
+    setIsDropdownOpen(false);
+    if (status === "authenticated") {
+      router.push("/profile");
+    } else {
+      router.push(`/authentication/login?callbackUrl=/profile`);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-[#c22638] shadow-lg backdrop-blur-sm text-white">
       <nav className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,8 +67,7 @@ const pathname = usePathname();
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            {[
-              { name: "Home", path: "/" },
+            {[{ name: "Home", path: "/" },
               { name: "Shop", path: "/shop" },
               { name: "About", path: "/about" },
               { name: "Contact", path: "/contact" },
@@ -87,69 +93,44 @@ const pathname = usePathname();
 
           {/* Icons */}
           <div className="flex items-center gap-4 relative" ref={dropdownRef}>
-            {/* User Dropdown */}
+            {/* User Icon + Dropdown */}
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="group p-2 rounded-full hover:bg-white/10 transition relative"
               title="Account"
-              aria-expanded={isDropdownOpen}
             >
-              {status === "loading" ? (
-                <FaSpinner className="animate-spin" size={18} />
-              ) : (
-                <FaUser size={18} className="group-hover:text-yellow-300" />
-              )}
+              <FaUser size={18} className="group-hover:text-gray-200" />
             </button>
 
             {isDropdownOpen && (
               <div className="absolute right-0 top-12 bg-white text-black rounded-md shadow-md w-44 z-50">
-                {status === "loading" ? (
-                  <div className="px-4 py-2 text-center">Loading...</div>
-                ) : status === "authenticated" ? (
-                  <div className="flex flex-col text-sm">
-                    <Link
-                      href="/customerAccount/profile"
-                      className="px-4 py-2 hover:bg-gray-100"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      My Profile
-                    </Link>
-                    <button
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        signOut({ callbackUrl: "/" });
-                      }}
-                      className="px-4 py-2 text-left hover:bg-gray-100"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col text-sm">
-                    <button
-                  onClick={() => {
-                  setIsDropdownOpen(false);
-                     const callback = encodeURIComponent(pathname);
-                   router.push(`/authentication/login?callbackUrl=${callback}`);
-                 }}
-                         className="px-4 py-2 text-left hover:bg-gray-100 w-full"
-                    >
-                      Login
-                        </button>
+                <div className="flex flex-col text-sm">
+                  <button
+                    onClick={handleProfileClick}
+                    className="px-4 py-2 text-left hover:bg-gray-100"
+                  >
+                    My Profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      router.push(`/authentication/login?callbackUrl=/home`);
+                    }}
+                    className="px-4 py-2 text-left hover:bg-gray-100"
+                  >
+                    Login
+                  </button>
 
-                    <button
-  onClick={() => {
-    setIsDropdownOpen(false);
-    const callback = encodeURIComponent(pathname);
-    router.push(`/authentication/signup?callbackUrl=${callback}`);
-  }}
-  className="px-4 py-2 text-left hover:bg-gray-100 w-full"
->
-  Sign Up
-</button>
-
-                  </div>
-                )}
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      router.push("/authentication/signup");
+                    }}
+                    className="px-4 py-2 text-left hover:bg-gray-100"
+                  >
+                    Sign Up
+                  </button>
+                </div>
               </div>
             )}
 
@@ -164,21 +145,18 @@ const pathname = usePathname();
                 <span className="absolute -top-1 -right-1 bg-black text-xs px-2 py-1 rounded-full">
                   {count}
                 </span>
-              )}{" "}
+              )}
             </Link>
 
             {/* Cart */}
             <Link
               href="/card"
-              className="group p-2 rounded-full  transition relative"
+              className="group p-2 rounded-full transition relative"
               title="Cart"
             >
-              <FaShoppingCart
-                size={18}
-                className="group-hover:text-gray-800"
-              />
+              <FaShoppingCart size={18} className="group-hover:text-gray-800" />
               {cartCount > 0 && (
-                <span  className="absolute -top-2 -right-1 bg-black text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow">
+                <span className="absolute -top-2 -right-1 bg-black text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow">
                   {cartCount}
                 </span>
               )}

@@ -59,7 +59,7 @@ const LoginForm = () => {
       if (role === "admin") {
         router.push("/Admin/dashbord"); // admin page
       } else {
-router.push(callbackUrl || "/customerAccount/profile");
+router.push(callbackUrl || "/home");
       }
     }, 1500);
   } catch (err: any) {

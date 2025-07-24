@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 export default function AuthSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const callbackUrl = searchParams.get("callbackUrl"); // ✅ get callbackUrl from URL
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -15,12 +16,12 @@ export default function AuthSuccessPage() {
       localStorage.setItem('token', token);
 
       // Redirect to shop page after login success
-      router.push('/shop');
+      router.push(callbackUrl || "/home");
     } else {
       // If token is missing, redirect to home
-      router.push('/');
+      router.push('/home');
     }
   }, [searchParams, router]);
 
-  return <p>Login successful... Redirecting to shop...</p>;
+  return <p>Login successful... Redirecting...</p>;
 }

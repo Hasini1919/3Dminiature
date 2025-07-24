@@ -11,8 +11,6 @@ import axiosInstance from "@/services/api";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { getCurrentUser } from "@/utils/auth-utils/api";
-import { useSession } from "next-auth/react";
-
 interface Address {
   FirstName: string;
   LastName: string;
@@ -22,7 +20,7 @@ interface Address {
   Area: string;
   City: string;
   HouseNo: string;
-  AnyInformation: string;
+  AnyInformation:string;
 }
 
 interface ShiftAddress {
@@ -32,8 +30,8 @@ interface ShiftAddress {
   District: string;
   City: string;
   Area: string;
-  HouseNo: string;
-  AnyInformation: string;
+  HouseNo:string;
+  AnyInformation:string;
 }
 
 type Product = {
@@ -42,11 +40,14 @@ type Product = {
   name: string;
   price: number;
   images: string[];
-  category: string;
-  themeColor: string;
+  category:string,
+  themeColor:string,
+  
 };
 
 interface CartItem {
+  
+  
   productId: string;
   productName: string;
   images: string;
@@ -62,13 +63,15 @@ interface CartItem {
 type CartData = CartItem[];
 
 interface BuyNowItem {
+  
   productId: string;
   frameSize: string;
   frameColor: string;
   themeColor: string;
-  uploadedImageUrls: string[];
+  uploadedImageUrls:string[];
   quantity: number;
   customText?: string;
+  //productImage:string[];
 }
 
 interface AppContextType {
@@ -88,11 +91,6 @@ interface AppContextType {
   shippingCities: string[];
   couponCode: string;
   isBuyNow: boolean;
-  user: any;
-  isLoggedIn: boolean;
-  role: string | null;
-
-  setIsBuyNow: React.Dispatch<React.SetStateAction<boolean>>;
    user: any;
   
     fetchCartData: () => Promise<void>;
@@ -122,8 +120,9 @@ interface AppContextType {
     themeColor: string,
     uploadedImageFile: File[],
     quantity: number,
-    isBuyNow: boolean,
-    customText?: string
+    isBuyNow:boolean,
+    customText?: string,
+    
   ) => void;
 
   updateCartItem: (
@@ -132,12 +131,14 @@ interface AppContextType {
     frameColor: string,
     themeColor: string,
     quantity: number,
-    uploadedImageFiles: string[],
+    uploadedImageFile: string[],
     customText?: string
   ) => void;
 
   getCartCount: () => number;
   getCartAmount: () => number;
+
+
 
   clearBuyNow: () => void;
   discountedTotal: number | null;
@@ -157,10 +158,6 @@ export const useAppContext = () => {
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
-  const { data: session, status } = useSession();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
 
   const [address, setAddress] = useState<Address>({
     FirstName: "",
@@ -171,7 +168,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     City: "",
     Area: "",
     HouseNo: "",
-    AnyInformation: "",
+    AnyInformation:""
   });
 
   const [shiftAddress, setShiftAddress] = useState<ShiftAddress>({
@@ -181,8 +178,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     District: "",
     City: "",
     Area: "",
-    HouseNo: "",
-    AnyInformation: "",
+    HouseNo:"",
+    AnyInformation:""
   });
 
   const [selectedShippingOption, setSelectedShippingOption] = useState("Standard Shipping");
@@ -201,24 +198,14 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [shippingCities, setShippingCities] = useState<string[]>([]);
   const [isBuyNow, setIsBuyNow] = useState(false);
   const [user, setUser] = useState(null);
-
   useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      setIsLoggedIn(true);
-      setRole((session.user as any).role || "user");
-    } else {
-      setIsLoggedIn(false);
-      setRole(null);
-    }
-  }, [session, status]);
+  const fetchUser = async () => {
+    const userData = await getCurrentUser();
+    setUser(userData);
+  };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await getCurrentUser();
-      setUser(userData);
-    };
-    fetchUser();
-  }, []);
+  fetchUser();
+}, []);
 
 const fetchCartData = async () => {
     try {
@@ -248,10 +235,16 @@ const fetchCartData = async () => {
  
  
   useEffect(() => {
+   
     const fetchProductData = async () => {
       try {
-        const response = await axiosInstance.get<Product[]>("/api/admin/products");
-        setProducts(response.data);
+        const response = await axiosInstance.get<Product[]>(
+          "/api/admin/products"
+        );
+        
+         setProducts(response.data);
+         
+       
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -259,6 +252,7 @@ const fetchCartData = async () => {
     fetchProductData();
     const interval = setInterval(fetchProductData, 300000);
     return () => clearInterval(interval);
+
   }, []);
  
 //console.log(products);
@@ -271,9 +265,12 @@ const fetchCartData = async () => {
     uploadedImageFile: File[],
     quantity: number,
     isBuyNow: boolean,
-    customText?: string
+    customText?: string,
+    
   ) => {
     if (!frameSize || !frameColor || !themeColor || uploadedImageFile.length === 0 || quantity <= 0) {
+      //alert("Please select some product options before adding this product to your cart.");
+      //console.error("Please fill all cart fields properly.");
       return;
     }
 
@@ -284,8 +281,8 @@ const fetchCartData = async () => {
     formData.append("themeColor", themeColor);
     formData.append("quantity", String(quantity));
     if (customText) formData.append("customText", customText);
-    uploadedImageFile.forEach((file) => {
-      formData.append(`uploadedImageFile`, file);
+    uploadedImageFile.forEach((file, index) => {
+      formData.append(`uploadedImageFile`, file); 
     });
    
    //console.log(isBuyNow);
@@ -293,13 +290,19 @@ const fetchCartData = async () => {
     if(!isBuyNow){
          
       try {
-        const response = await axiosInstance.post("/api/cart/add", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
+        const response = await axiosInstance.post("/api/cart/add", formData,
+          {
+            headers:{
+              "Content-Type": "multipart/form-data",
+            },
+          }
+          
+        );
+      
         if (response.data.success) {
-          setCartData(response.data.cartData);
-          toast.success("Added to cart successfully!");
+        setCartData(response.data.cartData);
+        toast.success("Added to cart successfully!");
+         
         }
         
         //console.log("addtocard");
@@ -307,16 +310,25 @@ const fetchCartData = async () => {
         console.error("Error adding to cart:", error);
         toast.error("Something went wrong while adding to cart.");
       }
-    } else {
-      try {
-        const uploadFormData = new FormData();
-        uploadedImageFile.forEach((file) => {
-          uploadFormData.append("uploadedImageFile", file);
-        });
-
-        const uploadResponse = await axiosInstance.post("/api/upload-image", uploadFormData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+    }
+    else{
+     try {
+    
+    const uploadFormData = new FormData();
+    
+    uploadedImageFile.forEach((file) => {
+      uploadFormData.append("uploadedImageFile", file);
+    });
+    console.log(uploadFormData);
+    const uploadResponse = await axiosInstance.post(
+      "/api/upload-image",
+      uploadFormData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     if (uploadResponse.data.success) {
         const uploadedImageUrls = uploadResponse.data.imageUrls;
@@ -346,6 +358,7 @@ const fetchCartData = async () => {
 
      
     }
+    
   };
   //console.log(buyNowItem);
   //console.log(cartData);
@@ -355,30 +368,36 @@ const fetchCartData = async () => {
     frameColor: string,
     themeColor: string,
     quantity: number,
-    uploadedImageFiles: string[],
+    uploadedImageFiles: string[], 
     customText?: string
   ) => {
     const updatedCart = [...cartData];
+  
+    
     const index = updatedCart.findIndex(
       (item) =>
         item.productId === productId &&
         item.frameSize === frameSize &&
         item.frameColor === frameColor &&
         item.themeColor === themeColor &&
-        JSON.stringify(item.uploadedImageFiles) === JSON.stringify(uploadedImageFiles) &&
+        JSON.stringify(item.uploadedImageFiles) === JSON.stringify(uploadedImageFiles) && 
         item.customText === customText
     );
-
-    if (index === -1) return;
-
+  
+    if (index === -1) {
+      console.warn("Item not found in cart.");
+      return;
+    }
+  
+    
     if (quantity === 0) {
       updatedCart.splice(index, 1);
     } else {
       updatedCart[index].quantity = quantity;
     }
-
+  
     setCartData(updatedCart);
-
+  
     try {
       await axiosInstance.put("/api/cart/update", {
         productId,
@@ -408,7 +427,11 @@ const fetchCartData = async () => {
     setBuyNowItem(null);
     sessionStorage.removeItem("buyNowItem");
   };
-
+ 
+   
+ 
+  
+  
   return (
     <AppContext.Provider
       value={{
@@ -454,8 +477,6 @@ const fetchCartData = async () => {
         setDiscountedTotal,
         user,
         setUser,
-        isLoggedIn,
-        role,
         router,
       }}
     >

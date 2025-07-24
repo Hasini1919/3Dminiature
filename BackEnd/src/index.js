@@ -37,7 +37,7 @@ import instagramAuthRoutes from "./routes/instagramAuthRoutes.js";
 import setupFacebookStrategy from "./config/facebookStrategy.js";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "./models/User.js";
-import addressRoutes from "./routes/address-routes.js";
+
 import cartRouter from "./routes/cart-routes.js";
 import productRoutes from "./routes/product-routes.js";
 import couponRouter from "./routes/coupon-routes.js";
@@ -48,7 +48,7 @@ import { routes as enquiryRoutes } from "./routes/enquiryRoutes.js";
 import { routes as subscribeRoutes } from "./routes/subscribeRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import { routes as pdfRoutes } from "./routes/pdfRoutes.js";
-
+import profileRoutes from "./routes/profileRoutes.js";
 
 
 import editRoutes from "./routes/admin_routes/editRoutes.js";
@@ -81,20 +81,44 @@ const PORT = process.env.PORT || 5500;
 
 setupFacebookStrategy(passport);
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:5500/api/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      // ... your google strategy code
-    }
-  )
-);
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:5500/api/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ googleId: profile.id });
 
-passport.serializeUser((user, done) => done(null, user.id));
+    if (!user) {
+      const email = profile.emails?.[0]?.value;
+      if (email) {
+        user = await User.findOne({ email });
+      }
+
+      if (user) {
+        user.googleId = profile.id;
+        user.picture = profile.photos?.[0]?.value;
+        await user.save();
+      } else {
+        user = await User.create({
+          googleId: profile.id,
+          name: profile.displayName,
+          email,
+          picture: profile.photos?.[0]?.value,
+        });
+      }
+    }
+
+    return done(null, user);
+  } catch (error) {
+    return done(error, null);
+  }
+}));
+
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -103,6 +127,7 @@ passport.deserializeUser(async (id, done) => {
     done(error, null);
   }
 });
+
 
 const app = express();
 
@@ -142,7 +167,7 @@ app.use("/src", express.static(path.join(__dirname, "src")));
 app.use("/images", express.static(path.join(__dirname, "../src/products")));
 app.use("/products", express.static(path.join(__dirname, "products")));
 app.use("/docs", express.static(path.join(__dirname, "docs")));
-
+app.use("/uploads", express.static("uploads"));
 // API Routes
 app.use("/api/products", productroutes);
 app.use("/api/product-details", productDetailsRoute);
@@ -168,8 +193,8 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/ads", adRoutes);
 app.use("/api/admin/profile", adminProfileRoutes);
 app.use("/api/orders", dyn_orderRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api", addressRoutes);
+
+//app.use("/api", addressRoutes);
 app.use("/api/admin", productRoutes);
 app.use(enquiryRoutes);
 app.use(subscribeRoutes);
@@ -184,6 +209,8 @@ app.use("/api/auth", instagramAuthRoutes);
 app.use("/api", refundRoutes);
 app.use("/api/reviews", reviewHistoryRoutes);
 app.use("/api/user",getUserAddressRoute);
+app.use("/api/profile", profileRoutes);
+
 // Default routeapp.use("/api/products", productroutes);
 
 app.get("/", (req, res) => {

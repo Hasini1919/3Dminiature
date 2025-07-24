@@ -36,7 +36,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ userId, onUploa
     const formData = new FormData();
     formData.append("image", selectedFile); // ✅ must match multer field in backend
 
-    const res = await fetch(`http://localhost:5500/api/user/upload-image/${userId}`, {
+    const res = await fetch(`http://localhost:5500/api/profile/upload-image/${userId}`, {
       method: "POST",
       body: formData,
     });

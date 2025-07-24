@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import { useSession, signOut } from "next-auth/react";
 import { FaUser } from "react-icons/fa";
@@ -84,3 +84,4 @@ const Header = () => {
 };
 
 export default Header;
+*/

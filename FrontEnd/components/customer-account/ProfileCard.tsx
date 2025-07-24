@@ -36,6 +36,7 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ userData, onEdit }: ProfileCardProps) {
+  console.log("ProfileCard userData:", userData);
   return (
     <div className="max-w-3xl mx-auto w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

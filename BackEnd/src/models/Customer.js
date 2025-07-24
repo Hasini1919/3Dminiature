@@ -37,16 +37,14 @@ const customerSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  defaultShippingAddress: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ShippingAddress"
-  }
+  // Remove defaultShippingAddress referencing ShippingAddress collection
+  // Instead you can handle default address inside User model's addresses array
+  // and fetch it by populating User model in your controller
 }, {
   timestamps: true,
   toJSON: { 
     virtuals: true,
     transform: function(doc, ret) {
-      // Ensure picture returns empty string instead of undefined
       ret.picture = ret.picture || "";
       return ret;
     }
@@ -60,14 +58,9 @@ const customerSchema = new mongoose.Schema({
   }
 });
 
-// Virtual for addresses
-customerSchema.virtual('addresses', {
-  ref: 'ShippingAddress',
-  localField: '_id',
-  foreignField: 'customerId'
-});
+// Remove virtual 'addresses' related to ShippingAddress collection
 
-// Add index for better query performance
+// Index for better query performance
 customerSchema.index({ userId: 1, email: 1 });
 
 export default mongoose.models.Customer || mongoose.model("Customer", customerSchema);

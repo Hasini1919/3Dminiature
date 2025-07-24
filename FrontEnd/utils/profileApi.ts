@@ -1,5 +1,7 @@
-const API_URL = 'http://localhost:5500/api';
-
+import axiosInstance from "@/services/api";
+import { getAuthToken } from "@/utils/auth-utils/api";
+const token = getAuthToken();
+console.log("Token:", token);
 // ======================
 // Profile API Utilities
 // ======================
@@ -20,25 +22,16 @@ export const getProfile = async (): Promise<{
   addresses?: Array<any>;
 }> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to fetch profile');
-    }
-
-    return data; // ✅ Now returns direct customer object
-  } catch (error) {
-    console.error('Profile fetch error:', error);
-    throw error;
-  }
+    const response = await axiosInstance.get("/api/profile");
+    return response.data;
+  } catch (error: any) {
+  console.error("Profile fetch error:", {
+    message: error.message,
+    status: error.response?.status,
+    data: error.response?.data,
+  });
+  throw new Error(error.response?.data?.message || "Failed to fetch profile");
+}
 };
 
 /**
@@ -49,28 +42,16 @@ export const updateProfile = async (profileData: {
   mobile?: string;
   birthday?: string;
   gender?: string;
+  addresses?: Array<any>;
 }): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(profileData)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to update profile');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Profile update error:', error);
-    throw error;
+    const response = await axiosInstance.put("/api/profile", profileData);
+    return response.data;
+  } catch (error: any) {
+    console.error("Profile update error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to update profile"
+    );
   }
 };
 
@@ -81,32 +62,30 @@ export const updateProfile = async (profileData: {
 /**
  * Get all user addresses
  */
-export const getAddresses = async (): Promise<Array<{
-  _id: string;
-  firstName: string;
-  lastName: string;
-  province: string;
-  // ... other address fields
-}>> => {
+export const getAddresses = async (): Promise<
+  Array<{
+    _id?: string;
+    firstName: string;
+    lastName: string;
+    province: string;
+    district: string;
+    city: string;
+    area: string;
+    houseNo: string;
+    postalCode: string;
+    country: string;
+    anyInformation?: string;
+    isDefault?: boolean;
+  }>
+> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile/addresses`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to fetch addresses');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Address fetch error:', error);
-    throw error;
+    const response = await axiosInstance.get("/api/profile/addresses");
+    return response.data;
+  } catch (error: any) {
+    console.error("Address fetch error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch addresses"
+    );
   }
 };
 
@@ -114,6 +93,7 @@ export const getAddresses = async (): Promise<Array<{
  * Add new address
  */
 export const addAddress = async (addressData: {
+  _id?: string;
   firstName: string;
   lastName: string;
   province: string;
@@ -122,29 +102,26 @@ export const addAddress = async (addressData: {
   area: string;
   houseNo: string;
   postalCode: string;
+  country: string;
+  anyInformation?: string;
   isDefault?: boolean;
 }): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile/addresses`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(addressData)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to add address');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Address add error:', error);
-    throw error;
+    console.log("Sending address data:", addressData);
+    const response = await axiosInstance.post(
+      "/api/profile/addresses",
+      addressData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+          "Content-Type": "application/json", 
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Address add error:", error);
+    throw new Error(error.response?.data?.message || "Failed to add address");
   }
 };
 
@@ -154,59 +131,50 @@ export const addAddress = async (addressData: {
 export const updateAddress = async (
   addressId: string,
   addressData: {
-    firstName?: string;
-    lastName?: string;
-    // ... other updatable fields
+    _id?: string;
+    firstName: string;
+    lastName: string;
+    province: string;
+    district: string;
+    city: string;
+    area: string;
+    houseNo: string;
+    postalCode: string;
+    country: string;
+    anyInformation?: string;
     isDefault?: boolean;
   }
 ): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile/addresses/${addressId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(addressData)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to update address');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Address update error:', error);
-    throw error;
+    const response = await axiosInstance.put(
+      `/api/profile/addresses/${addressId}`,
+      addressData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Address update error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to update address"
+    );
   }
 };
 
 /**
  * Delete address
  */
-export const deleteAddress = async (addressId: string): Promise<{ success: boolean }> => {
+export const deleteAddress = async (
+  addressId: string
+): Promise<{ success: boolean }> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile/addresses/${addressId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to delete address');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Address delete error:', error);
-    throw error;
+    const response = await axiosInstance.delete(
+      `/api/profile/addresses/${addressId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Address delete error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to delete address"
+    );
   }
 };
 
@@ -215,23 +183,14 @@ export const deleteAddress = async (addressId: string): Promise<{ success: boole
  */
 export const setDefaultAddress = async (addressId: string): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${API_URL}/profile/addresses/default/${addressId}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to set default address');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Default address set error:', error);
-    throw error;
+    const response = await axiosInstance.put(
+      `/api/profile/addresses/default/${addressId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Default address set error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to set default address"
+    );
   }
 };

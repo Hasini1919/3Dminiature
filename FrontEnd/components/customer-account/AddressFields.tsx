@@ -2,7 +2,7 @@
 
 import { FaTimes } from "react-icons/fa";
 
-export  interface AddressData {
+export interface AddressData {
   _id?: string;
   firstName: string;
   lastName: string;
@@ -20,7 +20,9 @@ export  interface AddressData {
 interface AddressFieldsProps {
   formData: AddressData;
   errors?: Partial<AddressData>;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   onClear: (field: keyof AddressData) => void;
 }
 
@@ -45,7 +47,7 @@ export function AddressFields({
     { label: "City", name: "city", type: "text", required: true },
     { label: "Area", name: "area", type: "text", required: true },
     { label: "House No", name: "houseNo", type: "text", required: true },
-    { label: "Postal Code", name: "postalCode", type: "text", required: true },
+    { label: "Postal Code", name: "postalCode", type: "text", required: false },
     { label: "Country", name: "country", type: "text", required: true },
   ];
 
@@ -88,10 +90,12 @@ export function AddressFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Additional Information</label>
+        <label className="block text-sm font-medium mb-1">
+          Additional Information
+        </label>
         <textarea
           name="anyInformation"
-          value={formData.anyInformation || ''}
+          value={formData.anyInformation || ""}
           onChange={onChange}
           placeholder="Any special instructions (optional)"
           className="w-full px-3 py-2 border border-gray-300 rounded-md"

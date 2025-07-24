@@ -1,4 +1,3 @@
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -15,7 +14,7 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "localhost",
         port: "5500",
-        pathname: "/photos/**",
+        pathname: "/uploads/profile/**",
       },
       {
         protocol: "http",
@@ -29,10 +28,14 @@ const nextConfig: NextConfig = {
         port: "5500",
         pathname: "/uploads/user-uploads/**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5500",
+        pathname: "/uploads/**",
+      },
     ],
   },
 };
 
 export default nextConfig;
-
-

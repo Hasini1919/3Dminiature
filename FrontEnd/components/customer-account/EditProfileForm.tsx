@@ -36,6 +36,10 @@ export function EditProfileForm({
   const [errors, setErrors] = useState<FormErrors>({ fields: {} });
   const [availableDays, setAvailableDays] = useState<number[]>([]);
 
+  useEffect(() => {
+    setForm({ ...userData });
+  }, [userData]);
+
   // Parse birthday or use current date as default
   const initialDate = form.birthday ? new Date(form.birthday) : new Date();
   const [selectedYear, setSelectedYear] = useState(initialDate.getFullYear());
