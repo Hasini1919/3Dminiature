@@ -43,6 +43,11 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
+    discountPercentage: {
+      type: Number,
+      default: 0, // optional
+    },
+
     detailed_description: {
       type: String,
       required: true,
@@ -53,7 +58,6 @@ const productSchema = new mongoose.Schema(
 
 // Indexes
 productSchema.index({ category: 1 });
-productSchema.index({ rating: -1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({
   name: "text",

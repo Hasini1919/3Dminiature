@@ -1,5 +1,5 @@
 import User from  "../models/User.js"
-import Products from  "../models/productModel.js";
+import Products from  "../models/Admin_models/Product.js";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -20,7 +20,7 @@ const addToCart = async (req, res) => {
     customText,
   } = req.body;
 
-  console.log(req.body);
+  
   const userId = req.user._id;
   
 
@@ -28,19 +28,16 @@ const addToCart = async (req, res) => {
   const uploadedImageFiles = req.files
     ? req.files.map((file) => `/uploads/user-uploads/${file.filename}`)
     : [];
-    console.log(uploadedImageFiles);
+   
    
 
 
   try {
     const user = await User.findById(userId);
-    console.log(productId);
+    
     
     const product = await Products.findById(productId);
-    console.log("product detauils for me");
-    console.log(product.image);
-    console.log(product.rating);
-    console.log(product.description);
+    
 
     if (!user || !product) {
       
@@ -68,7 +65,7 @@ const addToCart = async (req, res) => {
       const newCartItem = {
         productId,
         productName: product.name,
-        images: product.image,
+        images: product.images,
         price: product.price,
         frameSize,
         frameColor,
@@ -102,7 +99,7 @@ const getCartData = async (req, res) => {
     
     
    
-    console.log(userId);
+   
     const userData = await User.findById(userId);
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
@@ -149,7 +146,7 @@ const updateCart = async (req, res) => {
 
     if (parseInt(quantity) === 0) {
       const deletedItem = user.cartData[itemIndex];
-      console.log(deletedItem);
+      // console.log(deletedItem);
       
       if (deletedItem.uploadedImageFiles && deletedItem.uploadedImageFiles.length > 0) {
         deletedItem.uploadedImageFiles.forEach(file => {
