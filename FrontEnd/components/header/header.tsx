@@ -3,7 +3,7 @@
 import Link from "next/link";
 import SearchBar from "./search";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useState, useRef, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useSession, signOut } from "next-auth/react";
 import { FaSpinner } from "react-icons/fa"; // Added for loading state
@@ -17,6 +17,7 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { getCartCount } = useAppContext();
+
   const cartCount = getCartCount();
   const { data: session, status } = useSession();
   
@@ -45,14 +46,14 @@ const pathname = usePathname();
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-white group-hover:border-yellow-300 transition-all duration-300 shadow-md">
+            <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-white group-hover:border-black transition-all duration-300 shadow-md">
               <img
                 src="/logo.jpg"
                 alt="Tiny treasures logo"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <span className="font-bold text-lg hidden sm:inline-block group-hover:text-yellow-200 transition-all duration-300 tracking-wide">
+            <span className="font-bold text-lg hidden sm:inline-block group-hover:text-orange-400 transition-all duration-300 tracking-wide">
               Tiny Treasure
             </span>
           </Link>
@@ -68,10 +69,10 @@ const pathname = usePathname();
               <Link
                 key={item.name}
                 href={item.path}
-                className="relative group hover:text-yellow-200 transition"
+                className="relative group hover:text-gray-800 transition"
               >
                 {item.name}
-                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-300 group-hover:w-full transition-all duration-300 ease-in-out"></span>
+                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-800 group-hover:w-full transition-all duration-300 ease-in-out"></span>
               </Link>
             ))}
           </div>
@@ -155,7 +156,7 @@ const pathname = usePathname();
             {/* Wishlist */}
             <Link
               href="/wishlist"
-              className="group p-2 rounded-full hover:bg-white/10 transition relative"
+              className="group p-2 rounded-full transition relative"
               title="Wishlist"
             >
               <AiFillHeart className="w-6 h-6" />
@@ -168,16 +169,16 @@ const pathname = usePathname();
 
             {/* Cart */}
             <Link
-              href="/card" // Fixed from /card to /cart
-              className="group p-2 rounded-full hover:bg-white/10 transition relative"
-              title="Card"
+              href="/card"
+              className="group p-2 rounded-full  transition relative"
+              title="Cart"
             >
               <FaShoppingCart
                 size={18}
-                className="group-hover:text-yellow-300"
+                className="group-hover:text-gray-800"
               />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-yellow-400 text-red-700 text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center shadow">
+                <span  className="absolute -top-2 -right-1 bg-black text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow">
                   {cartCount}
                 </span>
               )}

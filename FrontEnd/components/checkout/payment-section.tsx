@@ -58,8 +58,7 @@ const Payment_Section = () => {
             quantity: buyNowItem.quantity,
             price: product.price,
             name: product.name,
-            
-            imageUrl: product.image,
+            imageUrl: product.images,
           });
         }
       } else {
@@ -106,14 +105,24 @@ const Payment_Section = () => {
           toast.error(response.data.message || "Order failed. Try again.");
         }
       } else if (paymentMethod === "payhere") {
-         const stripeOrder = {
+         
+         try {
+          
+         const createOrderResponse = await axiosInstance.post("/api/order/PayHere", orderData, {
+        withCredentials: true,
+      });
+         if (!createOrderResponse.data.success) {
+        toast.error(createOrderResponse.data.message || "Failed to create order. Try again.");
+        return;
+      }
+      const stripeOrder = {
+         orderId: createOrderResponse.data.orderId,
          items: orderItems.map(item => ({
          productName: item.name,
          quantity: item.quantity,
          price: totalAmount,
     })),
       };
-         try {
     const response = await axiosInstance.post("/api/checkout/create-checkout-session", stripeOrder);
 
   

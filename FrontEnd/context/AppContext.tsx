@@ -93,6 +93,11 @@ interface AppContextType {
   role: string | null;
 
   setIsBuyNow: React.Dispatch<React.SetStateAction<boolean>>;
+   user: any;
+  
+    fetchCartData: () => Promise<void>;
+
+  setIsBuyNow:React.Dispatch<React.SetStateAction<boolean>>;
   setBillingDistricts: React.Dispatch<React.SetStateAction<string[]>>;
   setShippingDistricts: React.Dispatch<React.SetStateAction<string[]>>;
   setBillingCities: React.Dispatch<React.SetStateAction<string[]>>;
@@ -215,30 +220,33 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, []);
 
-  useEffect(() => {
-    const fetchCartData = async () => {
-      try {
-        const response = await axiosInstance.get("/api/cart/get");
-        if (response.data.cartData) {
-          setCartData(response.data.cartData);
-        }
-      } catch (error: any) {
-        if (error.response && error.response.status === 401) {
-          toast.error("You are not authorized. Please login.");
-          router.push("/authentication/login");
-        }
+const fetchCartData = async () => {
+    try {
+      const response = await axiosInstance.get("/api/cart/get");
+      if (response.data.cartData) {
+        setCartData(response.data.cartData);
+      }
+    } catch (error: any) {
+      console.error("Error fetching cart data:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("You are not authorized. Please login.");
+        router.push("/authentication/login");
+      } else {
         toast.error("Something went wrong while fetching cart data.");
       }
-    };
+    }
+  };
 
-    fetchCartData();
+  useEffect(() => {
+    fetchCartData(); // call it properly here
 
     const storedData = sessionStorage.getItem("buyNowItem");
     if (storedData) {
       setBuyNowItem(JSON.parse(storedData));
     }
   }, [router]);
-
+ 
+ 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -252,6 +260,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     const interval = setInterval(fetchProductData, 300000);
     return () => clearInterval(interval);
   }, []);
+ 
+//console.log(products);
 
   const addToCart = async (
     productId: string,
@@ -277,8 +287,11 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     uploadedImageFile.forEach((file) => {
       formData.append(`uploadedImageFile`, file);
     });
+   
+   //console.log(isBuyNow);
 
-    if (!isBuyNow) {
+    if(!isBuyNow){
+         
       try {
         const response = await axiosInstance.post("/api/cart/add", formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -288,6 +301,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           setCartData(response.data.cartData);
           toast.success("Added to cart successfully!");
         }
+        
+        //console.log("addtocard");
       } catch (error) {
         console.error("Error adding to cart:", error);
         toast.error("Something went wrong while adding to cart.");
@@ -303,28 +318,37 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        if (uploadResponse.data.success) {
-          const uploadedImageUrls = uploadResponse.data.imageUrls;
-          const buyNowObject = {
-            productId,
-            frameSize,
-            frameColor,
-            themeColor,
-            quantity,
-            customText: customText || "",
-            uploadedImageUrls,
-          };
+    if (uploadResponse.data.success) {
+        const uploadedImageUrls = uploadResponse.data.imageUrls;
+        const buyNowObject = {
+        productId,
+        frameSize,
+        frameColor,
+        themeColor,
+        quantity,
+        customText: customText || "",
+        uploadedImageUrls,
+        
+      };
 
-          sessionStorage.setItem("buyNowItem", JSON.stringify(buyNowObject));
-          setBuyNowItem(buyNowObject);
-          router.push("/checkout");
-        }
-      } catch (error) {
-        console.error("Error uploading images for buy now:", error);
-      }
+     
+      sessionStorage.setItem("buyNowItem", JSON.stringify(buyNowObject));
+
+     //console.log("buynow");
+      setBuyNowItem(buyNowObject);
+
+     
+      router.push("/checkout");
     }
+  } catch (error) {
+    console.error("Error uploading images for buy now:", error);
   };
 
+     
+    }
+  };
+  //console.log(buyNowItem);
+  //console.log(cartData);
   const updateCartItem = async (
     productId: string,
     frameSize: string,
@@ -369,10 +393,16 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error updating cart item:", error);
     }
   };
+  //console.log(user);
 
-  const getCartCount = () => cartData.reduce((total, item) => total + item.quantity, 0);
+  const getCartCount = () => {
+    return cartData.reduce((total, item) => total + item.quantity, 0);
+  };
+
 
   const getCartAmount = () => cartData.reduce((acc, item) => acc + item.quantity * item.price, 0);
+
+
 
   const clearBuyNow = () => {
     setBuyNowItem(null);
@@ -383,6 +413,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     <AppContext.Provider
       value={{
         address,
+        fetchCartData,
         shiftAddress,
         selectedShippingOption,
         products,

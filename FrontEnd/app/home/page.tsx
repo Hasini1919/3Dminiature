@@ -10,35 +10,33 @@ export default function Homepage() {
   return (
     <>
      
-      {/* // <Header /> */}
+     
 
      
       <section
-        className="relative bg-cover bg-center bg-no-repeat  pt-44 pb-40 px-6 md:px-16 shadow-xl"
+        className="relative bg-cover bg-center bg-no-repeat  pt-72 pb-40 px-6 md:px-16 shadow-xl"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/Red.png')",
+            "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('/Red.png')",
         }}
       >
-        <div className="relative left-5 top-20 max-w-xl  text-left bg-white/90 shadow-xl  rounded-xl p-8">
+        <div className="relative left-10 top-32 max-w-xl  text-left   shadow-2xl border  rounded-xl p-6 ">
           <p className="uppercase  text-sm mb-4 ">
             Welcome to Tiny Treasure
           </p>
-          <h1 className="text-2xl md:text-xl font-extrabold leading-tight mb-8">
+          <h1 className="text-2xl  font-bold  mb-8 text-gray-600 uppercase ">
             Modern frames, your way design, customize, and cherish in 3D!
           </h1>
-          <p className="text-[16px] mb-8">
+          <p className="text-gray-800 mb-8">
             Discover our unique collection of beautifully crafted frames that bring
             your memories to life.
           </p>
-          <button className="px-6 py-3 bg-red-700 text-white font-semibold rounded shadow hover:bg-red-800 transition border border-orange-400">
-            Learn More
-          </button>
+          
         </div>
       </section>
 
       {/* Scrolling Text Section */}
-      <div className="p-28 font-semibold">
+      <div className="p-24 font-semibold">
         <Scroller />
       </div>
 
@@ -133,7 +131,7 @@ export default function Homepage() {
       </section>
 
      
-      <Footer />
+    
     </>
   );
 }

@@ -11,7 +11,7 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  images: string[];
+  imagess: string[];
   rating: number;
   averageRating: number;
   discountPercentage?: number;
@@ -47,6 +47,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         );
 
         const data = response.data;
+        
 
         //  Set only relatedProducts
         setProducts(data.relatedProducts || []);
@@ -66,7 +67,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
 
     if (productId) fetchProductWithRelated();
   }, [productId]);
-
+  
   // Update visible products
   useEffect(() => {
     const endIndex = Math.min(currentIndex + itemsPerPage, products.length);
@@ -186,7 +187,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                   <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100">
                     <ProductCard
                       images={
-                        product.images && product.images.length > 0
+                        product.imagess && product.imagess.length > 0
                           ? [
                               product.images[0].startsWith("http")
                                 ? product.images[0]
