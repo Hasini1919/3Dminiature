@@ -31,7 +31,7 @@ const LoginForm = () => {
 
     setTimeout(() => {
       if (role.toLowerCase() === "admin") {
-        router.push("/Admin/Product/Add"); // admin page
+        router.push("/Admin/dashboard"); // admin page
       } else {
         router.push("/shop"); // normal user page
       }

@@ -45,11 +45,11 @@ export default function RootLayout({
         />
 
         <AppContextProvider>
-          <WishlistProvider>
-            <Header />
+          {/* <WishlistProvider> */}
+            {/* <Header /> */}
             <main className="min-h-screen">{children}</main>
-            <Footer />
-          </WishlistProvider>
+            {/* <Footer /> */}
+          {/* </WishlistProvider> */}
         </AppContextProvider>
       </body>
     </html>

@@ -8,6 +8,7 @@ import { AiFillCheckCircle } from "react-icons/ai";
 import { MdCancel } from "react-icons/md";
 import { DashboardStats } from "@/types/admin/dashboard";
 import { MdRequestQuote } from "react-icons/md";
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
@@ -19,6 +20,8 @@ export default function DashboardPage() {
     refundCount: 0,
     customerCount: 0,
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -157,7 +160,7 @@ export default function DashboardPage() {
                 link="/Admin/refunds" // 👈 adjust path as per your route
               />
             </div> */}
-          </div> 
+          </div>
 
           {/* Quick Stats Summary - Enhanced Responsive Design */}
           <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm border border-slate-200">
@@ -199,9 +202,14 @@ export default function DashboardPage() {
               {/* Refunds */}
               {/* <div className="p-3 sm:p-4 bg-slate-50 rounded-lg text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-pink-600">
-                  {(stats.refundCount ?? 0) > 0 ? Math.round(((stats.refundCount ?? 0) / totalOrders) * 100) : 0}%
+                  <button
+                    onClick={() => router.push('/components/pdf')}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md"
+                  >
+                    Download
+                  </button>
                 </div>
-                <div className="text-xs sm:text-sm text-slate-600 mt-1">Refunds</div>
+
               </div> */}
 
             </div>

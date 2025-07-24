@@ -18,10 +18,6 @@ import productroutes from "./routes/productRoute.js";
 import productDetailsRoute from "./routes/productDetailsRoute.js";
 import advertisementRoutes from "./routes/advertisementRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import addRoutes from "./routes/admin_routes/add_order.js";
-import orderRoutes from "./routes/admin_routes/orders.js";
-import pendingRoutes from "./routes/admin_routes/pending.js";
-import comRoutes from "./routes/admin_routes/completed.js";
 import getUserAddressRoute from "./routes/useraddress-route.js";
 // import customRoutes from './routes/admin_routes/customer.js'
 // import newStatsRoutes from './routes/admin_routes/newstats.js'
@@ -29,7 +25,6 @@ import getUserAddressRoute from "./routes/useraddress-route.js";
 // import comStatsRoutes from './routes/admin_routes/comstats.js'
 // import customerstatsRoutes from './routes/admin_routes/cutomerstats.js'
 
-import notificationRoutes from "./routes/admin_routes/notification.js";
 import facebookAuthRoutes from "./routes/facebookAuthRoutes.js";
 import instagramAuthRoutes from "./routes/instagramAuthRoutes.js";
 import setupFacebookStrategy from "./config/facebookStrategy.js";
@@ -49,10 +44,11 @@ import { routes as pdfRoutes } from "./routes/pdfRoutes.js";
 
 
 
-import editRoutes from "./routes/admin_routes/editRoutes.js";
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////testing
+
+import editRoutes from "./routes/admin_routes/editRoutes.js";
 import addRoutes from './routes/admin_routes/add_order.js';
 import orderRoute from "./routes/admin_routes/testing/new_Order.js";
 import customersRoutes from "./routes/admin_routes/customer.js";
@@ -65,6 +61,18 @@ import notificationRoutes from './routes/admin_routes/notification.js'
 import adRoutes from './routes/admin_routes/advertRoutes.js';
 import adminProfileRoutes from './routes/admin_routes/admin_profile.js';
 import dyn_orderRoutes from "./routes/admin_routes/orderdynamic_rout.js";
+import couptableRout from "./routes/admin_routes/testing/coupon_routes.js";
+import noteRoutess from "./routes/admin_routes/notification.js";
+import customer_orderRoute from "./routes/admin_routes/order-customer.js"
+import { deactivateExpiredAdvertisements } from "./utils/cron/advertisementExpiration.js";
+import { startNotificationCleanupJob } from "./utils/cron/cronjob.js";
+import notificationRout from "./routes/admin_routes/notification.js"
+import  './utils/cron/cronjob.js';
+import { deactivateExpiredCoupons } from './utils/cron/couponExpiration.js';
+import Refund from './models/Admin_models/Refund.js';
+
+
+
 
 import refundRoutes from "./routes/refundRoutes.js";
 import feedbackRoutes from "./routes/feedback-routes.js";
@@ -157,20 +165,8 @@ app.use("/api/order", orderRouter);
 app.use("/api", uploadRouter);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/", editRoutes);
-app.use("/form", addRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/updates", pendingRoutes);
-app.use("/api/updates", comRoutes);
-app.use("/api/orders", orderRoute);
 app.use("/api/admin", productRoutes);
 app.use("/api/customers", customersRoutes);
-app.use("/api", dashboardRoute);
-app.use("/api/coupons", couponRoutes);
-app.use("/api/ads", adRoutes);
-app.use("/api/admin/profile", adminProfileRoutes);
-app.use("/api/orders", dyn_orderRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", addressRoutes);
 app.use("/api/admin", productRoutes);
@@ -187,6 +183,39 @@ app.use("/api/auth", instagramAuthRoutes);
 app.use("/api", refundRoutes);
 app.use("/api/user",getUserAddressRoute);
 // Default routeapp.use("/api/products", productroutes);
+///////////////////////////////////////////////////////////////////////////////////
+app.use('/api', dashboardRoute);
+app.use('/form', addRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/', editRoutes);
+app.use('/api/ads', adRoutes);
+app.use('/api/orders', orderRoute); //new-order full order table
+app.use('/api/orders', orderRoutes);  // status - order placed
+app.use('/api/orders', pendingRoutes); // status - Processing
+app.use('/api/orders', comRoutes); // status - Completed 
+app.use('/api/orders', dyn_orderRoutes); // check one order details
+app.use('/api/customers', customersRoutes); // customer full details
+// app.use('/api/notifications', notificationRoutes); // notification
+app.use('/api/admin/profile', adminProfileRoutes); // profile
+app.use("/api/coupons", couptableRout); // table for coupon
+app.use("/api/notifications", noteRoutess); //notification new 
+app.use(customer_orderRoute); // dynamic order customer al; details
+app.use(notificationRout);
+app.use('/api/refund',Refund)
+// cron.schedule("* * * * *", async () => { // every minute
+//   await deactivateExpiredAdvertisements();
+// });
+
+deactivateExpiredAdvertisements(); 
+startNotificationCleanupJob();
+deactivateExpiredCoupons();
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 
 app.get("/", (req, res) => {
   res.send("API is running...");
