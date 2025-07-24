@@ -8,7 +8,7 @@ import { addProduct } from "@/utils/Admin/api";
 //import Header from "@/components/header/header";
 //import Footer from "@/components/footer/footer";
 import { Kalam } from "next/font/google";
-
+import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import { WishlistProvider } from "@/context/WishlistContext";
 
@@ -28,12 +28,12 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         <div className="debug">
+          <Toaster position="top-right" reverseOrder={false} />
           <AppContextProvider>
             <WishlistProvider>{children}</WishlistProvider>
           </AppContextProvider>
         </div>
       </body>
-      
     </html>
   );
 }

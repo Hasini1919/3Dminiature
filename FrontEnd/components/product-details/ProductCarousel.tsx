@@ -211,6 +211,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                       price={product.price}
                       discountPercentage={product.discountPercentage || 0}
                       className="shadow-none transition-transform duration-300 group-hover:scale-105"
+                      product={product}
                     />
                   </div>
                 </Link>

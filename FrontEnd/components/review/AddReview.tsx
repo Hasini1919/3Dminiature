@@ -2,6 +2,7 @@
 import { useState } from "react";
 import axiosInstance from "@/services/api";
 import { getUserIdFromToken } from "@/utils/auth";
+import toast from "react-hot-toast";
 
 // AddReview Modal Component
 const AddReview = ({
@@ -23,8 +24,7 @@ const AddReview = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userId) return alert("Login required");
-
+    if (!userId) return toast.error("Login required");
     setIsSubmitting(true);
 
     const formData = new FormData();
@@ -43,7 +43,7 @@ const AddReview = ({
           "Content-Type": "multipart/form-data",
         },
       });
-      alert("Review added successfully!");
+      toast.success("Review added successfully!");
       // Reset form
       setRating(0);
       setComment("");
@@ -52,7 +52,7 @@ const AddReview = ({
       onClose(); // Close modal after successful submission
     } catch (err) {
       console.error("Review error:", err);
-      alert("Something went wrong!");
+      toast.error("Something went wrong!");
     } finally {
       setIsSubmitting(false);
     }

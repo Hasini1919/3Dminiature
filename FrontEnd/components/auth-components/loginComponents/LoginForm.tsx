@@ -18,9 +18,28 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  setLoading(true);
-  setMessage("");
 
+  setMessage("");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    setMessage("❌ Please enter a valid email address.");
+    return;
+  }
+  if (formData.password.length < 8) {
+    setMessage("❌ Password must be at least 8 characters long.");
+    return;
+  }
+
+  if (!/[A-Z]/.test(formData.password)) {
+    setMessage("❌ Password must include at least one uppercase letter.");
+    return;
+  }
+
+  if (!/[0-9]/.test(formData.password)) {
+    setMessage("❌ Password must include at least one number.");
+    return;
+  }
+  setLoading(true);
   try {
     const data = await login(formData.email, formData.password);
 
@@ -31,9 +50,9 @@ const LoginForm = () => {
 
     setTimeout(() => {
       if (role.toLowerCase() === "admin") {
-        router.push("/Admin/Product/Add"); // admin page
+        router.push("/Admin/dashboard"); // admin page
       } else {
-        router.push("/shop"); // normal user page
+        router.push("/home"); // normal user page
       }
     }, 1500);
   } catch (err: any) {

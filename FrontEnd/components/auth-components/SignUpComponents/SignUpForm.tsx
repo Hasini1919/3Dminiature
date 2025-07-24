@@ -23,19 +23,40 @@ export default function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+       if (!emailRegex.test(formData.email)) {
+         setMessage("❌ Please enter a valid email address.");
+         return;
+       }
 
-    if (formData.password.length < 6) {
-      setMessage("Password must be at least 6 characters long.");
-      return;
-    }
+       // ✅ Password strength check
+       if (formData.password.length < 8) {
+         setMessage("❌ Password must be at least 8 characters long.");
+         return;
+       }
+
+       if (!/[A-Z]/.test(formData.password)) {
+         setMessage("❌ Password must include at least one uppercase letter.");
+         return;
+       }
+
+       if (!/[0-9]/.test(formData.password)) {
+         setMessage("❌ Password must include at least one number.");
+         return;
+       }
+
 
     setLoading(true);
     try {
-      const response = await signup(formData.name, formData.email, formData.password);
+      const response = await signup(
+        formData.name,
+        formData.email,
+        formData.password
+      );
       if (response.message) {
         setMessage(response.message);
         setTimeout(() => {
-          router.push("/About");
+        router.push("/customerAccount/profile");
         }, 2000);
       }
     } catch (error) {
