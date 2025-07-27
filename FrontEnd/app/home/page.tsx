@@ -12,7 +12,7 @@ export default function Homepage() {
      
      
 
-     
+     <Header/>
       <section
         className="relative bg-cover bg-center bg-no-repeat  pt-72 pb-40 px-6 md:px-16 shadow-xl"
         style={{

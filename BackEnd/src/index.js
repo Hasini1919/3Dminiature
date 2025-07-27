@@ -41,7 +41,7 @@ import { routes as enquiryRoutes } from "./routes/enquiryRoutes.js";
 import { routes as subscribeRoutes } from "./routes/subscribeRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import { routes as pdfRoutes } from "./routes/pdfRoutes.js";
-
+import advertroutes from "./routes/admin_routes/advertRoutes.js"
 
 
 
@@ -144,8 +144,15 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+
+
+
 app.use(cors(corsOptions));
 app.use(passport.initialize());
+
+
+
+
 
 // Static folders
 app.use("/uploads", express.static(uploadDir));
@@ -154,10 +161,40 @@ app.use("/images", express.static(path.join(__dirname, "../src/products")));
 app.use("/products", express.static(path.join(__dirname, "products")));
 app.use("/docs", express.static(path.join(__dirname, "docs")));
 
+
+
+///////////////////////////////////////////////////////////////////////////////////
+app.use('/api', dashboardRoute);
+app.use('/form', addRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/', editRoutes);
+app.use('/api/ads', adRoutes);
+app.use('/api/orders', orderRoute); //new-order full order table
+app.use('/api/orders', orderRoutes);  // status - order placed
+app.use('/api/orders', pendingRoutes); // status - Processing
+app.use('/api/orders', comRoutes); // status - Completed 
+app.use('/api/orders', dyn_orderRoutes); // check one order details
+app.use('/api/customers', customersRoutes); // customer full details
+// app.use('/api/notifications', notificationRoutes); // notification
+app.use('/api/admin/profile', adminProfileRoutes); // profile
+app.use("/api/coupons", couptableRout); // table for coupon
+app.use("/api/notifications", noteRoutess); //notification new 
+app.use(customer_orderRoute); // dynamic order customer al; details
+app.use(notificationRout);
+app.use('/api/refund',Refund)
+app.use('/api/ads',advertroutes)
+
+deactivateExpiredAdvertisements(); 
+startNotificationCleanupJob();
+deactivateExpiredCoupons();
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 // API Routes
 app.use("/api/products", productroutes);
 app.use("/api/product-details", productDetailsRoute);
-app.use("/api/ads", advertisementRoutes);
+// app.use("/api/ads", advertisementRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRouter);
 app.use("/api/apply", couponRouter);
@@ -183,35 +220,7 @@ app.use("/api/auth", instagramAuthRoutes);
 app.use("/api", refundRoutes);
 app.use("/api/user",getUserAddressRoute);
 // Default routeapp.use("/api/products", productroutes);
-///////////////////////////////////////////////////////////////////////////////////
-app.use('/api', dashboardRoute);
-app.use('/form', addRoutes);
-app.use('/api/coupons', couponRoutes);
-app.use('/', editRoutes);
-app.use('/api/ads', adRoutes);
-app.use('/api/orders', orderRoute); //new-order full order table
-app.use('/api/orders', orderRoutes);  // status - order placed
-app.use('/api/orders', pendingRoutes); // status - Processing
-app.use('/api/orders', comRoutes); // status - Completed 
-app.use('/api/orders', dyn_orderRoutes); // check one order details
-app.use('/api/customers', customersRoutes); // customer full details
-// app.use('/api/notifications', notificationRoutes); // notification
-app.use('/api/admin/profile', adminProfileRoutes); // profile
-app.use("/api/coupons", couptableRout); // table for coupon
-app.use("/api/notifications", noteRoutess); //notification new 
-app.use(customer_orderRoute); // dynamic order customer al; details
-app.use(notificationRout);
-app.use('/api/refund',Refund)
-// cron.schedule("* * * * *", async () => { // every minute
-//   await deactivateExpiredAdvertisements();
-// });
 
-deactivateExpiredAdvertisements(); 
-startNotificationCleanupJob();
-deactivateExpiredCoupons();
-
-
-////////////////////////////////////////////////////////////////////////////////////////
 
 
 

@@ -7,6 +7,13 @@ import Product from '../../models/Admin_models/Product.js';
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+  if (req.path === '/' && req.method === 'POST' && !req.path.endsWith('/')) {
+    return res.redirect(307, req.originalUrl + '/');
+  }
+  next();
+});
+
 // Folder to save images
 const adImageFolder = path.join('src/products/advertisement');
 fs.mkdirSync(adImageFolder, { recursive: true });
@@ -29,7 +36,7 @@ const upload = multer({ storage });
 
  * Create or update ad (auto fallback image if needed)
  */
-router.post('/', upload.single('image'), async (req, res) => {
+router.post(['/',''], upload.single('image'), async (req, res) => {
   try {
     const { productId, title, mainTitle, discountPercentage, expiresAt } = req.body;
     let imagePath;
@@ -37,6 +44,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     if (req.file) {
       // Uploaded image path
       imagePath = `advertisement/${req.file.filename}`;
+     
     } else {
       // Fallback: get image from product
       const product = await Product.findById(productId);
@@ -59,22 +67,10 @@ router.post('/', upload.single('image'), async (req, res) => {
       },
       { new: true, upsert: true }
     );
+    
 
     res.status(200).json({ message: 'Advertisement saved successfully', advertisement });
-    const product = await Product.findById(productId);
-    const productName = product?.name || "Unknown Product";
 
-    // Create notification
-    let message = existingAd
-      ? `Advertisement updated for ${productName} (${discountPercentage}% off)`
-      : `New advertisement created for ${productName} (${discountPercentage}% off)`;
-
-    await Notification.create({
-      type: "advertisement",
-      message,
-      product: productId,
-      advertisement: advertisement._id
-    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

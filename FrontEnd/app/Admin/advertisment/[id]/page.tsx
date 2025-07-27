@@ -83,7 +83,7 @@ const SetAdvertisement = () => {
 
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5500/api/ads', {
+      const res = await fetch('http://localhost:5500/api/ads/', {
         method: 'POST',
         body: data,
       });
