@@ -4,16 +4,35 @@ import Slider from "react-slick";
 import Slide from "./Slide";
 import axiosInstance from "@/services/api";
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  images?: string[];
+}
+
 interface Advertisement {
   _id: string;
   img: string;
   title: string;
   mainTitle: string;
-  price: string;
+  discountPercentage: number;
+  product: Product | string;
+  isActive?: boolean;
+}
+
+function getProductId(product: Product | string): string {
+  return typeof product === "string" ? product : product._id;
 }
 
 const Advertising = () => {
-  const [ads, setAds] = useState<Advertisement[]>([]);
+  const [ads, setAds] = useState<
+    (Advertisement & {
+      price: string;
+      originalPrice?: string;
+      productId: string;
+    })[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,10 +50,40 @@ const Advertising = () => {
     const loadAdvertisements = async () => {
       try {
         const data = await fetchAdvertisements();
-        setAds(data);
+
+        const processedAds = data
+          .map((ad: Advertisement) => {
+            const productId =
+              typeof ad.product === "string" ? ad.product : ad.product?._id;
+
+            if (!productId) {
+              console.warn("Advertisement has no product:", ad._id);
+              return null;
+            }
+
+            const productPrice =
+              typeof ad.product === "object" ? ad.product.price : 0;
+            const price = (
+              productPrice *
+              (1 - ad.discountPercentage / 100)
+            ).toFixed(2);
+            const originalPrice =
+              ad.discountPercentage > 0 ? productPrice.toFixed(2) : undefined;
+
+            return {
+              ...ad,
+              price,
+              originalPrice,
+              productId,
+            };
+          })
+          .filter((ad: Advertisement) => ad !== null);
+
+        setAds(processedAds);
         setError(null);
       } catch (err) {
         setError("Failed to load advertisements");
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -43,14 +92,13 @@ const Advertising = () => {
     loadAdvertisements();
   }, []);
 
-  // Enhanced slider settings with custom styling
   const settings = {
     dots: true,
     infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 5000,
     pauseOnHover: true,
     arrows: true,
     adaptiveHeight: false,
@@ -63,16 +111,15 @@ const Advertising = () => {
 
   if (loading) {
     return (
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-red-50 via-pink-50 to-orange-50 animate-pulse"></div>
-        <div className="container mx-auto px-4 py-16 flex justify-center items-center h-[600px] relative z-10">
+      <div className="w-full h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-br from-gray-100 via-white to-gray-50">
+        <div className="container mx-auto px-4 h-full flex justify-center items-center">
           <div className="flex flex-col items-center space-y-4">
             <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-red-200"></div>
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-red-600 border-t-transparent absolute inset-0"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-red-600 border-t-transparent absolute inset-0"></div>
             </div>
-            <div className="text-gray-600 font-medium">
-              Loading amazing offers...
+            <div className="text-gray-700 font-semibold text-sm">
+              Loading Amazing Deals...
             </div>
           </div>
         </div>
@@ -82,12 +129,14 @@ const Advertising = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-16">
-        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-8 text-center h-[600px] flex items-center justify-center">
-          <div className="space-y-4">
-            <div className="text-6xl">⚠️</div>
-            <p className="text-yellow-800 font-medium text-lg">{error}</p>
-            <p className="text-yellow-600">Please try again later</p>
+      <div className="w-full h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-br from-gray-50 via-white to-red-50">
+        <div className="container mx-auto px-4 h-full flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <div className="text-5xl animate-bounce">🎯</div>
+            <p className="text-red-600 font-semibold text-lg">{error}</p>
+            <p className="text-gray-600 text-sm">
+              Please refresh to see our latest offers
+            </p>
           </div>
         </div>
       </div>
@@ -95,70 +144,48 @@ const Advertising = () => {
   }
 
   return (
-    <div className="relative py-12 bg-gradient-to-br from-gray-50 via-white to-red-50 overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-red-400 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-400 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent mb-4">
-            Special Offers
-          </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Discover amazing deals on premium 3D frames that bring your memories
-            to life
-          </p>
-        </div>
-
-        {/* Slider Container */}
-        <div className="relative max-w-7xl mx-auto">
-          <div className="slider-container relative overflow-hidden rounded-3xl shadow-2xl">
-            <Slider {...settings}>
-              {ads.map((ad) => (
-                <div key={ad._id} className="!h-[600px]">
-                  <Slide
-                    img={ad.img}
-                    title={ad.title}
-                    mainTitle={ad.mainTitle}
-                    price={ad.price}
-                    _id={ad._id}
-                  />
-                </div>
-              ))}
-            </Slider>
-          </div>
-        </div>
-
-        {/* Bottom accent */}
-        <div className="flex justify-center mt-8">
-          <div className="flex space-x-2">
-            {ads.map((_, index) => (
-              <div
-                key={index}
-                className="w-2 h-2 rounded-full bg-gradient-to-r from-red-400 to-pink-400 opacity-30"
-              ></div>
+    <div className="w-full bg-white overflow-hidden">
+      <div className="container mx-auto px-0">
+        <div className="slider-container w-full">
+          <Slider {...settings}>
+            {ads.map((ad) => (
+              <div key={ad._id}>
+                <Slide
+                  img={ad.img}
+                  title={ad.title}
+                  mainTitle={ad.mainTitle}
+                  price={ad.price}
+                  originalPrice={ad.originalPrice}
+                  _id={ad._id}
+                  productId={getProductId(ad.product)}
+                />
+              </div>
             ))}
-          </div>
+          </Slider>
         </div>
       </div>
 
-      {/* Custom CSS for slider dots */}
       <style jsx global>{`
         .custom-dots {
-          bottom: -50px !important;
+          bottom: 20px !important;
+          z-index: 20;
+        }
+        .custom-dots li {
+          margin: 0 4px;
         }
         .custom-dots li button:before {
-          color: #dc2626 !important;
+          color: rgba(255, 255, 255, 0.8) !important;
           font-size: 12px !important;
-          opacity: 0.5 !important;
+          opacity: 0.6 !important;
+          transition: all 0.3s ease !important;
         }
         .custom-dots li.slick-active button:before {
           opacity: 1 !important;
-          color: #dc2626 !important;
+          color: #ffffff !important;
+          transform: scale(1.3);
+        }
+        .slider-container .slick-slide > div {
+          height: 100%;
         }
       `}</style>
     </div>
@@ -169,10 +196,10 @@ const Advertising = () => {
 const CustomPrevArrow = ({ onClick }: { onClick?: () => void }) => (
   <button
     onClick={onClick}
-    className="absolute left-6 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all duration-300 hover:scale-110 group"
+    className="absolute left-6 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg rounded-full p-3 transition-all duration-300 hover:scale-110 group border border-gray-200"
   >
     <svg
-      className="w-6 h-6 text-gray-700 group-hover:text-red-600 transition-colors"
+      className="w-5 h-5 text-gray-700 group-hover:text-red-600 transition-colors"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -180,7 +207,7 @@ const CustomPrevArrow = ({ onClick }: { onClick?: () => void }) => (
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
+        strokeWidth={2.5}
         d="M15 19l-7-7 7-7"
       />
     </svg>
@@ -190,10 +217,10 @@ const CustomPrevArrow = ({ onClick }: { onClick?: () => void }) => (
 const CustomNextArrow = ({ onClick }: { onClick?: () => void }) => (
   <button
     onClick={onClick}
-    className="absolute right-6 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all duration-300 hover:scale-110 group"
+    className="absolute right-6 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg rounded-full p-3 transition-all duration-300 hover:scale-110 group border border-gray-200"
   >
     <svg
-      className="w-6 h-6 text-gray-700 group-hover:text-red-600 transition-colors"
+      className="w-5 h-5 text-gray-700 group-hover:text-red-600 transition-colors"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -201,7 +228,7 @@ const CustomNextArrow = ({ onClick }: { onClick?: () => void }) => (
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
+        strokeWidth={2.5}
         d="M9 5l7 7-7 7"
       />
     </svg>

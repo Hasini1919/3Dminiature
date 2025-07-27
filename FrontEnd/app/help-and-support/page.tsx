@@ -22,7 +22,7 @@ export default function HelpPage() {
             <p className="text-gray-600 text-sm mb-6">
               Reach out via our contact form for any questions about orders or support.
             </p>
-            <Link href="/help/contact">
+            <Link href="/contact">
               <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition">
                 Go to Contact Page
               </button>
@@ -78,11 +78,19 @@ export default function HelpPage() {
           <p className="text-gray-600 text-sm mb-6">
             Instantly connect with our support team during business hours.
           </p>
-          <Link href="/help/chat">
-            <button className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
-              Start Chat
-            </button>
-          </Link>
+   <button
+  onClick={() => {
+    if (typeof window !== "undefined" && (window as any).Tawk_API) {
+      (window as any).Tawk_API.maximize(); // Safely access it
+    } else {
+      alert("Chat is not available yet. Please wait...");
+    }
+  }}
+  className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition"
+>
+  Start Chat
+</button>
+
         </div>
 
         {/* FAQ */}

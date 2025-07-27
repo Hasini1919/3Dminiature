@@ -1,6 +1,6 @@
 // app/Admin/notification/page.tsx
 'use client';
-
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FiBell, FiX, FiCheck } from 'react-icons/fi';
 
@@ -11,6 +11,7 @@ interface Notification {
   seen: boolean;
   createdAt: string;
 }
+
 
 export default function NotificationPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -28,7 +29,7 @@ export default function NotificationPage() {
         setLoading(false);
       }
     };
-    
+
     fetchNotifications();
   }, []);
 
@@ -37,20 +38,22 @@ export default function NotificationPage() {
       await fetch(`http://localhost:5500/api/notifications/seen/${id}`, {
         method: "PATCH",
       });
-      setNotifications(prev => 
-        prev.map(n => n._id === id ? {...n, seen: true} : n)
+      setNotifications(prev =>
+        prev.map(n => n._id === id ? { ...n, seen: true } : n)
       );
     } catch (err) {
       console.error("Error marking as seen", err);
     }
   };
+  const router = useRouter();
+
 
   const markAllAsSeen = async () => {
     try {
       await fetch("http://localhost:5500/api/notifications/mark-all-seen", {
         method: "PATCH",
       });
-      setNotifications(prev => prev.map(n => ({...n, seen: true})));
+      setNotifications(prev => prev.map(n => ({ ...n, seen: true })));
     } catch (err) {
       console.error("Error marking all as seen", err);
     }
@@ -87,7 +90,14 @@ export default function NotificationPage() {
   }
 
   return (
+
     <div className="min-h-screen bg-gray-50 p-6">
+      <button
+        onClick={() => router.back()}
+        className="mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg flex items-center"
+      >
+        ← Go Back
+      </button>
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4 text-white">
           <div className="flex justify-between items-center">
@@ -96,14 +106,14 @@ export default function NotificationPage() {
               Notifications
             </h1>
             <div className="space-x-2">
-              <button 
+              <button
                 onClick={markAllAsSeen}
                 className="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg flex items-center"
               >
                 <FiCheck className="mr-2" />
                 Mark All as Seen
               </button>
-              <button 
+              <button
                 onClick={clearAllNotifications}
                 className="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg flex items-center"
               >
@@ -123,14 +133,13 @@ export default function NotificationPage() {
             </div>
           ) : (
             notifications.map(notification => (
-              <div 
-                key={notification._id} 
+              <div
+                key={notification._id}
                 className={`p-4 flex items-start ${!notification.seen ? 'bg-red-50' : ''}`}
               >
                 <div className="flex-shrink-0">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    !notification.seen ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${!notification.seen ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
+                    }`}>
                     <FiBell />
                   </div>
                 </div>
@@ -144,7 +153,7 @@ export default function NotificationPage() {
                 </div>
                 <div className="flex space-x-2">
                   {!notification.seen && (
-                    <button 
+                    <button
                       onClick={() => markAsSeen(notification._id)}
                       className="text-green-600 hover:text-green-800"
                       title="Mark as seen"
@@ -152,7 +161,7 @@ export default function NotificationPage() {
                       <FiCheck size={18} />
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => deleteNotification(notification._id)}
                     className="text-red-600 hover:text-red-800"
                     title="Delete notification"
