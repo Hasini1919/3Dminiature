@@ -21,6 +21,7 @@ export default function OrderTable() {
     fetchAndSetOrders(urlStatus);
   }, [urlStatus]);
 
+
   const onFilterChange = (newStatus: string) => {
     setFilterStatus(newStatus);
     if (newStatus === "All") {
@@ -38,11 +39,11 @@ export default function OrderTable() {
       setOrders(data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
+      // Add user notification here
     } finally {
       setLoading(false);
     }
   };
-
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       await updateOrderStatus(orderId, newStatus);
@@ -67,7 +68,11 @@ export default function OrderTable() {
   };
 
   // Filter orders by orderNumber search
-  const filteredOrders = orders.filter((order) =>
+  const filteredOrders = orders
+  .filter(order => 
+    filterStatus === "All" ? true : order.status === filterStatus
+  )
+  .filter(order => 
     order.orderNumber.toLowerCase().includes(search.toLowerCase())
   );
 
