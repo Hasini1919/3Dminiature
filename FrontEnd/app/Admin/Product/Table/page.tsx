@@ -276,7 +276,7 @@ const ProductTable = () => {
                             ? 'bg-green-100 text-green-800' 
                             : 'bg-red-100 text-red-800'
                         }`}>
-                          {adMap[product._id] ? 'Active' : 'Inactive'}
+                          {adMap[product._id] ? 'Set' : 'Not Set'}
                         </span>
                       </td>
                     </tr>

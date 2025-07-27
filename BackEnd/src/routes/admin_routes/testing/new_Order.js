@@ -3,7 +3,7 @@ import Order from "../../../models/Order.js";
 
 const router = express.Router();
 
-// GET /api/orders?status=StatusName  - fetch orders filtered by status or all if no status or "All"
+// StatusName  
 router.get("/", async (req, res) => {
   try {
     const { status } = req.query;
@@ -21,10 +21,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-// PUT /api/orders/:id/status  - update order status
+//  - update order status
 router.put("/:id/status", async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body; // expects { status: "newStatus" }
+  const { status } = req.body; 
   try {
     await Order.findByIdAndUpdate(id, { status });
       
@@ -35,7 +35,7 @@ router.put("/:id/status", async (req, res) => {
   }
 });
 
-// GET /api/orders/user/:userId - fetch orders by userId (customer)
+//  fetch orders by userId (customer)
 router.get("/user/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -47,7 +47,7 @@ router.get("/user/:userId", async (req, res) => {
 });
 
 
-// Express-style
+//payment
 router.put("/:id/payment", async (req, res) => {
   const { id } = req.params;
   const { payment } = req.body;

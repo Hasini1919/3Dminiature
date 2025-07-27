@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// GET admin profile (example: assuming only 1 admin)
+// GET admin profile
 router.get('/', async (req, res) => {
     try {
         const admin = await User.findOne({ role: 'admin' });

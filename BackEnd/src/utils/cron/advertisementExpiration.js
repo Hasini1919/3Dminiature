@@ -1,6 +1,6 @@
 import Notification from "../../models/Admin_models/Notification.js";
 import Advertisement from "../../models/Advertisement.js";
-
+import cron from 'node-cron';
 export async function deactivateExpiredAdvertisements() {
     try {
         const now = new Date();
@@ -14,10 +14,6 @@ export async function deactivateExpiredAdvertisements() {
                 type: "advertisement",
                 message: `Advertisement titled "${ad.title}" has expired and is deactivated.`,
 
-            });
-            cron.schedule("0 1 * * *", async () => {
-                console.log("Running daily cron job: Delete old notifications");
-                await deleteOldNotifications();
             });
         } console.log(`Processed ${expiredAds.length} expired advertisements.`);
     } catch (error) {

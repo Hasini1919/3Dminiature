@@ -1,6 +1,6 @@
 import Notification from "../../models/Admin_models/Notification.js";
 import Coupon from "../../models/Coupon.js";
-
+import cron from 'node-cron';
 export async function deactivateExpiredCoupons() {
   const now = new Date();
   const expiredCoupons = await Coupon.find({ active: true, validTo: { $lt: now } });

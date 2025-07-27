@@ -1,4 +1,4 @@
-// routes/orderRoutes.js (or wherever your Express routes are)
+
 import express from "express";
 import Order from "../../models/Order.js";
 import User from "../../models/User.js";

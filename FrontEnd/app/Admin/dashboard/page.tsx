@@ -99,6 +99,7 @@ export default function DashboardPage() {
                 value={stats.customerCount.toLocaleString()}
                 icon={<FiBarChart className="w-5 h-5 sm:w-6 sm:h-6" />}
                 dotColor="bg-purple-500"
+                link= "/Admin/customer"
               />
             </div>
 

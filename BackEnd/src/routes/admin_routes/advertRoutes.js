@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /**
- * POST /api/ads
+
  * Create or update ad (auto fallback image if needed)
  */
 router.post('/', upload.single('image'), async (req, res) => {
@@ -43,7 +43,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       if (!product || !product.images?.length) {
         return res.status(400).json({ message: "No image uploaded and product has no image." });
       }
-      imagePath = product.images[0]; // Assuming it's already a relative path
+      imagePath = product.images[0]; 
     }
 
     const advertisement = await Advertisement.findOneAndUpdate(
@@ -60,6 +60,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       { new: true, upsert: true }
     );
 
+    res.status(200).json({ message: 'Advertisement saved successfully', advertisement });
     const product = await Product.findById(productId);
     const productName = product?.name || "Unknown Product";
 
@@ -74,9 +75,6 @@ router.post('/', upload.single('image'), async (req, res) => {
       product: productId,
       advertisement: advertisement._id
     });
-
-
-    res.status(200).json({ message: 'Advertisement saved successfully', advertisement });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -84,7 +82,7 @@ router.post('/', upload.single('image'), async (req, res) => {
 });
 
 /**
- * GET /api/ads/:productId
+
  * Fetch advertisement for a product
  */
 router.get('/:productId', async (req, res) => {
@@ -102,7 +100,7 @@ router.get('/:productId', async (req, res) => {
 });
 
 /**
- * DELETE /api/ads/:productId
+ 
  * Delete advertisement and its image file
  */
 router.delete('/:productId', async (req, res) => {
@@ -118,7 +116,9 @@ router.delete('/:productId', async (req, res) => {
       fs.unlinkSync(absolutePath);
     }
 
-    const product = await Product.findById(req.params.productId);
+    res.status(200).json({ message: 'Advertisement removed successfully' });
+
+        const product = await Product.findById(req.params.productId);
     const productName = product?.name || "Unknown Product";
 
     // Create notification
@@ -127,9 +127,6 @@ router.delete('/:productId', async (req, res) => {
       message: `Advertisement for ${productName} has been removed`,
       product: req.params.productId
     });
-
-
-    res.status(200).json({ message: 'Advertisement removed successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

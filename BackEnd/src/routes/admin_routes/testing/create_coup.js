@@ -11,7 +11,7 @@ router.post("/create", async (req, res) => {
     await coupon.save();
     await Notification.create({
       type: "coupon",
-      message: `Coupon code ${Coupon.code} is now created.`,
+      message: `Coupon code ${coupon.code} is now updated.`,
     });
     res.status(201).json({ message: "Coupon created successfully", coupon });
   } catch (err) {

@@ -18,16 +18,16 @@ router.get("/", async (req, res) => {
       },
       {
         $lookup: {
-          from: "users", // 👈 match your MongoDB collection name
-          localField: "_id", // _id is userId
-          foreignField: "_id", // make sure _id is ObjectId in user schema
+          from: "users", 
+          localField: "_id", 
+          foreignField: "_id", 
           as: "userInfo",
         },
       },
       {
         $unwind: {
           path: "$userInfo",
-          preserveNullAndEmptyArrays: true, // in case user is deleted
+          preserveNullAndEmptyArrays: true,
         },
       },
       {

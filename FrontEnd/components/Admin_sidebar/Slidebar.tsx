@@ -46,13 +46,22 @@ export default function ModernAdminNavbar() {
   const notificationRef = useRef<HTMLDivElement>(null);
   const [showOnlyUnseen, setShowOnlyUnseen] = useState(false);
 
+
+
+
   // Fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const res = await fetch("http://localhost:5500/api/notifications");
         const data = await res.json();
-        setNotifications(data);
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        } else {
+          setNotifications([]); // fallback to empty array
+          console.error("Expected array but got:", data);
+        }
+
       } catch {
         setNotifications([]);
       }
@@ -90,6 +99,7 @@ export default function ModernAdminNavbar() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+  
 
   const unseenCount = notifications.filter((n) => !n.seen).length;
   const isActive = (path: string) => pathname.toLowerCase().includes(path.toLowerCase());
