@@ -265,13 +265,13 @@ export default function ProfilePage() {
                   currentAddress || {
                     firstName: "",
                     lastName: "",
-                    province: "",
+                    province: "Northern",
                     district: "",
                     city: "",
                     area: "",
                     houseNo: "",
                     postalCode: "",
-                    country: "United States",
+                    country: "Srilanka",
                     anyInformation: "",
                   }
                 }

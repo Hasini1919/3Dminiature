@@ -4,7 +4,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-import profileAuth from "../middleware/profile.js";
+import auth from "../middleware/auth.js";
 import {
   getProfile,
   updateProfile,
@@ -35,25 +35,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 // Profile Routes
-router.route("/").get(profileAuth, getProfile).put(profileAuth, updateProfile);
+router.route("/").get(auth, getProfile).put(auth, updateProfile);
 
 // Address Routes
-router
-  .route("/addresses")
-  .get(profileAuth, getAddresses)
-  .post(profileAuth, addAddress);
+router.route("/addresses").get(auth, getAddresses).post(auth, addAddress);
 
 router
   .route("/addresses/:id")
-  .put(profileAuth, updateAddress)
-  .delete(profileAuth, deleteAddress);
+  .put(auth, updateAddress)
+  .delete(auth, deleteAddress);
 
-router.put("/addresses/default/:id", profileAuth, setDefaultAddress);
+router.put("/addresses/default/:id", auth, setDefaultAddress);
 
 // ✅ Profile Image Upload Route
 router.post(
   "/upload-image/:userId",
-  profileAuth,
+  auth,
   upload.single("image"),
   uploadProfileImage
 );

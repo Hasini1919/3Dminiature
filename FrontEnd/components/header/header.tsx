@@ -21,7 +21,6 @@ export default function Header() {
   const { status } = useSession();
   const router = useRouter();
 
-  // Inside your component
   const pathname = usePathname();
 
   useEffect(() => {
@@ -37,14 +36,23 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Modified to redirect to profile if authenticated, else to login with callback to profile
   const handleProfileClick = () => {
     setIsDropdownOpen(false);
     if (status === "authenticated") {
-      router.push("/profile");
+      router.push("/customerAccount/profile");
     } else {
-      router.push(`/authentication/login?callbackUrl=/profile`);
+      router.push("/authentication/login?callbackUrl=/customerAccount/profile");
     }
+  };
+
+  const handleLoginClick = () => {
+    setIsDropdownOpen(false);
+    router.push("/authentication/login?callbackUrl=/home");
+  };
+
+  const handleSignUpClick = () => {
+    setIsDropdownOpen(false);
+    router.push("/authentication/signup");
   };
 
   return (
@@ -67,7 +75,8 @@ export default function Header() {
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            {[{ name: "Home", path: "/" },
+            {[
+              { name: "Home", path: "/" },
               { name: "Shop", path: "/shop" },
               { name: "About", path: "/about" },
               { name: "Contact", path: "/contact" },
@@ -105,27 +114,27 @@ export default function Header() {
             {isDropdownOpen && (
               <div className="absolute right-0 top-12 bg-white text-black rounded-md shadow-md w-44 z-50">
                 <div className="flex flex-col text-sm">
+                  {/* My Profile (always shown, redirects based on auth status) */}
                   <button
                     onClick={handleProfileClick}
                     className="px-4 py-2 text-left hover:bg-gray-100"
                   >
                     My Profile
                   </button>
-                  <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      router.push(`/authentication/login?callbackUrl=/home`);
-                    }}
-                    className="px-4 py-2 text-left hover:bg-gray-100"
-                  >
-                    Login
-                  </button>
 
+                  {/* Login (only shown when not authenticated) */}
+                  {status !== "authenticated" && (
+                    <button
+                      onClick={handleLoginClick}
+                      className="px-4 py-2 text-left hover:bg-gray-100"
+                    >
+                      Login
+                    </button>
+                  )}
+
+                  {/* Sign Up (always shown) */}
                   <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      router.push("/authentication/signup");
-                    }}
+                    onClick={handleSignUpClick}
                     className="px-4 py-2 text-left hover:bg-gray-100"
                   >
                     Sign Up

@@ -144,7 +144,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
+app.use("/api/review-history", reviewHistoryRoutes);
 
 // Middleware
 app.use(express.json({ limit: "50mb" }));

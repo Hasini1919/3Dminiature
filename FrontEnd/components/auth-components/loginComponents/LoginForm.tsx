@@ -57,7 +57,7 @@ const LoginForm = () => {
 
     setTimeout(() => {
       if (role === "admin") {
-        router.push("/Admin/dashbord"); // admin page
+        router.push("/Admin/dashboard"); 
       } else {
 router.push(callbackUrl || "/home");
       }

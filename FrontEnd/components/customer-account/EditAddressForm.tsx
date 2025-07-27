@@ -19,7 +19,7 @@ export function EditAddressForm({
 }: EditAddressFormProps) {
   const [formData, setFormData] = useState<AddressData>({
     ...addressData,
-    country: addressData.country || "United States",
+    country: addressData.country || "Srilanka",
   });
   const [errors, setErrors] = useState<Partial<AddressData>>({});
 
