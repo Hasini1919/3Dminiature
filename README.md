@@ -52,7 +52,7 @@ Tiny Treasures follows a clean **4-tier architecture**: a dual-zone Next.js 14 f
 
 <br />
 
-![Tiny Treasures System Architecture](./tinytreasures-architecture.svg)
+![Tiny Treasures System Architecture](./FrontEnd/public/assets/tinytreasures-architecture.svg)
 
 <br />
 
